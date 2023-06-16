@@ -1,7 +1,7 @@
 <p align="center">
   <img width="670" src="https://github.com/Danily07/Translumo/assets/29047281/6b3e0aa5-d772-4b63-b3ea-c7af2e003f85">
 </p>
-<p align="center"><b>EN</b> | <a href=""><b>RU</b></a></p>
+<p align="center"><b>EN</b> | <a href="docs/README-RU.md"><b>RU</b></a></p>
 <p align="center">Advanced screen translator. <b>Translumo</b> is able to detect and translate appearing in the selected area text in real-time (e.g. subtitles).</p>
 <h1>Main features</h1>
 <ul>
