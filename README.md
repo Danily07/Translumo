@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="670" src="https://github.com/Danily07/Translumo/assets/29047281/6b3e0aa5-d772-4b63-b3ea-c7af2e003f85">
+  <img width="670" src="https://github.com/Danily07/Translumo/assets/29047281/8985049f-ea1c-428e-94be-042ece66cb54">
 </p>
 <p align="center"><b>EN</b> | <a href="docs/README-RU.md"><b>RU</b></a></p>
 <p align="center">Advanced screen translator. <b>Translumo</b> is able to detect and translate appearing in the selected area text in real-time (e.g. subtitles).</p>
@@ -7,7 +7,7 @@
 <ul>
   <li><b>High text recognition precision</b></li>
   <p>Translumo allows to combine the usage of several OCR engines simultaneously. It uses machine learning training model for scoring each recognized result by OCR and chooses the best one.</p>
-  <img width="740" src="https://github.com/Danily07/Translumo/assets/29047281/5773de86-d3f1-41e1-a493-c37c973c8b7f)">
+  <img width="740" src="https://github.com/Danily07/Translumo/assets/29047281/7800ca08-71e9-41c2-ab05-d30e2b5a7269">
   <li><b>Simple interface</b></li>
   The main idea was to make tool, that does not require manual adjustments for each case and convenient for everyday use. 
   <li><b>Low latency</b></li>
