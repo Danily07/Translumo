@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="Translumo.MVVM.Views.HotkeysSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:common="clr-namespace:Translumo.MVVM.Common"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <common:HotKeyValueConverter x:Key="HotKeyValueConverter"/>
+    </UserControl.Resources>
+
+    <DockPanel LastChildFill="True">
+        <ItemsControl Name="IcHotKeys" ItemsSource="{Binding Model}" DockPanel.Dock="Top">
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="FrameworkElement.Margin" Value="0 0 0 7"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Text="{Binding HotKey, Mode=OneWay, Converter={StaticResource HotKeyValueConverter}}"  IsReadOnly="True" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="15" Width="70">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Background" Value="#c9d4d4"></Setter>
+                                    <Setter Property="BorderBrush" Value="#868787"></Setter>
+                                    <Setter Property="BorderThickness" Value="1"></Setter>
+                                    <Style.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="4"></Setter>
+                                        </Style>
+                                    </Style.Resources>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                        <Label Content="{Binding Description}" Style="{StaticResource ControlCaptionLabel}"></Label>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Label DockPanel.Dock="Bottom" Content="{DynamicResource Str.Hotkeys.PostScriptum}" Style="{StaticResource PostscriptLabel}" VerticalAlignment="Bottom" HorizontalAlignment="Right"></Label>
+    </DockPanel>
+</UserControl>

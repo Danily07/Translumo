@@ -1,0 +1,111 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+
+    <!--Generic-->
+    <system:String x:Key="Str.Login">Login</system:String>
+    <system:String x:Key="Str.Password">Password</system:String>
+    <system:String x:Key="Str.ExitConfirmation" xml:space="preserve">Do you want to close the application?&#13;You can use minimize button for hiding settings window (the app will still be available via tray icon).</system:String>
+    <system:String x:Key="Str.ExitConfirmationCaption">Exit confirmation</system:String>
+
+    <!--Notifications-->
+    <system:String x:Key="Str.Notification.CaptchaPass" xml:space="preserve">Please complete captcha on the website to use service.&#13;Also it may be required for each registered proxy.</system:String>
+
+    <!--Titles-->
+    <system:String x:Key="Str.Title.SettingWindow" xml:space="preserve">Settings - Translumo</system:String>
+    <system:String x:Key="Str.Title.BrowserWindow" xml:space="preserve">Browser - Translumo</system:String>
+
+    <!--Tray-->
+    <system:String x:Key="Str.Tray.ShowHideSettings">Show/Hide settings</system:String>
+    <system:String x:Key="Str.Tray.ShowHideTranslation">Show/Hide translation</system:String>
+    <system:String x:Key="Str.Tray.Exit">Exit</system:String>
+
+    <!--Chat-->
+    <system:String x:Key="Str.Chat.SettingsOpened">Close settings to start translation</system:String>
+
+    <!--Language settings-->
+    <system:String x:Key="Str.LangSettings.SourceLang">Source language</system:String>
+    <system:String x:Key="Str.LangSettings.TranslationLang">Translation language</system:String>
+    <system:String x:Key="Str.LangSettings.Translator">Translator</system:String>
+
+    <!--Hotkeys descriptions-->
+    <system:String x:Key="Str.Hotkeys.ChatVisibility">Show/hide translation window</system:String>
+    <system:String x:Key="Str.Hotkeys.SettingsVisibility">Open/close the Settings window</system:String>
+    <system:String x:Key="Str.Hotkeys.SelectArea">Select detection area</system:String>
+    <system:String x:Key="Str.Hotkeys.OnOffTranslation">On/off translation</system:String>
+    <system:String x:Key="Str.Hotkeys.PostScriptum">*Hotkeys configuration will be added in the future versions</system:String>
+    <system:String x:Key="Str.Hotkeys.SettingsShowHelp">Press '{0}' to open the Settings</system:String>
+    <system:String x:Key="Str.Hotkeys.SelectAreaHelp">Press '{0}' to select detection area</system:String>
+    <system:String x:Key="Str.Hotkeys.OnTranslationHelp">Press '{0}' to start translation</system:String>
+    <system:String x:Key="Str.Hotkeys.GeneralHelp">To control the app use context menu from tray or following hotkeys:</system:String>
+
+    <!--Appearance settings-->
+    <system:String x:Key="Str.AppearanceSettings.WindowColor">Window color</system:String>
+    <system:String x:Key="Str.AppearanceSettings.FontColor">Font color</system:String>
+    <system:String x:Key="Str.AppearanceSettings.FontSize">Font size</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Bold">Bold</system:String>
+    <system:String x:Key="Str.AppearanceSettings.LineSpacing">Line spacing</system:String>
+    <system:String x:Key="Str.AppearanceSettings.WindowOpacity">Window opacity</system:String>
+    <system:String x:Key="Str.AppearanceSettings.FontSizePanelCaption">Font size — change</system:String>
+    <system:String x:Key="Str.AppearanceSettings.FontColorPanelCaption">Font color — change</system:String>
+
+    <!--Proxy settings-->
+    <system:String x:Key="Str.ProxySettings.Proxy">Proxy</system:String>
+    <system:String x:Key="Str.ProxySettings.IpAddress">IP address</system:String>
+    <system:String x:Key="Str.ProxySettings.Port">Port</system:String>
+    <system:String x:Key="Str.ProxySettings.Note" xml:space="preserve">Use IPv4 proxy to avoid block by translation services with a large number of simultaneous requests.&#13;The app will allocate the proxy address pool between requests.</system:String>
+    <system:String x:Key="Str.ProxySettings.Caption">Proxy list — change</system:String>
+
+
+    <!--OCR settings-->
+    <system:String x:Key="Str.OcrSettings.TesseractOcr">Tesseract OCR</system:String>
+    <system:String x:Key="Str.OcrSettings.WindowsOcr">Windows OCR</system:String>
+    <system:String x:Key="Str.OcrSettings.EasyOcr">EasyOCR</system:String>
+    <system:String x:Key="Str.OcrSettings.TesseractOcrDesc" xml:space="preserve">Tesseract 5.0 with LSTM mode. One of the most popular early open-source OCR solution.&#13;Consistently recognizes text with simple solid background.&#13;&lt;Bold&gt;Performance impact:&lt;/Bold&gt; low</system:String>
+    <system:String x:Key="Str.OcrSettings.WindowsOcrDesc" xml:space="preserve">Native OCR solution by Microsoft. Able to handle a more complex background then Tesseract.&#13;&lt;Bold&gt;Performance impact:&lt;/Bold&gt; minor</system:String>
+    <system:String x:Key="Str.OcrSettings.WindowsOcrDesc2">Additional language packs may need to be installed</system:String>
+    <system:String x:Key="Str.OcrSettings.EasyOcrDesc" xml:space="preserve">The most advanced open-source OCR solution by Jaided AI.&#13;High precision of text recognition even with a complex background and uncommon fonts.&#13;&lt;Bold&gt;Performance impact:&lt;/Bold&gt; high</system:String>
+    <system:String x:Key="Str.OcrSettings.EasyOcrDesc2">Installation additional packages (Python, PyTorch) is required</system:String>
+
+    <!--About window-->
+    <system:String x:Key="Str.About.DevelopedBy">Developed by Danil Iushkov</system:String>
+    <system:String x:Key="Str.About.ProjectPage">Project page</system:String>
+    <system:String x:Key="Str.About.ReportIssue">Report an issue</system:String>
+
+    <!--Navigation menu-->
+    <system:String x:Key="Str.Navigation.Languages">Languages</system:String>
+    <system:String x:Key="Str.Navigation.Appearance">Appearance</system:String>
+    <system:String x:Key="Str.Navigation.Ocr">Text recognition</system:String>
+    <system:String x:Key="Str.Navigation.HotKeys">Hotkeys</system:String>
+
+    <!--Languages-->
+    <system:String x:Key="Str.Languages.English">English</system:String>
+    <system:String x:Key="Str.Languages.Russian">Russian</system:String>
+    <system:String x:Key="Str.Languages.Japanese">Japanese</system:String>
+    <system:String x:Key="Str.Languages.Korean">Korean</system:String>
+    <system:String x:Key="Str.Languages.Chinese">Chinese</system:String>
+
+    <!--Dialog stages-->
+    <system:String x:Key="Str.Stages.CheckPyModules">Checking installed modules...</system:String>
+    <system:String x:Key="Str.Stages.PyModulesQuestion" xml:space="preserve">Required Python modules are not installed. Do you want to install it now?&#13;Option is available only for NVIDIA GPUs!</system:String>
+    <system:String x:Key="Str.Stages.PyModulesQuestion2" xml:space="preserve">Required modules will take up ~5gb of disk space.&#13;Installation can take from a few minutes to an hour.&#13;Do you want to proceed?</system:String>
+    <system:String x:Key="Str.Stages.InstallationPyModule1">(1/2) Installation 'pytorch' module...</system:String>
+    <system:String x:Key="Str.Stages.InstallationPyModule2">(2/2) Installation 'easyocr' module...</system:String>
+    <system:String x:Key="Str.Stages.PyModulesInstalled">Required modules are installed</system:String>
+    <system:String x:Key="Str.Stages.PyModulesCheckError">Couldn't get access to Python for checking modules</system:String>
+    <system:String x:Key="Str.Stages.CheckLangPack">Checking language pack installation...</system:String>
+    <system:String x:Key="Str.Stages.LangPackQuestion" xml:space="preserve">Language feature pack '{0}' is not installed.&#13;Do you want to install it now?</system:String>
+    <system:String x:Key="Str.Stages.InstallationLangPack">Installation language pack...</system:String>
+    <system:String x:Key="Str.Stages.LangPackInstalledRestart">Language pack has been installed. Please restart computer</system:String>
+    <system:String x:Key="Str.Stages.InstallationLangError">Failed to install pack: '{0}'</system:String>
+    <system:String x:Key="Str.Stages.CheckLangPackError" xml:space="preserve">Unexpected error of checking Windows feature options.&#13;Please verify that the application is running as an Administrator.</system:String>
+    <system:String x:Key="Str.Stages.SwitchLanguage">Switching the language...</system:String>
+    <system:String x:Key="Str.Stages.SwitchLanguageError">Failed to switch language: '{0}'</system:String>
+
+    <!--Buttons-->
+    <system:String x:Key="Str.Button.SettingProxy">Configure proxy</system:String>
+    <system:String x:Key="Str.Button.ShowText">Show text example</system:String>
+    <system:String x:Key="Str.Button.Apply">Apply</system:String>
+
+
+</ResourceDictionary>

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>net5.0-windows10.0.19041</TargetFramework>
+	  <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Translumo.OCR\Translumo.OCR.csproj" />
+    <ProjectReference Include="..\Translumo.Translation\Translumo.Translation.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,20 @@
+﻿<!--<Window x:Class="ScreenTranslator.Core.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScreenTranslator.Core"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" AllowsTransparency="True" WindowStyle="None" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ResizeMode="CanResizeWithGrip" Activated="Window_Activated" Deactivated="Window_Deactivated" Background="#3FFFFFFF" BorderThickness="0" Loaded="Window_Loaded">
+    <Grid>
+        <RichTextBox x:Name="rtbChat" IsReadOnly="True" Focusable="false" MouseDown="rtbChat_MouseDown"  Background="#3F000000" FontSize="15">
+            <FlowDocument>
+                <Paragraph>
+                    <Run />
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+   </Grid>
+
+
+</Window>-->
