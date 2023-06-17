@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="670" src="https://github.com/Danily07/Translumo/assets/29047281/6b3e0aa5-d772-4b63-b3ea-c7af2e003f85">
+  <img width="670" src="https://github.com/Danily07/Translumo/assets/29047281/8985049f-ea1c-428e-94be-042ece66cb54">
 </p>
 <p align="center"><a href="https://github.com/Danily07/Translumo/blob/master/README.md"><b>EN</b></a> | <b>RU</b></p>
 <p align="center">Продвинутый экранный переводчик. <b>Translumo</b> способен переводить появляющийся текст в выбранной области в режиме реального времени (например, субтитры).</p>
@@ -7,7 +7,7 @@
 <ul>
   <li><b>Высокая точность распознавания текста</b></li>
   <p>Translumo использует сразу несколько OCR движков для распознавания текста. За счет обученной модели машинного обучения механизм выбирает лучший результат на каждой итерации.</p>
-  <img width="740" src="https://github.com/Danily07/Translumo/assets/29047281/5773de86-d3f1-41e1-a493-c37c973c8b7f)">
+  <img width="740" src="https://github.com/Danily07/Translumo/assets/29047281/7800ca08-71e9-41c2-ab05-d30e2b5a7269">
   <li><b>Простой интерфейс</b></li>
   Основным принципом разработки было сделать предельно универсальное приложения без необходимости подгонки настроек под каждый отдельный случай изображения. 
   <li><b>Низкая задержка</b></li>
