@@ -108,31 +108,19 @@ namespace Translumo.MVVM.ViewModels
             ProxySettingsIsOpened = false;
         }
 
-        private async Task ChangeSourceLanguage(Languages language, bool afterFailure = false)
+        private async Task ChangeSourceLanguage(Languages language)
         {
-            var prevLanguage = Model.TranslateFromLang;
-            var toChangeLanguage = false;
-            ActionInteractionStage stageToEnableFlag = new ActionInteractionStage(_dialogService, () =>
-            {
-                toChangeLanguage = true;
-                return Task.CompletedTask;
-            });
-
             try
             {
                 var changeLangStage = StagesFactory.CreateLanguageChangeStages(_dialogService, () =>
                     {
                         Model.TranslateFromLang = language;
-                        OnPropertyChanged(nameof(TranslateFromLang));
                     }, _logger);
-                if (_ocrConfiguration.GetConfiguration<WindowsOCRConfiguration>().Enabled && !afterFailure)
+
+                if (_ocrConfiguration.GetConfiguration<WindowsOCRConfiguration>().Enabled)
                 {
                     var langCode = _languageService.GetLanguageDescriptor(language).Code;
-                    changeLangStage.AddNextStage(StagesFactory.CreateWindowsOcrCheckingStages(_dialogService, langCode, stageToEnableFlag, _logger));
-                }
-                else
-                {
-                    changeLangStage.AddNextStage(stageToEnableFlag);
+                    changeLangStage = StagesFactory.CreateWindowsOcrCheckingStages(_dialogService, langCode, changeLangStage, _logger);
                 }
 
                 await changeLangStage.ExecuteAsync();
@@ -141,13 +129,8 @@ namespace Translumo.MVVM.ViewModels
             {
                 _logger.LogError(ex, $"Unexpected error during source language change");
             }
-            finally
-            {
-                if (!toChangeLanguage)
-                {
-                    await ChangeSourceLanguage(prevLanguage, true);
-                }
-            }
+
+            OnPropertyChanged(nameof(TranslateFromLang));
         }
 
         private string GetLanguageDisplayName(LanguageDescriptor languageDescriptor)
