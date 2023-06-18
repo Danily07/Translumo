@@ -102,6 +102,7 @@ namespace Translumo.Processing
             const int MAX_TRANSLATE_TASK_POOL = 4;
             const int SHORT_ITERATION_DELAY_MS = 130;
             const int ITERATION_DELAY_MS = 330;
+            const int SEQUENTIAL_DIFF_LETTERS = 3;
 
             IOCREngine primaryOcr = _engines.OrderByDescending(e => e.PrimaryPriority).First();
             IOCREngine[] otherOcr = _engines.Except(new[] { primaryOcr }).ToArray();
@@ -111,20 +112,18 @@ namespace Translumo.Processing
             Mat cachedImg = null;
             Guid iterationId;
             bool? lastIterationFull = true;
+            bool sequentialText = false;
 
-            TextDetectionResult GetSecondaryCheckText(byte[] screen)
+            TextDetectionResult GetSecondaryCheckText(byte[] screen, out Mat secondaryMat)
             {
-                Mat grayScaleScreen = ImageHelper.ToGrayScale(screen);
+                Mat grayScaleScreen = secondaryMat = ImageHelper.ToGrayScale(screen);
                 if (cachedImg != null)
                 {
                     var unitedScreen = ImageHelper.UnionImages(cachedImg, grayScaleScreen);
-                    cachedImg.Dispose();
 
-                    cachedImg = grayScaleScreen;
                     return _textProvider.GetText(primaryOcr, unitedScreen);
                 }
-
-                cachedImg = grayScaleScreen;
+                
                 return null;
             }
 
@@ -153,18 +152,31 @@ namespace Translumo.Processing
                     byte[] screenshot = _capturer.CaptureScreen();
                     lastIterationFull = false;
                     var primaryDetected = _textProvider.GetText(primaryOcr, screenshot);
-                    if (primaryDetected.ValidityScore == 0 || _textResultCacheService.IsCached(primaryDetected.Text))
+                    if (primaryDetected.ValidityScore == 0 || _textResultCacheService.IsCached(primaryDetected.Text, sequentialText))
                     {
                         continue;
                     }
 
                     if (primaryOcr.SecondaryPrimaryCheck)
                     {
-                        var res = GetSecondaryCheckText(screenshot);
-                        if (res != null && _textResultCacheService.IsCached(res.Text))
+                        var res = GetSecondaryCheckText(screenshot, out var secondaryMat);
+                        if (res != null && _textResultCacheService.IsCached(res.Text, false))
                         {
+                            if (primaryDetected.Text.Length - res.Text.Length > SEQUENTIAL_DIFF_LETTERS)
+                            {
+                                sequentialText = true;
+                            }
+                            else
+                            {
+                                cachedImg?.Dispose();
+                                cachedImg = secondaryMat;
+                            }
+                            
                             continue;
                         }
+
+                        cachedImg?.Dispose();
+                        cachedImg = secondaryMat;
                     }
 
                     for (var i = 0; i < otherOcr.Length; i++)
@@ -178,15 +190,18 @@ namespace Translumo.Processing
                     TextDetectionResult bestDetected = GetBestDetectionResult(detectedResults, 3);
                     if (bestDetected.ValidityScore <= MIN_SCORE_THRESHOLD)
                     {
+                        sequentialText = false;
                         continue;
                     }
 
                     lastIterationFull = true;
-                    if (_textResultCacheService.IsCached(bestDetected.Text, bestDetected.ValidityScore, out iterationId))
+                    if (_textResultCacheService.IsCached(bestDetected.Text, bestDetected.ValidityScore, sequentialText, out iterationId))
                     {
+                        sequentialText = false;
                         continue;
                     }
 
+                    sequentialText = false;
                     //resultLogger.LogResults(detectedResults.Select(res => res.Result), screenshot);
                     activeTranslationTasks.Add(TranslateTextAsync(bestDetected.Text, iterationId));
                 }

@@ -35,15 +35,20 @@ namespace Translumo.Processing.TextProcessing
             _cachedTextsCurrentIteration = new List<KeyValuePair<string, float>>(CACHE_DEF_CAPACITY);
         }
 
-        public bool IsCached(string text)
+        public bool IsCached(string text, bool isSequentialText)
         {
             bool isCached = IsCachedInternal(text);
+            if (isSequentialText && isCached)
+            {
+                _cachedTexts.Remove(text);
+                isCached = false;
+            }
             _cachedTextsCurrentIteration.Add(new KeyValuePair<string, float>(text, default(float)));
 
             return isCached;
         }
 
-        public bool IsCached(string text, float score, out Guid iterationId)
+        public bool IsCached(string text, float score, bool isSequentialText, out Guid iterationId)
         {
             try
             {
@@ -51,11 +56,10 @@ namespace Translumo.Processing.TextProcessing
                 {
                     return true;
                 }
-
-                var isCached = HasBetterSimilarText(text, score);
+                
                 _cachedTextsCurrentIteration.Add(new KeyValuePair<string, float>(text, score));
 
-                return isCached;
+                return HasBetterSimilarText(text, score) && !isSequentialText;
             }
             finally
             {
@@ -141,7 +145,7 @@ namespace Translumo.Processing.TextProcessing
                 var textSimilarity = cachedTextPair.Key.GetSimilarity(text);
                 if (textSimilarity > SIMILARITY_THRESHOLD)
                 {
-                    if (cachedTextPair.Value >= score)
+                    if (cachedTextPair.Value >= score && (cachedTextPair.Value != float.MaxValue || score != float.MaxValue))
                     {
                         return true;
                     }
