@@ -12,6 +12,8 @@ namespace Translumo.MVVM.ViewModels
             set => SetProperty(ref _textContent, value);
         }
 
+        public bool IsClosed { get; private set; } = false;
+
         public event EventHandler DialogIsClosed;
 
         private string _textContent;
@@ -25,6 +27,7 @@ namespace Translumo.MVVM.ViewModels
 
         private void Close()
         {
+            IsClosed = true;
             DialogIsClosed?.Invoke(this, EventArgs.Empty);
         }
     }
