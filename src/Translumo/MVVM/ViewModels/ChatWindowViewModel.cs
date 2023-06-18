@@ -87,8 +87,7 @@ namespace Translumo.MVVM.ViewModels
         {
             Model.EndTranslation();
             
-            var window = new SelectionAreaWindow();
-            var result = window.ShowDialog();
+            var result = _dialogService.ShowWindowDialog<SelectionAreaWindow>(out var window);
             if (result.HasValue && result.Value)
             {
                 Model.CaptureConfiguration.CaptureAreaP1 = window.MouseInitialPos;

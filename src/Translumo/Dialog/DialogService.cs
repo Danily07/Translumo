@@ -78,6 +78,28 @@ namespace Translumo.Dialog
             _openedWindows[typeof(TViewModel)] = view;
         }
 
+        public bool? ShowWindowDialog<TView>(out TView windowView)
+            where TView: Window
+        {
+            if (_openedWindows.ContainsKey(typeof(TView)))
+            {
+                windowView = null;
+                return null;
+            }
+
+            windowView = Activator.CreateInstance<TView>();
+            _openedWindows[typeof(TView)] = windowView;
+
+            try
+            {
+                return windowView.ShowDialog();
+            }
+            finally
+            {
+                _openedWindows.TryRemove(typeof(TView), out _);
+            }
+        }
+
         public bool WindowIsOpened<TViewModel>()
         {
             return _openedWindows.ContainsKey(typeof(TViewModel));
