@@ -30,6 +30,7 @@ namespace Translumo.Processing
         private readonly TextDetectionProvider _textProvider;
         private readonly TextResultCacheService _textResultCacheService;
         private readonly ILogger _logger;
+        private readonly AutoResetEvent _translationSync = new AutoResetEvent(true);
 
         private IEnumerable<IOCREngine> _engines;
         private ITranslator _translator;
@@ -96,6 +97,8 @@ namespace Translumo.Processing
 
         private void TranslateInternal(CancellationToken cancellationToken)
         {
+            _translationSync.WaitOne();
+
             const int MAX_TRANSLATE_TASK_POOL = 4;
             const int SHORT_ITERATION_DELAY_MS = 130;
             const int ITERATION_DELAY_MS = 330;
@@ -214,6 +217,7 @@ namespace Translumo.Processing
             }
             _textResultCacheService.Reset();
             _logger.LogTrace("Translation finished");
+            _translationSync.Set();
         }
 
         private async Task TranslateTextAsync(string text, Guid iterationId)
