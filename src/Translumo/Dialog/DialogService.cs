@@ -42,6 +42,11 @@ namespace Translumo.Dialog
 
             if (dialogViewModel is INonInteractionDialogViewModel nonInteractionVm)
             {
+                if (nonInteractionVm.IsClosed)
+                {
+                    return default(MessageBoxResult);
+                }
+
                 AllowCloseOnClickAway = false;
                 nonInteractionVm.DialogIsClosed += (sender, args) => IsOpen = false;
             }
