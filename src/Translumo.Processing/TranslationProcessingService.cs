@@ -114,16 +114,21 @@ namespace Translumo.Processing
             bool? lastIterationFull = true;
             bool sequentialText = false;
 
-            TextDetectionResult GetSecondaryCheckText(byte[] screen, out Mat secondaryMat)
+            TextDetectionResult GetSecondaryCheckText(byte[] screen)
             {
-                Mat grayScaleScreen = secondaryMat = ImageHelper.ToGrayScale(screen);
+                Mat grayScaleScreen = ImageHelper.ToGrayScale(screen);
                 if (cachedImg != null)
                 {
                     var unitedScreen = ImageHelper.UnionImages(cachedImg, grayScaleScreen);
 
+                    cachedImg?.Dispose();
+                    cachedImg = grayScaleScreen;
+
                     return _textProvider.GetText(primaryOcr, unitedScreen);
                 }
-                
+
+                cachedImg = grayScaleScreen;
+
                 return null;
             }
 
@@ -159,24 +164,16 @@ namespace Translumo.Processing
 
                     if (primaryOcr.SecondaryPrimaryCheck)
                     {
-                        var res = GetSecondaryCheckText(screenshot, out var secondaryMat);
+                        var res = GetSecondaryCheckText(screenshot);
                         if (res != null && _textResultCacheService.IsCached(res.Text, false))
                         {
                             if (primaryDetected.Text.Length - res.Text.Length > SEQUENTIAL_DIFF_LETTERS)
                             {
                                 sequentialText = true;
                             }
-                            else
-                            {
-                                cachedImg?.Dispose();
-                                cachedImg = secondaryMat;
-                            }
                             
                             continue;
                         }
-
-                        cachedImg?.Dispose();
-                        cachedImg = secondaryMat;
                     }
 
                     for (var i = 0; i < otherOcr.Length; i++)
