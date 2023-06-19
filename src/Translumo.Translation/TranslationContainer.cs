@@ -26,7 +26,7 @@ namespace Translumo.Translation
         {
             this.Proxy = proxy;
             this.IsPrimary = isPrimary;
-            this.LastTimeUsedUtc = isPrimary ? DateTime.MinValue.AddMinutes(1) : DateTime.MinValue;
+            this.LastTimeUsedUtc = isPrimary ? DateTime.MinValue : DateTime.MinValue.AddMinutes(1);
         }
 
         public virtual void MarkContainerIsUsed(bool isSuccessful)
