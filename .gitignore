@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# large artifacts
+ext_components/
+
 # User-specific files
 *.rsuser
 *.suo
