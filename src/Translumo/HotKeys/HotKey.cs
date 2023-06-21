@@ -25,6 +25,7 @@ namespace Translumo.HotKeys
         public KeyModifier KeyModifiers { get; private set; }
         public Action<HotKey> Action { get; private set; }
         public int Id { get; set; }
+        public bool Registered { get; private set; }
 
         // ******************************************************************
         public HotKey(Key k, KeyModifier keyModifiers, Action<HotKey> action, bool register = true)
@@ -38,9 +39,23 @@ namespace Translumo.HotKeys
             }
         }
 
+        public void Reassign(Key k, KeyModifier keyModifiers)
+        {
+            Unregister();
+
+            Key = k;
+            KeyModifiers = keyModifiers;
+            Register();
+        }
+
         // ******************************************************************
         public bool Register()
         {
+            if (Registered)
+            {
+                return false;
+            }
+
             int virtualKeyCode = KeyInterop.VirtualKeyFromKey(Key);
             Id = virtualKeyCode + ((int)KeyModifiers * 0x10000);
             bool result = RegisterHotKey(IntPtr.Zero, Id, (UInt32)KeyModifiers, (UInt32)virtualKeyCode);
@@ -48,12 +63,14 @@ namespace Translumo.HotKeys
             if (_dictHotKeyToCalBackProc == null)
             {
                 _dictHotKeyToCalBackProc = new Dictionary<int, HotKey>();
-                ComponentDispatcher.ThreadFilterMessage += new ThreadMessageEventHandler(ComponentDispatcherThreadFilterMessage);
+                ComponentDispatcher.ThreadFilterMessage += ComponentDispatcherThreadFilterMessage;
             }
 
             _dictHotKeyToCalBackProc.Add(Id, this);
 
             Debug.Print(result.ToString() + ", " + Id + ", " + virtualKeyCode);
+            Registered = result;
+
             return result;
         }
 
@@ -63,7 +80,8 @@ namespace Translumo.HotKeys
             HotKey hotKey;
             if (_dictHotKeyToCalBackProc.TryGetValue(Id, out hotKey))
             {
-                UnregisterHotKey(IntPtr.Zero, Id);
+                Registered = !UnregisterHotKey(IntPtr.Zero, Id);
+                _dictHotKeyToCalBackProc.Remove(Id);
             }
         }
 

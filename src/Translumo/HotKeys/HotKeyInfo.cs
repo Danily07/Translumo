@@ -13,5 +13,16 @@ namespace Translumo.HotKeys
             Key = key;
             KeyModifier = keyModifier;
         }
+
+        public override bool Equals(object obj)
+        {
+            var anotherHotKey = obj as HotKeyInfo;
+            if (anotherHotKey == null)
+            {
+                return false;
+            }
+
+            return this.Key == anotherHotKey.Key && this.KeyModifier == anotherHotKey.KeyModifier;
+        }
     }
 }
