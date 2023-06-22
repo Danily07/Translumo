@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using SharpDX.XInput;
+using Translumo.Services;
 using Translumo.Utils.Extensions;
 
 namespace Translumo.HotKeys
@@ -12,13 +15,37 @@ namespace Translumo.HotKeys
         public event EventHandler TranslationStateKeyPressed;
         public event EventHandler SettingVisibilityKeyPressed;
         public HotKeysConfiguration Configuration { get; }
+        public bool GamepadHotkeysEnabled { get; }
 
+        private readonly IControllerInputProvider _controllerInputProvider;
         private readonly IDictionary<string, HotKey> _registeredHotKeys;
+        private readonly IDictionary<string, GamepadHotKey> _registeredGamepadHotKeys;
+        private readonly IEnumerable<(string keyActionName, string gamepadActionName)> _keyNamesLink;
 
-        public HotKeysServiceManager(HotKeysConfiguration configuration)
+        public HotKeysServiceManager(HotKeysConfiguration configuration, IControllerInputProvider controllerInputProvider, IControllerService controllerService)
         {
             this._registeredHotKeys = InitializeHotKeys(configuration);
+            this._registeredGamepadHotKeys = new Dictionary<string, GamepadHotKey>();
+            this._controllerInputProvider = controllerInputProvider;
             this.Configuration = configuration;
+            this.GamepadHotkeysEnabled = controllerService.TryChangeListenState(true);
+            this._keyNamesLink = new[]
+            {
+                (nameof(configuration.ChatVisibilityKey), nameof(configuration.ChatVisibilityGamepadKey)),
+                (nameof(configuration.SelectAreaKey), nameof(configuration.SelectAreaGamepadKey)),
+                (nameof(configuration.TranslationStateKey), nameof(configuration.TranslationStateGamepadKey)),
+                (nameof(configuration.SettingVisibilityKey), nameof(configuration.SettingVisibilityGamepadKey))
+            };
+
+            if (GamepadHotkeysEnabled)
+            {
+                this._registeredGamepadHotKeys = InitializeGamepadHotKeys(configuration);
+                _registeredGamepadHotKeys.ForEach(key =>
+                {
+                    RegisterHotKey(key.Key);
+                    SuspendHotKey(key.Key);
+                });
+            }
 
             this.Configuration.PropertyChanged += ConfigurationOnPropertyChanged;
         }
@@ -26,11 +53,19 @@ namespace Translumo.HotKeys
         public void RegisterAll()
         {
             _registeredHotKeys.ForEach(key => RegisterHotKey(key.Key));
+            if (GamepadHotkeysEnabled)
+            {
+                _registeredGamepadHotKeys.ForEach(key => RegisterHotKey(key.Key));
+            }
         }
 
         public void UnregisterAll()
         {
             _registeredHotKeys.ForEach(key => UnregisterHotKey(key.Key));
+            if (GamepadHotkeysEnabled)
+            {
+                _registeredGamepadHotKeys.ForEach(key => UnregisterHotKey(key.Key));
+            }
         }
 
         public void UnregisterHotKey(string keyActionName)
@@ -38,6 +73,10 @@ namespace Translumo.HotKeys
             if (_registeredHotKeys.ContainsKey(keyActionName))
             {
                 _registeredHotKeys[keyActionName].Unregister();
+            }
+            else if (_registeredGamepadHotKeys.ContainsKey(keyActionName))
+            {
+                _controllerInputProvider.UnregisterHotKey(_registeredGamepadHotKeys[keyActionName]);
             }
         }
 
@@ -47,36 +86,70 @@ namespace Translumo.HotKeys
             {
                 _registeredHotKeys[keyActionName].Register();
             }
+            else if (_registeredGamepadHotKeys.ContainsKey(keyActionName))
+            {
+                _controllerInputProvider.RegisterHotKey(_registeredGamepadHotKeys[keyActionName]);
+            }
         }
 
         private void ConfigurationOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(e.PropertyName) && _registeredHotKeys.ContainsKey(e.PropertyName))
+            if (!string.IsNullOrEmpty(e.PropertyName))
             {
                 var newValueProperty = typeof(HotKeysConfiguration).GetProperty(e.PropertyName);
-                var newValue = newValueProperty.GetValue(Configuration) as HotKeyInfo;
-                _registeredHotKeys[e.PropertyName].Reassign(newValue.Key, newValue.KeyModifier);
+                if (_registeredHotKeys.ContainsKey(e.PropertyName))
+                {
+                    var newValue = newValueProperty.GetValue(Configuration) as HotKeyInfo;
+
+                    var gamepadKeyActionName = _keyNamesLink.First(name => name.keyActionName == e.PropertyName)
+                        .gamepadActionName;
+                    var forceSuspend = (_registeredGamepadHotKeys[gamepadKeyActionName]?.KeyCode ?? GamepadKeyCode.None) == GamepadKeyCode.None;
+                    _registeredHotKeys[e.PropertyName].Reassign(newValue.Key, newValue.KeyModifier, forceSuspend);
+                }
+                else if (_registeredGamepadHotKeys.ContainsKey(e.PropertyName))
+                {
+                    var newValue = newValueProperty.GetValue(Configuration) as GamepadHotKeyInfo;
+                    _registeredGamepadHotKeys[e.PropertyName].KeyCode = newValue.Key;
+                    _controllerInputProvider.ReassignHotKey(_registeredGamepadHotKeys[e.PropertyName]);
+                    SuspendHotKey(e.PropertyName);
+                }
             }
         }
 
-        private void OnTranslationStatePressed(HotKey obj)
+        private void SuspendHotKey(string gamepadKeyActionName)
         {
-            TranslationStateKeyPressed?.Invoke(obj, EventArgs.Empty);
+            if (_registeredGamepadHotKeys[gamepadKeyActionName].KeyCode == GamepadKeyCode.None)
+            {
+                return;
+            }
+
+            var hotkeyActionName = _keyNamesLink
+                .First(name => name.gamepadActionName == gamepadKeyActionName)
+                .keyActionName;
+            if (_registeredHotKeys.ContainsKey(hotkeyActionName))
+            {
+                _registeredHotKeys[hotkeyActionName].Suspend();
+            }
         }
 
-        private void OnSelectAreaPressed(HotKey obj)
+        private void OnTranslationStatePressed()
         {
-            SelectAreaKeyPressed?.Invoke(obj, EventArgs.Empty);
+            TranslationStateKeyPressed?.Invoke(this, EventArgs.Empty);
         }
 
-        private void OnChatVisibilityPressed(HotKey obj)
+        private void OnSelectAreaPressed()
         {
-            ChatVisibilityKeyPressed?.Invoke(obj, EventArgs.Empty);
+            SelectAreaKeyPressed?.Invoke(this, EventArgs.Empty);
         }
 
-        private void OnSettingVisibilityPressed(HotKey obj)
+        private void OnChatVisibilityPressed()
         {
-            SettingVisibilityKeyPressed?.Invoke(obj, EventArgs.Empty);
+            ChatVisibilityKeyPressed?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnSettingVisibilityPressed()
+        {
+            SettingVisibilityKeyPressed?.Invoke(this, EventArgs.Empty);
         }
 
         private IDictionary<string, HotKey> InitializeHotKeys(HotKeysConfiguration configuration)
@@ -99,6 +172,17 @@ namespace Translumo.HotKeys
                     nameof(configuration.SettingVisibilityKey), new HotKey(configuration.SettingVisibilityKey.Key,
                         configuration.SettingVisibilityKey.KeyModifier, OnSettingVisibilityPressed)
                 }
+            };
+        }
+
+        private IDictionary<string, GamepadHotKey> InitializeGamepadHotKeys(HotKeysConfiguration configuration)
+        {
+            return new Dictionary<string, GamepadHotKey>()
+            {
+                { nameof(configuration.ChatVisibilityGamepadKey), new GamepadHotKey(configuration.ChatVisibilityGamepadKey.Key, OnChatVisibilityPressed) },
+                { nameof(configuration.SelectAreaGamepadKey), new GamepadHotKey(configuration.SelectAreaGamepadKey.Key, OnSelectAreaPressed) },
+                { nameof(configuration.TranslationStateGamepadKey), new GamepadHotKey(configuration.TranslationStateGamepadKey.Key, OnTranslationStatePressed) },
+                { nameof(configuration.SettingVisibilityGamepadKey), new GamepadHotKey(configuration.SettingVisibilityGamepadKey.Key, OnSettingVisibilityPressed) }
             };
         }
     }

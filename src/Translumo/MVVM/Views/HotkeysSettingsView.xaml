@@ -10,6 +10,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <common:KeyCombinationValueConverter x:Key="KeyCombinationConverter"/>
+        <common:GamepadKeyCombinationValueConverter x:Key="GamepadKeyCombinationValueConverter"/>
     </UserControl.Resources>
 
     <DockPanel LastChildFill="True">
@@ -22,7 +23,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <controls:HotkeyInput HotKey="{Binding HotKey, Mode=TwoWay, Converter={StaticResource KeyCombinationConverter}}"  IsReadOnly="True" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="15" Width="85">
+                        <controls:HotkeyInput HotKey="{Binding HotKey, Mode=TwoWay, Converter={StaticResource KeyCombinationConverter}}" GamepadHotKey="{Binding GamepadHotKey, Mode=TwoWay, Converter={StaticResource GamepadKeyCombinationValueConverter}}"  IsReadOnly="True" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="15" Width="85">
                             <b:Interaction.Triggers>
                                 <b:EventTrigger EventName="LostFocus">
                                     <b:InvokeCommandAction Command="{Binding DataContext.ExitEditModeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />

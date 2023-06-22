@@ -23,12 +23,13 @@ namespace Translumo.HotKeys
 
         public Key Key { get; private set; }
         public KeyModifier KeyModifiers { get; private set; }
-        public Action<HotKey> Action { get; private set; }
+        public Action Action { get; private set; }
         public int Id { get; set; }
         public bool Registered { get; private set; }
+        public bool Suspended { get; private set; } = false;
 
         // ******************************************************************
-        public HotKey(Key k, KeyModifier keyModifiers, Action<HotKey> action, bool register = true)
+        public HotKey(Key k, KeyModifier keyModifiers, Action action, bool register = true)
         {
             Key = k;
             KeyModifiers = keyModifiers;
@@ -39,19 +40,24 @@ namespace Translumo.HotKeys
             }
         }
 
-        public void Reassign(Key k, KeyModifier keyModifiers)
+        public void Reassign(Key k, KeyModifier keyModifiers, bool forceSuspend = false)
         {
             Unregister();
 
             Key = k;
             KeyModifiers = keyModifiers;
-            Register();
+            Register(forceSuspend);
         }
 
         // ******************************************************************
-        public bool Register()
+        public bool Register(bool forceSuspend = false)
         {
-            if (Registered)
+            if (forceSuspend)
+            {
+                Suspended = false;
+            }
+
+            if (Registered || Suspended)
             {
                 return false;
             }
@@ -74,6 +80,12 @@ namespace Translumo.HotKeys
             return result;
         }
 
+        public void Suspend()
+        {
+            Suspended = true;
+            Unregister();
+        }
+
         // ******************************************************************
         public void Unregister()
         {
@@ -82,6 +94,10 @@ namespace Translumo.HotKeys
             {
                 Registered = !UnregisterHotKey(IntPtr.Zero, Id);
                 _dictHotKeyToCalBackProc.Remove(Id);
+            }
+            else
+            {
+                Registered = false;
             }
         }
 
@@ -98,7 +114,7 @@ namespace Translumo.HotKeys
                     {
                         if (hotKey.Action != null)
                         {
-                            hotKey.Action.Invoke(hotKey);
+                            hotKey.Action.Invoke();
                         }
                         handled = true;
                     }

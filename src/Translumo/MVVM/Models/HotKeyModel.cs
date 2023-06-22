@@ -1,7 +1,4 @@
-﻿using Microsoft.Xaml.Behaviors.Core;
-using System;
-using System.Windows.Input;
-using Translumo.HotKeys;
+﻿using Translumo.HotKeys;
 using Translumo.Utils;
 
 namespace Translumo.MVVM.Models
@@ -14,6 +11,12 @@ namespace Translumo.MVVM.Models
             set => SetProperty(ref _hotKey, value);
         }
 
+        public GamepadHotKeyInfo GamepadHotKey
+        {
+            get => _gamepadHotKey;
+            set => SetProperty(ref _gamepadHotKey, value);
+        }
+
         public string Description
         {
             get => _description;
@@ -21,14 +24,18 @@ namespace Translumo.MVVM.Models
         }
 
         public string ConfigurationPropertyName { get; }
+        public string GamepadConfigurationPropertyName { get; }
 
         private HotKeyInfo _hotKey;
+        private GamepadHotKeyInfo _gamepadHotKey;
         private string _description;
 
-        public HotKeyModel(HotKeyInfo hotKey, string configurationName, string description)
+        public HotKeyModel(HotKeyInfo hotKey, GamepadHotKeyInfo gamepadHotKey, string configurationName, string gamepadConfigurationPropertyName, string description)
         {
             _hotKey = hotKey;
             _description = description;
+            _gamepadHotKey = gamepadHotKey;
+            GamepadConfigurationPropertyName = gamepadConfigurationPropertyName;
             ConfigurationPropertyName = configurationName;
         }
     }

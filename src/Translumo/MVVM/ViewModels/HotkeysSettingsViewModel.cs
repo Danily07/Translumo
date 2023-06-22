@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using Microsoft.Xaml.Behaviors.Core;
+using SharpDX.XInput;
 using Translumo.HotKeys;
 using Translumo.MVVM.Models;
 using Translumo.Utils;
@@ -26,12 +27,25 @@ namespace Translumo.MVVM.ViewModels
             this._configuration = hotKeysServiceManager.Configuration;
             this._serviceManager = hotKeysServiceManager;
 
+            var defaultGamepadHotKey = new GamepadHotKeyInfo(GamepadKeyCode.None);
             Model = new List<HotKeyModel>(new[]
             {
-                new HotKeyModel(_configuration.ChatVisibilityKey, nameof(_configuration.ChatVisibilityKey), LocalizationManager.GetValue("Str.Hotkeys.ChatVisibility", false, OnLocalizedValueChanged, this)),
-                new HotKeyModel(_configuration.SettingVisibilityKey, nameof(_configuration.SettingVisibilityKey), LocalizationManager.GetValue("Str.Hotkeys.SettingsVisibility", false, OnLocalizedValueChanged, this)),
-                new HotKeyModel(_configuration.SelectAreaKey, nameof(_configuration.SelectAreaKey), LocalizationManager.GetValue("Str.Hotkeys.SelectArea", false, OnLocalizedValueChanged, this)),
-                new HotKeyModel(_configuration.TranslationStateKey, nameof(_configuration.TranslationStateKey), LocalizationManager.GetValue("Str.Hotkeys.OnOffTranslation", false, OnLocalizedValueChanged, this))
+                new HotKeyModel(_configuration.ChatVisibilityKey,
+                    hotKeysServiceManager.GamepadHotkeysEnabled ? _configuration.ChatVisibilityGamepadKey : defaultGamepadHotKey,
+                    nameof(_configuration.ChatVisibilityKey), nameof(_configuration.ChatVisibilityGamepadKey),
+                    LocalizationManager.GetValue("Str.Hotkeys.ChatVisibility", false, OnLocalizedValueChanged, this)),
+                new HotKeyModel(_configuration.SettingVisibilityKey,
+                    hotKeysServiceManager.GamepadHotkeysEnabled ? _configuration.SettingVisibilityGamepadKey : defaultGamepadHotKey,
+                    nameof(_configuration.SettingVisibilityKey), nameof(_configuration.SettingVisibilityGamepadKey),
+                    LocalizationManager.GetValue("Str.Hotkeys.SettingsVisibility", false, OnLocalizedValueChanged, this)),
+                new HotKeyModel(_configuration.SelectAreaKey,
+                    hotKeysServiceManager.GamepadHotkeysEnabled ? _configuration.SelectAreaGamepadKey : defaultGamepadHotKey,
+                    nameof(_configuration.SelectAreaKey), nameof(_configuration.SelectAreaGamepadKey),
+                    LocalizationManager.GetValue("Str.Hotkeys.SelectArea", false, OnLocalizedValueChanged, this)),
+                new HotKeyModel(_configuration.TranslationStateKey,
+                    hotKeysServiceManager.GamepadHotkeysEnabled ? _configuration.TranslationStateGamepadKey : defaultGamepadHotKey,
+                    nameof(_configuration.TranslationStateKey), nameof(_configuration.TranslationStateGamepadKey),
+                    LocalizationManager.GetValue("Str.Hotkeys.OnOffTranslation", false, OnLocalizedValueChanged, this))
             });
 
             Model.ForEach(m => m.PropertyChanged += OnPropertyChanged);
@@ -50,20 +64,40 @@ namespace Translumo.MVVM.ViewModels
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             var model = sender as HotKeyModel;
-            if (model == null || e.PropertyName != nameof(HotKeyModel.HotKey))
+            if (model == null)
             {
                 return;
             }
 
-            var targetPropInfo = _configuration.GetType().GetProperty(model.ConfigurationPropertyName);
-            var sameKeyModel = Model.FirstOrDefault(m => m.HotKey.Equals(model.HotKey) && m != model);
-            if (sameKeyModel != null)
+            
+            if (e.PropertyName == nameof(HotKeyModel.HotKey))
             {
-                _serviceManager.UnregisterHotKey(model.ConfigurationPropertyName);
-                sameKeyModel.HotKey = targetPropInfo.GetValue(_configuration) as HotKeyInfo;
-            }
+                var targetPropInfo = _configuration.GetType().GetProperty(model.ConfigurationPropertyName);
+                var sameKeyModel = Model.FirstOrDefault(m => m.HotKey.Equals(model.HotKey) && m != model);
+                if (sameKeyModel != null)
+                {
+                    _serviceManager.UnregisterHotKey(model.ConfigurationPropertyName);
+                    sameKeyModel.HotKey = targetPropInfo.GetValue(_configuration) as HotKeyInfo;
+                }
 
-            targetPropInfo.SetValue(_configuration, model.HotKey);
+                targetPropInfo.SetValue(_configuration, model.HotKey);
+            }
+            else if (e.PropertyName == nameof(HotKeyModel.GamepadHotKey))
+            {
+                var targetPropInfo = _configuration.GetType().GetProperty(model.GamepadConfigurationPropertyName);
+                var sameKeyModel = Model.FirstOrDefault(m => m.GamepadHotKey.Equals(model.GamepadHotKey) && m != model);
+                if (sameKeyModel != null && model.GamepadHotKey.Key != GamepadKeyCode.None)
+                {
+                    var oldValue = targetPropInfo.GetValue(_configuration) as GamepadHotKeyInfo;
+                    sameKeyModel.GamepadHotKey = oldValue;
+                    if (oldValue.Key == GamepadKeyCode.None)
+                    {
+                        sameKeyModel.HotKey = model.HotKey;
+                    }
+                }
+
+                targetPropInfo.SetValue(_configuration, model.GamepadHotKey);
+            }
         }
 
         private void OnLocalizedValueChanged(string key, string oldValue)
