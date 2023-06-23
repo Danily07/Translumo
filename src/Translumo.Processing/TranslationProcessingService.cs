@@ -23,7 +23,7 @@ namespace Translumo.Processing
     {
         public bool IsStarted => !_ctSource?.IsCancellationRequested ?? false;
 
-        private readonly IScreenCapturer _capturer;
+        private readonly ICapturerFactory _capturerFactory;
         private readonly IChatTextMediator _chatTextMediator;
         private readonly OcrEnginesFactory _enginesFactory;
         private readonly TranslatorFactory _translatorFactory;
@@ -41,13 +41,13 @@ namespace Translumo.Processing
 
         private const float MIN_SCORE_THRESHOLD = 2.1f;
         
-        public TranslationProcessingService(IScreenCapturer capturer, IChatTextMediator chatTextMediator, OcrEnginesFactory ocrEnginesFactory, TranslatorFactory translationFactory,
+        public TranslationProcessingService(ICapturerFactory capturerFactory, IChatTextMediator chatTextMediator, OcrEnginesFactory ocrEnginesFactory, TranslatorFactory translationFactory,
             TextDetectionProvider textProvider, TranslationConfiguration translationConfiguration, OcrGeneralConfiguration ocrConfiguration, 
             TextResultCacheService textResultCacheService, ILogger<TranslationProcessingService> logger)
         {
             _logger = logger;
             _chatTextMediator = chatTextMediator;
-            _capturer = capturer;
+            _capturerFactory = capturerFactory;
             _translationConfiguration = translationConfiguration;
             _ocrGeneralConfiguration = ocrConfiguration;
             _enginesFactory = ocrEnginesFactory;
@@ -73,12 +73,6 @@ namespace Translumo.Processing
             if (!_engines.Any())
             {
                 _chatTextMediator.SendText("No OCR engine is selected!", false);
-                return;
-            }
-
-            if (!_capturer.HasCaptureArea)
-            {
-                _chatTextMediator.SendText("Capture area is not selected!", false);
                 return;
             }
 
@@ -111,7 +105,7 @@ namespace Translumo.Processing
             var activeTranslationTasks = new List<Task>();
             Mat cachedImg = null;
             Guid iterationId;
-            bool? lastIterationFull = true;
+            bool? lastIterationFull = null;
             bool sequentialText = false;
 
             TextDetectionResult GetSecondaryCheckText(byte[] screen)
@@ -130,6 +124,15 @@ namespace Translumo.Processing
                 cachedImg = grayScaleScreen;
 
                 return null;
+            }
+
+            using var capturer = _capturerFactory.CreateCapturer();
+            if (capturer == null)
+            {
+                _chatTextMediator.SendText("Failed to initialize capturer. Please check logs for details", false);
+                _translationSync.Set();
+
+                return;
             }
 
             while (!cancellationToken.IsCancellationRequested)
@@ -154,7 +157,7 @@ namespace Translumo.Processing
                         continue;
                     }
 
-                    byte[] screenshot = _capturer.CaptureScreen();
+                    byte[] screenshot = capturer.CaptureScreen();
                     lastIterationFull = false;
                     var primaryDetected = _textProvider.GetText(primaryOcr, screenshot);
                     if (primaryDetected.ValidityScore == 0 || _textResultCacheService.IsCached(primaryDetected.Text, sequentialText))
@@ -206,11 +209,12 @@ namespace Translumo.Processing
                 {
                     if (!lastIterationFull.HasValue)
                     {
-                        _chatTextMediator.SendText($"Failed to capture screen", false);
+                        _chatTextMediator.SendText($"Failed to capture screen ({ex.Message})", false);
+                        lastIterationFull = true;
                     }
 
                     _logger.LogError(ex, $"Screen capture failed (code: {ex.ErrorCode})");
-                    _capturer.Initialize();
+                    capturer.Initialize();
                 }
                 catch (TranslationException)
                 {

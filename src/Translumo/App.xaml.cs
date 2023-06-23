@@ -106,10 +106,10 @@ namespace Translumo
             services.AddSingleton<ScreenCaptureConfiguration>();
             services.AddSingleton<DialogService>();
             services.AddSingleton<LanguageService>();
-            services.AddSingleton<IScreenCapturer, ScreenDXCapturer>();
             services.AddSingleton<TextDetectionProvider>();
             services.AddSingleton<IActionDispatcher, InteractionActionDispatcher>();
             services.AddSingleton<TextValidityPredictor>();
+            services.AddSingleton<ICapturerFactory, ScreenCapturerFactory>();
 
             services.AddTransient<IProcessingService, TranslationProcessingService>();
             services.AddTransient<OcrEnginesFactory>();
