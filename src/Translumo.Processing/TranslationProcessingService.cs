@@ -130,6 +130,7 @@ namespace Translumo.Processing
             if (capturer == null)
             {
                 _chatTextMediator.SendText("Failed to initialize capturer. Please check logs for details", false);
+                _ctSource.Cancel();
                 _translationSync.Set();
 
                 return;
