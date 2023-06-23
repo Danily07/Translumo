@@ -10,11 +10,8 @@ namespace Translumo.Translation.Deepl
         public HttpReader Reader { get; private set; }
         public long DeeplId { get; set; }
 
-        private readonly Random _random;
-
         public DeeplContainer(Proxy proxy = null, bool isPrimary = false) : base(proxy, isPrimary)
         {
-            _random = new Random((int)Math.Round(DateTime.Now.TimeOfDay.TotalMilliseconds));
             Reader = CreateReader(proxy);
             DeeplId = GenerateDeeplId();
         }
@@ -46,7 +43,7 @@ namespace Translumo.Translation.Deepl
         {
             long num = 10000L;
             
-            return num * (long)Math.Round((double)num * _random.NextDouble());
+            return num * (long)Math.Round((double)num * Random.Shared.NextDouble());
         }
     }
 }
