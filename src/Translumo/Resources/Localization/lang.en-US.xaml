@@ -33,7 +33,6 @@
     <system:String x:Key="Str.Hotkeys.SettingsVisibility">Open/close the Settings window</system:String>
     <system:String x:Key="Str.Hotkeys.SelectArea">Select detection area</system:String>
     <system:String x:Key="Str.Hotkeys.OnOffTranslation">On/off translation</system:String>
-    <system:String x:Key="Str.Hotkeys.PostScriptum">*Hotkeys configuration will be added in the future versions</system:String>
     <system:String x:Key="Str.Hotkeys.SettingsShowHelp">Press '{0}' to open the Settings</system:String>
     <system:String x:Key="Str.Hotkeys.SelectAreaHelp">Press '{0}' to select detection area</system:String>
     <system:String x:Key="Str.Hotkeys.OnTranslationHelp">Press '{0}' to start translation</system:String>

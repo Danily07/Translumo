@@ -15,7 +15,6 @@ namespace Translumo.MVVM.Common
                 return keyStr;
             }
 
-
             return $"{Modifier}+{keyStr}";
         }
     }

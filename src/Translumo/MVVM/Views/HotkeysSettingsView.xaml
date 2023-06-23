@@ -23,7 +23,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <controls:HotkeyInput HotKey="{Binding HotKey, Mode=TwoWay, Converter={StaticResource KeyCombinationConverter}}" GamepadHotKey="{Binding GamepadHotKey, Mode=TwoWay, Converter={StaticResource GamepadKeyCombinationValueConverter}}"  IsReadOnly="True" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="15" Width="85">
+                        <controls:HotkeyInput HotKey="{Binding HotKey, Mode=TwoWay, Converter={StaticResource KeyCombinationConverter}}" GamepadHotKey="{Binding GamepadHotKey, Mode=TwoWay, Converter={StaticResource GamepadKeyCombinationValueConverter}}" VerticalContentAlignment="Center" Width="90">
                             <b:Interaction.Triggers>
                                 <b:EventTrigger EventName="LostFocus">
                                     <b:InvokeCommandAction Command="{Binding DataContext.ExitEditModeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
@@ -32,24 +32,11 @@
                                     <b:InvokeCommandAction Command="{Binding DataContext.EnterEditModeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                                 </b:EventTrigger>
                             </b:Interaction.Triggers>
-                            <TextBox.Style>
-                                <Style TargetType="TextBox">
-                                    <Setter Property="Background" Value="#c9d4d4"></Setter>
-                                    <Setter Property="BorderBrush" Value="#868787"></Setter>
-                                    <Setter Property="BorderThickness" Value="1"></Setter>
-                                    <Style.Resources>
-                                        <Style TargetType="Border">
-                                            <Setter Property="CornerRadius" Value="4"></Setter>
-                                        </Style>
-                                    </Style.Resources>
-                                </Style>
-                            </TextBox.Style>
                         </controls:HotkeyInput>
                         <Label Content="{Binding Description}" Style="{StaticResource ControlCaptionLabel}"></Label>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Label DockPanel.Dock="Bottom" Content="{DynamicResource Str.Hotkeys.PostScriptum}" Style="{StaticResource PostscriptLabel}" VerticalAlignment="Bottom" HorizontalAlignment="Right"></Label>
     </DockPanel>
 </UserControl>
