@@ -21,7 +21,7 @@ namespace Translumo.Utils
             _subscribers = new List<(EventHandler<GamepadKeyPressedEventArgs>, Action<object, GamepadKeyPressedEventArgs>)>();
         }
 
-        public static void RegisterInputControllerOnUI(this ServiceProvider serviceProvider)
+        public static void RegisterUIInputController(this ServiceProvider serviceProvider)
         {
             _controllerProvider = serviceProvider.GetService<IControllerInputProvider>();
         }

@@ -80,7 +80,7 @@ namespace Translumo
             var dialogService = _serviceProvider.GetService<DialogService>();
             dialogService.ShowWindowAsync(chatViewModel);
             
-            _serviceProvider.RegisterInputControllerOnUI();
+            _serviceProvider.RegisterUIInputController();
         }
 
         private void ConfigureServices(ServiceCollection services)

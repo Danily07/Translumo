@@ -43,7 +43,7 @@ namespace Translumo.HotKeys
                 _registeredGamepadHotKeys.ForEach(key =>
                 {
                     RegisterHotKey(key.Key);
-                    SuspendHotKey(key.Key);
+                    SuspendAssociativeHotKey(key.Key);
                 });
             }
 
@@ -96,7 +96,7 @@ namespace Translumo.HotKeys
         {
             if (GamepadHotkeysEnabled)
             {
-                var gpKeyActionName = _keyNamesLink.First(kl => kl.keyActionName == keyActionName).gamepadActionName;
+                var gpKeyActionName = GetAssociativeGamepadHotKey(keyActionName);
                 var gpHotKey = Configuration.GetType().GetProperty(gpKeyActionName)?.GetValue(Configuration) as GamepadHotKeyInfo;
                 if ((gpHotKey?.Key ?? GamepadKeyCode.None) != GamepadKeyCode.None)
                 {
@@ -118,8 +118,7 @@ namespace Translumo.HotKeys
                 {
                     var newValue = newValueProperty.GetValue(Configuration) as HotKeyInfo;
 
-                    var gamepadKeyActionName = _keyNamesLink.First(name => name.keyActionName == e.PropertyName)
-                        .gamepadActionName;
+                    var gamepadKeyActionName = GetAssociativeGamepadHotKey(e.PropertyName);
                     var forceSuspend = !_registeredGamepadHotKeys.ContainsKey(gamepadKeyActionName)  || _registeredGamepadHotKeys[gamepadKeyActionName].KeyCode == GamepadKeyCode.None;
                     _registeredHotKeys[e.PropertyName].Reassign(newValue.Key, newValue.KeyModifier, forceSuspend);
                 }
@@ -128,25 +127,35 @@ namespace Translumo.HotKeys
                     var newValue = newValueProperty.GetValue(Configuration) as GamepadHotKeyInfo;
                     _registeredGamepadHotKeys[e.PropertyName].KeyCode = newValue.Key;
                     _controllerInputProvider.ReassignHotKey(_registeredGamepadHotKeys[e.PropertyName]);
-                    SuspendHotKey(e.PropertyName);
+                    SuspendAssociativeHotKey(e.PropertyName);
                 }
             }
         }
 
-        private void SuspendHotKey(string gamepadKeyActionName)
+        private void SuspendAssociativeHotKey(string gamepadKeyActionName)
         {
             if (_registeredGamepadHotKeys[gamepadKeyActionName].KeyCode == GamepadKeyCode.None)
             {
                 return;
             }
 
-            var hotkeyActionName = _keyNamesLink
-                .First(name => name.gamepadActionName == gamepadKeyActionName)
-                .keyActionName;
+            var hotkeyActionName = GetAssociativeHotKey(gamepadKeyActionName);
             if (_registeredHotKeys.ContainsKey(hotkeyActionName))
             {
                 _registeredHotKeys[hotkeyActionName].Suspend();
             }
+        }
+
+        private string GetAssociativeHotKey(string gamepadKeyActionName)
+        {
+            return _keyNamesLink.First(name => name.gamepadActionName == gamepadKeyActionName)
+                .keyActionName;
+        }
+
+        private string GetAssociativeGamepadHotKey(string keyActionName)
+        {
+            return _keyNamesLink.First(name => name.keyActionName == keyActionName)
+                .gamepadActionName;
         }
 
         private void OnTranslationStatePressed()

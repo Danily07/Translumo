@@ -69,35 +69,44 @@ namespace Translumo.MVVM.ViewModels
                 return;
             }
 
-            
             if (e.PropertyName == nameof(HotKeyModel.HotKey))
             {
-                var targetPropInfo = _configuration.GetType().GetProperty(model.ConfigurationPropertyName);
-                var sameKeyModel = Model.FirstOrDefault(m => m.HotKey.Equals(model.HotKey) && m != model);
-                if (sameKeyModel != null)
-                {
-                    _serviceManager.UnregisterHotKey(model.ConfigurationPropertyName);
-                    sameKeyModel.HotKey = targetPropInfo.GetValue(_configuration) as HotKeyInfo;
-                }
-
-                targetPropInfo.SetValue(_configuration, model.HotKey);
+                UpdateTargetHotKey(model);
             }
             else if (e.PropertyName == nameof(HotKeyModel.GamepadHotKey))
             {
-                var targetPropInfo = _configuration.GetType().GetProperty(model.GamepadConfigurationPropertyName);
-                var sameKeyModel = Model.FirstOrDefault(m => m.GamepadHotKey.Equals(model.GamepadHotKey) && m != model);
-                if (sameKeyModel != null && model.GamepadHotKey.Key != GamepadKeyCode.None)
-                {
-                    var oldValue = targetPropInfo.GetValue(_configuration) as GamepadHotKeyInfo;
-                    sameKeyModel.GamepadHotKey = oldValue;
-                    if (oldValue.Key == GamepadKeyCode.None)
-                    {
-                        sameKeyModel.HotKey = model.HotKey;
-                    }
-                }
-
-                targetPropInfo.SetValue(_configuration, model.GamepadHotKey);
+                UpdateTargetGamepadHotKey(model);
             }
+        }
+
+        private void UpdateTargetHotKey(HotKeyModel model)
+        {
+            var targetPropInfo = _configuration.GetType().GetProperty(model.ConfigurationPropertyName);
+            var sameKeyModel = Model.FirstOrDefault(m => m.HotKey.Equals(model.HotKey) && m != model);
+            if (sameKeyModel != null)
+            {
+                _serviceManager.UnregisterHotKey(model.ConfigurationPropertyName);
+                sameKeyModel.HotKey = targetPropInfo.GetValue(_configuration) as HotKeyInfo;
+            }
+
+            targetPropInfo.SetValue(_configuration, model.HotKey);
+        }
+
+        private void UpdateTargetGamepadHotKey(HotKeyModel model)
+        {
+            var targetPropInfo = _configuration.GetType().GetProperty(model.GamepadConfigurationPropertyName);
+            var sameKeyModel = Model.FirstOrDefault(m => m.GamepadHotKey.Equals(model.GamepadHotKey) && m != model);
+            if (sameKeyModel != null && model.GamepadHotKey.Key != GamepadKeyCode.None)
+            {
+                var oldValue = targetPropInfo.GetValue(_configuration) as GamepadHotKeyInfo;
+                sameKeyModel.GamepadHotKey = oldValue;
+                if (oldValue.Key == GamepadKeyCode.None)
+                {
+                    sameKeyModel.HotKey = model.HotKey;
+                }
+            }
+
+            targetPropInfo.SetValue(_configuration, model.GamepadHotKey);
         }
 
         private void OnLocalizedValueChanged(string key, string oldValue)
