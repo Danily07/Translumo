@@ -9,13 +9,14 @@ namespace Translumo.MVVM.Common
 
         public override string ToString()
         {
+            var keyStr = Key == Key.Oem3 ? "~" : Key.ToString();
             if (Modifier == ModifierKeys.None)
             {
-                return Key.ToString();
+                return keyStr;
             }
 
 
-            return $"{Modifier}+{Key}";
+            return $"{Modifier}+{keyStr}";
         }
     }
 }

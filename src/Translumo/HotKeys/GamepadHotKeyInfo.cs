@@ -11,6 +11,10 @@ namespace Translumo.HotKeys
             this.Key = key;
         }
 
+        public GamepadHotKeyInfo()
+        {
+        }
+
         public override bool Equals(object obj)
         {
             var anotherKeyInfo = obj as GamepadHotKeyInfo;
@@ -20,6 +24,11 @@ namespace Translumo.HotKeys
             }
 
             return this.Key.Equals(anotherKeyInfo.Key);
+        }
+
+        public override string ToString()
+        {
+            return Key.ToString();
         }
     }
 }

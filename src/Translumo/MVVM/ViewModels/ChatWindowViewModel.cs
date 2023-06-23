@@ -124,7 +124,7 @@ namespace Translumo.MVVM.ViewModels
 
         private void OnLoadedCommand()
         {
-            SendHelpText(_hotKeysServiceManager.Configuration);
+            SendHelpText();
         }
 
 
@@ -156,20 +156,18 @@ namespace Translumo.MVVM.ViewModels
             Model.StartTranslation();
         }
 
-        private void SendHelpText(HotKeysConfiguration configuration)
+        private void SendHelpText()
         {
-            var hotKeyConverter = new HotKeyValueConverter();
-
-            string GetHotKeyHelpText(HotKeyInfo hotKey, string localizationKey)
+            string GetHotKeyHelpText(string hotKeyName, string localizationKey)
             {
-                return string.Format(LocalizationManager.GetValue(localizationKey),
-                    hotKeyConverter.Convert(hotKey, typeof(string), null, null));
+                return string.Format(LocalizationManager.GetValue(localizationKey), _hotKeysServiceManager.GetRegisteredKeyCaption(hotKeyName));
             }
 
+            var configuration = _hotKeysServiceManager.Configuration;
             Model.AddChatItem(LocalizationManager.GetValue("Str.Hotkeys.GeneralHelp"), TextTypes.Info);
-            Model.AddChatItem(GetHotKeyHelpText(configuration.SettingVisibilityKey, "Str.Hotkeys.SettingsShowHelp"), TextTypes.Info);
-            Model.AddChatItem(GetHotKeyHelpText(configuration.SelectAreaKey, "Str.Hotkeys.SelectAreaHelp"), TextTypes.Info);
-            Model.AddChatItem(GetHotKeyHelpText(configuration.TranslationStateKey, "Str.Hotkeys.OnTranslationHelp"), TextTypes.Info);
+            Model.AddChatItem(GetHotKeyHelpText(nameof(configuration.SettingVisibilityKey), "Str.Hotkeys.SettingsShowHelp"), TextTypes.Info);
+            Model.AddChatItem(GetHotKeyHelpText(nameof(configuration.SelectAreaKey), "Str.Hotkeys.SelectAreaHelp"), TextTypes.Info);
+            Model.AddChatItem(GetHotKeyHelpText(nameof(configuration.TranslationStateKey), "Str.Hotkeys.OnTranslationHelp"), TextTypes.Info);
         }
     }
 }

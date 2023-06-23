@@ -92,6 +92,23 @@ namespace Translumo.HotKeys
             }
         }
 
+        public string GetRegisteredKeyCaption(string keyActionName)
+        {
+            if (GamepadHotkeysEnabled)
+            {
+                var gpKeyActionName = _keyNamesLink.First(kl => kl.keyActionName == keyActionName).gamepadActionName;
+                var gpHotKey = Configuration.GetType().GetProperty(gpKeyActionName)?.GetValue(Configuration) as GamepadHotKeyInfo;
+                if ((gpHotKey?.Key ?? GamepadKeyCode.None) != GamepadKeyCode.None)
+                {
+                    return gpHotKey.ToString();
+                }
+            }
+
+            var hotKey = Configuration.GetType().GetProperty(keyActionName)?.GetValue(Configuration) as HotKeyInfo;
+
+            return hotKey?.ToString();
+        }
+
         private void ConfigurationOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (!string.IsNullOrEmpty(e.PropertyName))
@@ -103,7 +120,7 @@ namespace Translumo.HotKeys
 
                     var gamepadKeyActionName = _keyNamesLink.First(name => name.keyActionName == e.PropertyName)
                         .gamepadActionName;
-                    var forceSuspend = (_registeredGamepadHotKeys[gamepadKeyActionName]?.KeyCode ?? GamepadKeyCode.None) == GamepadKeyCode.None;
+                    var forceSuspend = !_registeredGamepadHotKeys.ContainsKey(gamepadKeyActionName)  || _registeredGamepadHotKeys[gamepadKeyActionName].KeyCode == GamepadKeyCode.None;
                     _registeredHotKeys[e.PropertyName].Reassign(newValue.Key, newValue.KeyModifier, forceSuspend);
                 }
                 else if (_registeredGamepadHotKeys.ContainsKey(e.PropertyName))

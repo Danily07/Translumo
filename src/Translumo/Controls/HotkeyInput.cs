@@ -37,7 +37,6 @@ namespace Translumo.Controls
             LostFocus += OnLostFocus;
         }
 
-
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.IsRepeat)

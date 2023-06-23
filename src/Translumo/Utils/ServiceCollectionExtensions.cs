@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Translumo.Configuration;
+using Translumo.HotKeys;
 using Translumo.Infrastructure.Encryption;
 using Translumo.OCR.Configuration;
 using Translumo.Translation.Configuration;
@@ -18,6 +19,7 @@ namespace Translumo.Utils
                 confStorage.RegisterConfiguration<OcrGeneralConfiguration>();
                 confStorage.RegisterConfiguration<TranslationConfiguration>();
                 confStorage.RegisterConfiguration<SystemConfiguration>();
+                confStorage.RegisterConfiguration<HotKeysConfiguration>();
 
                 return confStorage;
             });
