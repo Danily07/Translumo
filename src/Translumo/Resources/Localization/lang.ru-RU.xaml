@@ -7,6 +7,7 @@
     <system:String x:Key="Str.Password">Пароль</system:String>
     <system:String x:Key="Str.ExitConfirmation" xml:space="preserve">Хотите выйти из приложения?&#13;Можете использовать кнопку сворачивания для скрытия окна настроек (доступ к приложению останется через трей).</system:String>
     <system:String x:Key="Str.ExitConfirmationCaption">Подтверждение выхода</system:String>
+    <system:String x:Key="Str.NewVersion">Доступна новая версия Translumo. Пожалуйста перейдите на страницу проекта на Github, чтобы скачать.</system:String>
 
     <!--Notifications-->
     <system:String x:Key="Str.Notification.CaptchaPass" xml:space="preserve">Пожалуйста пройдите капчу для использования сервиса&#13;Это окно может появиться для каждого задействованного прокси.</system:String>

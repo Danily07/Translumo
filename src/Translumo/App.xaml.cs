@@ -23,6 +23,7 @@ using Translumo.Processing.TextProcessing;
 using Translumo.Services;
 using Translumo.Translation;
 using Translumo.Translation.Configuration;
+using Translumo.Update;
 using Translumo.Utils;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
@@ -110,6 +111,8 @@ namespace Translumo
             services.AddSingleton<TextDetectionProvider>();
             services.AddSingleton<IActionDispatcher, InteractionActionDispatcher>();
             services.AddSingleton<TextValidityPredictor>();
+            services.AddSingleton<UpdateManager>();
+            services.AddSingleton<IReleasesClient, GithubApiClient>(provider => new GithubApiClient("Danily07", "Translumo"));
 
             services.AddTransient<IProcessingService, TranslationProcessingService>();
             services.AddTransient<OcrEnginesFactory>();

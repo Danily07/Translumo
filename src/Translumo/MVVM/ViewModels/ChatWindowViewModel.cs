@@ -13,6 +13,7 @@ using Translumo.Infrastructure.Dispatching;
 using Translumo.MVVM.Common;
 using Translumo.MVVM.Models;
 using Translumo.Services;
+using Translumo.Update;
 using Translumo.Utils;
 using RelayCommand = Microsoft.Toolkit.Mvvm.Input.RelayCommand;
 
@@ -37,8 +38,9 @@ namespace Translumo.MVVM.ViewModels
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
         private readonly HotKeysServiceManager _hotKeysServiceManager;
+        private readonly UpdateManager _updateManager;
 
-        public ChatWindowViewModel(ChatWindowModel model, HotKeysServiceManager hotKeysManager, ChatUITextMediator chatTextMediator, 
+        public ChatWindowViewModel(ChatWindowModel model, HotKeysServiceManager hotKeysManager, ChatUITextMediator chatTextMediator, UpdateManager updateManager, 
             IActionDispatcher dispatcher, DialogService dialogService, IServiceProvider serviceProvider, ILogger<ChatWindowViewModel> logger)
         {
             this.Model = model;
@@ -46,6 +48,7 @@ namespace Translumo.MVVM.ViewModels
             this._dialogService = dialogService;
             this._serviceProvider = serviceProvider;
             this._hotKeysServiceManager = hotKeysManager;
+            this._updateManager = updateManager;
 
             dispatcher.RegisterConsumer<BrowseSiteDispatchArg, BrowseSiteDispatchResult>(DispatcherActions.PASS_SITE, BrowseSiteHandler);
 
@@ -122,9 +125,15 @@ namespace Translumo.MVVM.ViewModels
             }
         }
 
-        private void OnLoadedCommand()
+        private async void OnLoadedCommand()
         {
             SendHelpText(_hotKeysServiceManager.Configuration);
+
+            var hasNewVersion = await _updateManager.CheckNewVersionAsync();
+            if (hasNewVersion)
+            {
+                Model.AddChatItem(LocalizationManager.GetValue("Str.NewVersion"), TextTypes.Info);
+            }
         }
 
 

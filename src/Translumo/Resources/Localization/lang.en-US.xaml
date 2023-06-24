@@ -7,6 +7,7 @@
     <system:String x:Key="Str.Password">Password</system:String>
     <system:String x:Key="Str.ExitConfirmation" xml:space="preserve">Do you want to close the application?&#13;You can use minimize button for hiding settings window (the app will still be available via tray icon).</system:String>
     <system:String x:Key="Str.ExitConfirmationCaption">Exit confirmation</system:String>
+    <system:String x:Key="Str.NewVersion">The new version of Translumo is already available. Please check Github page to download.</system:String>
 
     <!--Notifications-->
     <system:String x:Key="Str.Notification.CaptchaPass" xml:space="preserve">Please complete captcha on the website to use service.&#13;Also it may be required for each registered proxy.</system:String>
