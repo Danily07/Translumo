@@ -72,12 +72,16 @@ namespace Translumo.MVVM.ViewModels
         public LanguagesSettingsViewModel(LanguageService languageService, TranslationConfiguration translationConfiguration, 
             OcrGeneralConfiguration ocrConfiguration, DialogService dialogService, ILogger<LanguagesSettingsViewModel> logger)
         {
-            this.AvailableLanguages = languageService.GetAll()
-                .Select(lang => new DisplayLanguage(lang, GetLanguageDisplayName(lang)))
+            var languages = languageService.GetAll(true)
+                .Select(lang => (lang.TranslationOnly, new DisplayLanguage(lang, GetLanguageDisplayName(lang))))
+                .ToArray();
+            this.AvailableLanguages = languages.Where(lang => !lang.TranslationOnly)
+                .Select(lang => lang.Item2)
                 .ToList();
-            this.AvailableTranslationLanguages = languageService.GetAll(true)
-                .Select(lang => new DisplayLanguage(lang, GetLanguageDisplayName(lang)))
+            this.AvailableTranslationLanguages = languages
+                .Select(lang => lang.Item2)
                 .ToList();
+
             this.Model = translationConfiguration;
             this._languageService = languageService;
             this._dialogService = dialogService;
@@ -150,7 +154,7 @@ namespace Translumo.MVVM.ViewModels
 
         private void OnLocalizedValueChanged(string key, string oldValue)
         {
-            var availableLang = AvailableLanguages.First(lang => lang.DisplayName == oldValue);
+            var availableLang = AvailableTranslationLanguages.First(lang => lang.DisplayName == oldValue);
             availableLang.DisplayName = LocalizationManager.GetValue(key, false, OnLocalizedValueChanged, this);
         }
 
