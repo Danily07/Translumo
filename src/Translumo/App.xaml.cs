@@ -109,7 +109,6 @@ namespace Translumo
             services.AddSingleton<ScreenCaptureConfiguration>();
             services.AddSingleton<DialogService>();
             services.AddSingleton<LanguageService>();
-            services.AddSingleton<IScreenCapturer, ScreenDXCapturer>();
             services.AddSingleton<TextDetectionProvider>();
             services.AddSingleton<IActionDispatcher, InteractionActionDispatcher>();
             services.AddSingleton<TextValidityPredictor>();
@@ -118,6 +117,7 @@ namespace Translumo
             services.AddSingleton<ObservablePipe<Keystroke>>(new ObservablePipe<Keystroke>(Application.Current.Dispatcher));
             services.AddSingleton<UpdateManager>();
             services.AddSingleton<IReleasesClient, GithubApiClient>(provider => new GithubApiClient("Danily07", "Translumo"));
+            services.AddSingleton<ICapturerFactory, ScreenCapturerFactory>();
 
             services.AddTransient<IProcessingService, TranslationProcessingService>();
             services.AddTransient<OcrEnginesFactory>();
