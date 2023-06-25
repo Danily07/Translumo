@@ -25,6 +25,8 @@ namespace Translumo.MVVM.ViewModels
         public event EventHandler<bool> PanelStateIsChanged;
 
         public IList<DisplayLanguage> AvailableLanguages { get; set; }
+        public IList<DisplayLanguage> AvailableTranslationLanguages { get; set; }
+
         public TranslationConfiguration Model { get; set; }
 
         public ObservableCollection<ProxyCardItem> ProxyCollection
@@ -71,6 +73,9 @@ namespace Translumo.MVVM.ViewModels
             OcrGeneralConfiguration ocrConfiguration, DialogService dialogService, ILogger<LanguagesSettingsViewModel> logger)
         {
             this.AvailableLanguages = languageService.GetAll()
+                .Select(lang => new DisplayLanguage(lang, GetLanguageDisplayName(lang)))
+                .ToList();
+            this.AvailableTranslationLanguages = languageService.GetAll(true)
                 .Select(lang => new DisplayLanguage(lang, GetLanguageDisplayName(lang)))
                 .ToList();
             this.Model = translationConfiguration;

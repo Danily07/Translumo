@@ -23,9 +23,11 @@ namespace Translumo.Infrastructure.Language
             return _langDescriptors[language];
         }
 
-        public IEnumerable<LanguageDescriptor> GetAll()
+        public IEnumerable<LanguageDescriptor> GetAll(bool includeTranslationOnly = false)
         {
-            return _langDescriptors.Select(lang => lang.Value).ToArray();
+            return _langDescriptors.Where(lang => !lang.Value.TranslationOnly || includeTranslationOnly)
+                .Select(lang => lang.Value)
+                .ToArray();
         }
     }
 }

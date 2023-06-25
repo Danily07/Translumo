@@ -83,7 +83,12 @@
     <system:String x:Key="Str.Languages.Russian">Russian</system:String>
     <system:String x:Key="Str.Languages.Japanese">Japanese</system:String>
     <system:String x:Key="Str.Languages.Korean">Korean</system:String>
-    <system:String x:Key="Str.Languages.Chinese">Chinese</system:String>
+    <system:String x:Key="Str.Languages.Chinese">Chinese (Simplified)</system:String>
+    <system:String x:Key="Str.Languages.Italian">Italian</system:String>
+    <system:String x:Key="Str.Languages.French">French</system:String>
+    <system:String x:Key="Str.Languages.German">German</system:String>
+    <system:String x:Key="Str.Languages.Spanish">Spanish</system:String>
+    <system:String x:Key="Str.Languages.Portuguese">Portuguese</system:String>
 
     <!--Dialog stages-->
     <system:String x:Key="Str.Stages.CheckPyModules">Checking installed modules...</system:String>
