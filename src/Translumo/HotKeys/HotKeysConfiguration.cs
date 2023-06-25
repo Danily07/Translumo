@@ -13,7 +13,7 @@ namespace Translumo.HotKeys
             SettingVisibilityKey = new HotKeyInfo(Key.G, KeyModifier.Alt),
             TranslationStateKey = new HotKeyInfo(Key.OemTilde, KeyModifier.None),
             ShowSelectionAreaKey = new HotKeyInfo(Key.Y, KeyModifier.Alt),
-            OnceTranslateKey = new HotKeyInfo(Key.F, KeyModifier.None),
+            OnceTranslateKey = new HotKeyInfo(Key.F, KeyModifier.Shift),
 
             ChatVisibilityGamepadKey = new GamepadHotKeyInfo(GamepadKeyCode.None),
             SelectAreaGamepadKey = new GamepadHotKeyInfo(GamepadKeyCode.None),
