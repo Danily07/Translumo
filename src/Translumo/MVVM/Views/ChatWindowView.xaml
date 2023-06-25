@@ -25,7 +25,7 @@
 
     <Grid>
         <controls:TrayControl SettingsOpeningCommand="{Binding ShowHideSettingsCommand}" ChatOpeningCommand="{Binding ShowHideChatCommand}"/>
-        <RichTextBox x:Name="rtbChat" IsReadOnly="True" Focusable="false" MouseDown="rtbChat_MouseDown"  Background="#3F000000" FontSize="15" BorderThickness="0,0,0,0">
+        <RichTextBox x:Name="rtbChat" IsReadOnly="True" Focusable="false" MouseDown="rtbChat_MouseDown"  Background="#03000000" FontSize="15" BorderThickness="0,0,0,0">
             <FlowDocument>
             </FlowDocument>
         </RichTextBox>
