@@ -39,6 +39,7 @@ namespace Translumo.HotKeys
                 (nameof(configuration.TranslationStateKey), nameof(configuration.TranslationStateGamepadKey)),
                 (nameof(configuration.SettingVisibilityKey), nameof(configuration.SettingVisibilityGamepadKey)),
                 (nameof(configuration.ShowSelectionAreaKey), nameof(configuration.ShowSelectionAreaGamepadKey)),
+                (nameof(configuration.OnceTranslateKey), nameof(configuration.OnceTranslateGamepadKey)),
             };
 
             if (GamepadHotkeysEnabled)
@@ -187,6 +188,11 @@ namespace Translumo.HotKeys
             ShowSelectionAreaKeyPressed?.Invoke(this, EventArgs.Empty);
         }
 
+        private void OnOnceTranslatePressed()
+        {
+            OnceTranslateKeyPressed?.Invoke(this, EventArgs.Empty);
+        }
+
         private IDictionary<string, HotKey> InitializeHotKeys(HotKeysConfiguration configuration)
         {
             return new Dictionary<string, HotKey>()
@@ -210,6 +216,10 @@ namespace Translumo.HotKeys
                 {
                     nameof(configuration.ShowSelectionAreaKey), new HotKey(configuration.ShowSelectionAreaKey.Key,
                         configuration.ShowSelectionAreaKey.KeyModifier, OnShowSelectionAreaPressed)
+                },
+                {
+                    nameof(configuration.OnceTranslateKey), new HotKey(configuration.OnceTranslateKey.Key,
+                        configuration.OnceTranslateKey.KeyModifier, OnOnceTranslatePressed)
                 }
             };
         }
@@ -222,7 +232,8 @@ namespace Translumo.HotKeys
                 { nameof(configuration.SelectAreaGamepadKey), new GamepadHotKey(configuration.SelectAreaGamepadKey.Key, OnSelectAreaPressed) },
                 { nameof(configuration.TranslationStateGamepadKey), new GamepadHotKey(configuration.TranslationStateGamepadKey.Key, OnTranslationStatePressed) },
                 { nameof(configuration.SettingVisibilityGamepadKey), new GamepadHotKey(configuration.SettingVisibilityGamepadKey.Key, OnSettingVisibilityPressed) },
-                { nameof(configuration.ShowSelectionAreaGamepadKey), new GamepadHotKey(configuration.ShowSelectionAreaGamepadKey.Key, OnShowSelectionAreaPressed) }
+                { nameof(configuration.ShowSelectionAreaGamepadKey), new GamepadHotKey(configuration.ShowSelectionAreaGamepadKey.Key, OnShowSelectionAreaPressed) },
+                { nameof(configuration.OnceTranslateGamepadKey), new GamepadHotKey(configuration.OnceTranslateGamepadKey.Key, OnOnceTranslatePressed) }
             };
         }
     }

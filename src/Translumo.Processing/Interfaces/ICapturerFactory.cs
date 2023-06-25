@@ -2,6 +2,6 @@
 {
     public interface ICapturerFactory
     {
-        IScreenCapturer CreateCapturer();
+        IScreenCapturer CreateCapturer(bool reliabilityPrioritize);
     }
 }

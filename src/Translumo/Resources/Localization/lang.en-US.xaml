@@ -35,6 +35,7 @@
     <system:String x:Key="Str.Hotkeys.SelectArea">Select screen capture area</system:String>
     <system:String x:Key="Str.Hotkeys.OnOffTranslation">On/off translation</system:String>
     <system:String x:Key="Str.Hotkeys.ShowSelectArea">Show selected screen capture area</system:String>
+    <system:String x:Key="Str.Hotkeys.OnceTranslate">Select area and translate text once</system:String>
     <system:String x:Key="Str.Hotkeys.SettingsShowHelp">Press '{0}' to open the Settings</system:String>
     <system:String x:Key="Str.Hotkeys.SelectAreaHelp">Press '{0}' to select detection area</system:String>
     <system:String x:Key="Str.Hotkeys.OnTranslationHelp">Press '{0}' to start translation</system:String>

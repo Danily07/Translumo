@@ -16,11 +16,16 @@ namespace Translumo.Services
             this._logger = logger;
         }
 
-        public IScreenCapturer CreateCapturer()
+        public IScreenCapturer CreateCapturer(bool reliabilityPrioritize)
         {
-            IScreenCapturer capturer = TryCreateCapturer<ScreenDXCapturer>();
-
-            return capturer ?? TryCreateCapturer<BitBltScreenCapture>();
+            if (reliabilityPrioritize)
+            {
+                return (IScreenCapturer)TryCreateCapturer<BitBltScreenCapture>() ?? TryCreateCapturer<ScreenDXCapturer>();
+            }
+            else
+            {
+                return (IScreenCapturer)TryCreateCapturer<ScreenDXCapturer>() ?? TryCreateCapturer<BitBltScreenCapture>();
+            }
         }
 
         private TCapturer TryCreateCapturer<TCapturer>()

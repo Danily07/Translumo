@@ -13,12 +13,14 @@ namespace Translumo.HotKeys
             SettingVisibilityKey = new HotKeyInfo(Key.G, KeyModifier.Alt),
             TranslationStateKey = new HotKeyInfo(Key.OemTilde, KeyModifier.None),
             ShowSelectionAreaKey = new HotKeyInfo(Key.Y, KeyModifier.Alt),
+            OnceTranslateKey = new HotKeyInfo(Key.F, KeyModifier.None),
 
             ChatVisibilityGamepadKey = new GamepadHotKeyInfo(GamepadKeyCode.None),
             SelectAreaGamepadKey = new GamepadHotKeyInfo(GamepadKeyCode.None),
             SettingVisibilityGamepadKey = new GamepadHotKeyInfo(GamepadKeyCode.None),
             TranslationStateGamepadKey = new GamepadHotKeyInfo(GamepadKeyCode.None),
             ShowSelectionAreaGamepadKey = new GamepadHotKeyInfo(GamepadKeyCode.None),
+            OnceTranslateGamepadKey = new GamepadHotKeyInfo(GamepadKeyCode.None),
         };
 
         public HotKeyInfo ChatVisibilityKey
@@ -66,6 +68,16 @@ namespace Translumo.HotKeys
             }
         }
 
+        public HotKeyInfo OnceTranslateKey
+        {
+            get => _onceTranslateKey;
+            set
+            {
+                SetProperty(ref _onceTranslateKey, value);
+            }
+        }
+
+
         public GamepadHotKeyInfo ChatVisibilityGamepadKey
         {
             get => _chatVisibilityGamepadKey;
@@ -111,16 +123,27 @@ namespace Translumo.HotKeys
             }
         }
 
+        public GamepadHotKeyInfo OnceTranslateGamepadKey
+        {
+            get => _onceTranslateGamepadKey;
+            set
+            {
+                SetProperty(ref _onceTranslateGamepadKey, value);
+            }
+        }
+
         private HotKeyInfo _chatVisibilityKey;
         private HotKeyInfo _selectAreaKey;
         private HotKeyInfo _translationStateKey;
         private HotKeyInfo _settingVisibilityKey;
         private HotKeyInfo _showSelectionAreaKey;
+        private HotKeyInfo _onceTranslateKey;
 
         private GamepadHotKeyInfo _chatVisibilityGamepadKey;
         private GamepadHotKeyInfo _selectAreaGamepadKey;
         private GamepadHotKeyInfo _translationStateGamepadKey;
         private GamepadHotKeyInfo _settingVisibilityGamepadKey;
         private GamepadHotKeyInfo _showSelctionAreaGamepadKey;
+        private GamepadHotKeyInfo _onceTranslateGamepadKey;
     }
 }

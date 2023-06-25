@@ -50,6 +50,10 @@ namespace Translumo.MVVM.ViewModels
                     hotKeysServiceManager.GamepadHotkeysEnabled ? _configuration.ShowSelectionAreaGamepadKey : defaultGamepadHotKey,
                     nameof(_configuration.ShowSelectionAreaKey), nameof(_configuration.ShowSelectionAreaGamepadKey),
                     LocalizationManager.GetValue("Str.Hotkeys.ShowSelectArea", false, OnLocalizedValueChanged, this)),
+                new HotKeyModel(_configuration.OnceTranslateKey,
+                    hotKeysServiceManager.GamepadHotkeysEnabled ? _configuration.OnceTranslateGamepadKey : defaultGamepadHotKey,
+                    nameof(_configuration.OnceTranslateKey), nameof(_configuration.OnceTranslateGamepadKey),
+                    LocalizationManager.GetValue("Str.Hotkeys.OnceTranslate", false, OnLocalizedValueChanged, this))
             });
 
             Model.ForEach(m => m.PropertyChanged += OnPropertyChanged);

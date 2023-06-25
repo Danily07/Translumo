@@ -134,7 +134,7 @@ namespace Translumo.Processing
                 return null;
             }
 
-            using var capturer = _capturerFactory.CreateCapturer();
+            using var capturer = _capturerFactory.CreateCapturer(false);
             if (capturer == null)
             {
                 _chatTextMediator.SendText("Failed to initialize capturer. Please check logs for details", false);
@@ -245,7 +245,8 @@ namespace Translumo.Processing
 
         private void TranslateOnceInternal(RectangleF captureArea)
         {
-            using var capturer = _capturerFactory.CreateCapturer();
+            const int TRANSLATION_TIMEOUT_MS = 10000;
+            using var capturer = _capturerFactory.CreateCapturer(true);
             if (capturer == null)
             {
                 _chatTextMediator.SendText("Failed to initialize capturer. Please check logs for details", false);
@@ -256,6 +257,7 @@ namespace Translumo.Processing
 
             try
             {
+                Task translationTask;
                 lock (_obj)
                 {
                     byte[] screenshot = capturer.CaptureScreen(captureArea);
@@ -263,17 +265,15 @@ namespace Translumo.Processing
 
                     Task.WaitAll(taskResults);
                     TextDetectionResult bestDetected = GetBestDetectionResult(taskResults, 3);
-                    TranslateTextAsync(bestDetected.Text, Guid.NewGuid());
+                    translationTask = TranslateTextAsync(bestDetected.Text, Guid.NewGuid());
                 }
+
+                translationTask.Wait(TRANSLATION_TIMEOUT_MS);
             }
             catch (CaptureException ex)
             {
                 _chatTextMediator.SendText($"Failed to capture screen ({ex.Message})", false);
                 _logger.LogError(ex, $"Screen capture failed (code: {ex.ErrorCode})");
-            }
-            catch (TranslationException)
-            {
-                _chatTextMediator.SendText("Text translation is failed", false);
             }
             catch (AggregateException ex) when (ex.InnerException is TextDetectionException innerEx)
             {
