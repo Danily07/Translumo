@@ -139,7 +139,7 @@ namespace Translumo.MVVM.ViewModels
 
         private async void OnLoadedCommand()
         {
-            SendHelpText(_hotKeysServiceManager.Configuration);
+            SendHelpText();
 
             _hasUpdates = await _updateManager.CheckNewVersionAsync();
             if (_hasUpdates)
