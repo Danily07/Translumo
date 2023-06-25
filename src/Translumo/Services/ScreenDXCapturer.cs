@@ -143,7 +143,7 @@ namespace Translumo.Services
             {
                 // Try to get duplicated frame within given time is ms
                 var resultAcquire =
-                    _duplicatedOutput.TryAcquireNextFrame(80, out duplicateFrameInformation, out screenResource);
+                    _duplicatedOutput.TryAcquireNextFrame(100, out duplicateFrameInformation, out screenResource);
                 if (!resultAcquire.Success)
                 {
                     throw new CaptureException("Failed to acquire frame", resultAcquire.Code);

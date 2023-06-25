@@ -39,6 +39,8 @@ namespace Translumo.Processing
         private OcrGeneralConfiguration _ocrGeneralConfiguration;
 
         private CancellationTokenSource _ctSource;
+        private IScreenCapturer _capturer;
+        private IScreenCapturer _onceTimeCapturer;
 
         private const float MIN_SCORE_THRESHOLD = 2.1f;
         
@@ -134,15 +136,23 @@ namespace Translumo.Processing
                 return null;
             }
 
-            using var capturer = _capturerFactory.CreateCapturer(false);
-            if (capturer == null)
+            void CapturerEnsureInitialized()
             {
-                _chatTextMediator.SendText("Failed to initialize capturer. Please check logs for details", false);
-                _ctSource.Cancel();
-
-                return;
+                lock (_obj)
+                {
+                    if (_capturer == null)
+                    {
+                        _capturer = _capturerFactory.CreateCapturer(false);
+                        if (_capturer == null)
+                        {
+                            _chatTextMediator.SendText("Failed to initialize capturer. Please check logs for details", false);
+                            _ctSource.Cancel();
+                        }
+                    }
+                }
             }
 
+            CapturerEnsureInitialized();
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
@@ -164,7 +174,7 @@ namespace Translumo.Processing
                             continue;
                         }
 
-                        byte[] screenshot = capturer.CaptureScreen();
+                        byte[] screenshot = _capturer.CaptureScreen();
                         var primaryDetected = _textProvider.GetText(primaryOcr, screenshot);
                         lastIterationType = IterationType.Short;
                         if (primaryDetected.ValidityScore == 0 || _textResultCacheService.IsCached(primaryDetected.Text, sequentialText))
@@ -222,7 +232,10 @@ namespace Translumo.Processing
                     }
 
                     _logger.LogError(ex, $"Screen capture failed (code: {ex.ErrorCode})");
-                    capturer.Initialize();
+                    
+                    _capturer.Dispose();
+                    _capturer = null;
+                    CapturerEnsureInitialized();
                 }
                 catch (TranslationException)
                 {
@@ -246,13 +259,16 @@ namespace Translumo.Processing
         private void TranslateOnceInternal(RectangleF captureArea)
         {
             const int TRANSLATION_TIMEOUT_MS = 10000;
-            using var capturer = _capturerFactory.CreateCapturer(true);
-            if (capturer == null)
-            {
-                _chatTextMediator.SendText("Failed to initialize capturer. Please check logs for details", false);
-                _ctSource.Cancel();
 
-                return;
+            if (_onceTimeCapturer == null)
+            {
+                _onceTimeCapturer = _capturerFactory.CreateCapturer(true);
+                if (_onceTimeCapturer == null)
+                {
+                    _chatTextMediator.SendText("Failed to initialize capturer. Please check logs for details", false);
+
+                    return;
+                }
             }
 
             try
@@ -260,7 +276,7 @@ namespace Translumo.Processing
                 Task translationTask;
                 lock (_obj)
                 {
-                    byte[] screenshot = capturer.CaptureScreen(captureArea);
+                    byte[] screenshot = _onceTimeCapturer.CaptureScreen(captureArea);
                     var taskResults = _engines.Select(engine => _textProvider.GetTextAsync(engine, screenshot)).ToArray();
 
                     Task.WaitAll(taskResults);
