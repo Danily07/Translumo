@@ -13,6 +13,7 @@ using Translumo.Infrastructure.Dispatching;
 using Translumo.MVVM.Common;
 using Translumo.MVVM.Models;
 using Translumo.Services;
+using Translumo.Update;
 using Translumo.Utils;
 using RelayCommand = Microsoft.Toolkit.Mvvm.Input.RelayCommand;
 
@@ -32,13 +33,15 @@ namespace Translumo.MVVM.ViewModels
         public ICommand LoadedCommand => new RelayCommand(OnLoadedCommand);
 
         private bool _chatWindowIsVisible = true;
+        private bool _hasUpdates = false;
 
         private readonly DialogService _dialogService;
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
         private readonly HotKeysServiceManager _hotKeysServiceManager;
+        private readonly UpdateManager _updateManager;
 
-        public ChatWindowViewModel(ChatWindowModel model, HotKeysServiceManager hotKeysManager, ChatUITextMediator chatTextMediator, 
+        public ChatWindowViewModel(ChatWindowModel model, HotKeysServiceManager hotKeysManager, ChatUITextMediator chatTextMediator, UpdateManager updateManager, 
             IActionDispatcher dispatcher, DialogService dialogService, IServiceProvider serviceProvider, ILogger<ChatWindowViewModel> logger)
         {
             this.Model = model;
@@ -46,6 +49,7 @@ namespace Translumo.MVVM.ViewModels
             this._dialogService = dialogService;
             this._serviceProvider = serviceProvider;
             this._hotKeysServiceManager = hotKeysManager;
+            this._updateManager = updateManager;
 
             dispatcher.RegisterConsumer<BrowseSiteDispatchArg, BrowseSiteDispatchResult>(DispatcherActions.PASS_SITE, BrowseSiteHandler);
 
@@ -110,7 +114,9 @@ namespace Translumo.MVVM.ViewModels
             {
                 Model.EndTranslation();
                 var scope = _serviceProvider.CreateScope();
-                _dialogService.ShowWindowAsync(scope.ServiceProvider.GetService<SettingsViewModel>(), () =>
+                var viewModel = scope.ServiceProvider.GetService<SettingsViewModel>();
+                viewModel.HasUpdates = _hasUpdates;
+                _dialogService.ShowWindowAsync(viewModel, () =>
                 {
                     scope.Dispose();
                     GC.Collect(2);
@@ -131,9 +137,15 @@ namespace Translumo.MVVM.ViewModels
             }
         }
 
-        private void OnLoadedCommand()
+        private async void OnLoadedCommand()
         {
-            SendHelpText();
+            SendHelpText(_hotKeysServiceManager.Configuration);
+
+            _hasUpdates = await _updateManager.CheckNewVersionAsync();
+            if (_hasUpdates)
+            {
+                Model.AddChatItem(LocalizationManager.GetValue("Str.NewVersion"), TextTypes.Info);
+            }
         }
 
 

@@ -16,6 +16,7 @@
             <Setter Property="Width" Value="250"/>
             <Setter Property="VerticalAlignment" Value="Bottom"/>
         </Style>
+        <common:VisibilityConverter x:Key="VisibilityConverter"/>
     </UserControl.Resources>
     <DockPanel>
         <Image Source="../../Resources/Icons/logo.png" DockPanel.Dock="Top" Height="90" RenderOptions.BitmapScalingMode="HighQuality" VerticalAlignment="Top" Margin="0,20,0,0"></Image>
@@ -24,6 +25,8 @@
             <Run Text="{Binding ApplicationVersion}" Style="{StaticResource SecondaryHeaderRun}"></Run>
         </TextBlock>
         <Label DockPanel.Dock="Top" Content="{DynamicResource Str.About.DevelopedBy}" HorizontalAlignment="Center" VerticalAlignment="Top" Style="{StaticResource SecondaryLabel}"></Label>
+        <TextBlock DockPanel.Dock="Top" Text="{DynamicResource Str.NewVersion}" Visibility="{Binding HasUpdates, Mode=OneWay, Converter={StaticResource VisibilityConverter}}" Style="{StaticResource AdditionalTextBlock}" Margin="0,6,0,0"/>
+
 
         <controls:ExtendedButton DockPanel.Dock="Bottom" Style="{StaticResource ActionLinkExtendedButton}" Caption="{StaticResource Str.About.ReportIssue}" CommandParameter="https://github.com/Danily07/Translumo/issues/new" Margin="0,0,0,25" />
         <controls:ExtendedButton DockPanel.Dock="Bottom" Style="{StaticResource ActionLinkExtendedButton}" Caption="{StaticResource Str.About.ProjectPage}" CommandParameter="https://github.com/Danily07/Translumo" Margin="0,0,0,6" />
