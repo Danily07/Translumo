@@ -112,14 +112,18 @@ namespace Translumo.MVVM.ViewModels
         {
             try
             {
-                var changeLangStage = StagesFactory.CreateLanguageChangeStages(_dialogService, () =>
-                    {
-                        Model.TranslateFromLang = language;
-                    }, _logger);
+                var changeLangStage = StagesFactory.CreateLanguageChangeStages(_dialogService, () => Model.TranslateFromLang = language, 
+                    _logger);
 
-                if (_ocrConfiguration.GetConfiguration<WindowsOCRConfiguration>().Enabled)
+                if (_ocrConfiguration.GetConfiguration<WindowsOCRConfiguration>().Enabled && 
+                    !_ocrConfiguration.InstalledWinOcrLanguages.Contains(language))
                 {
                     var langCode = _languageService.GetLanguageDescriptor(language).Code;
+                    changeLangStage.AddNextStage(new ActionInteractionStage(_dialogService, () =>
+                    {
+                        _ocrConfiguration.InstalledWinOcrLanguages.Add(language);
+                        return Task.CompletedTask;
+                    }));
                     changeLangStage = StagesFactory.CreateWindowsOcrCheckingStages(_dialogService, langCode, changeLangStage, _logger);
                 }
 
