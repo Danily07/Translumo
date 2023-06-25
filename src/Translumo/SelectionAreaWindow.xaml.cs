@@ -13,12 +13,12 @@ namespace Translumo
     {
         public Point MouseInitialPos { get; private set; }
         public Point MouseEndPos { get; private set; }
+        public RectangleF SelectedArea { get; private set; }
 
         private bool _mouseIsDown = false; // Set to 'true' when mouse is held down.
         private Point _relativeInitialPos; // The point where the mouse button was clicked down.
 
         private readonly bool _readonlyMode = false;
-        private readonly RectangleF _savedRectangle;
 
         public SelectionAreaWindow()
         {
@@ -30,7 +30,7 @@ namespace Translumo
             InitializeComponent();
 
             this._readonlyMode = true;
-            this._savedRectangle = rectangle;
+            this.SelectedArea = rectangle;
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -80,8 +80,17 @@ namespace Translumo
             selectionBox.Visibility = Visibility.Collapsed;
 
             MouseEndPos = this.PointToScreen(e.GetPosition(this));
+            SelectedArea = CalculateArea(MouseInitialPos, MouseEndPos);
 
             CloseDialog(false);
+        }
+
+        private RectangleF CalculateArea(Point firstPoint, Point secondPoint)
+        {
+            return new RectangleF((int)Math.Min(firstPoint.X, secondPoint.X),
+                (int)Math.Min(firstPoint.Y, secondPoint.Y),
+                (int)Math.Abs(firstPoint.X - secondPoint.X),
+                (int)Math.Abs(firstPoint.Y - secondPoint.Y));
         }
 
         private void Grid_MouseMove(object sender, MouseEventArgs e)
@@ -129,10 +138,10 @@ namespace Translumo
 
         private void SelectionAreaWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (!_savedRectangle.IsEmpty)
+            if (!SelectedArea.IsEmpty && _readonlyMode)
             {
-                var leftUpperPoint = this.PointFromScreen(new Point(_savedRectangle.X, _savedRectangle.Y));
-                var rightBottomPoint = this.PointFromScreen(new Point(_savedRectangle.Right, _savedRectangle.Bottom));
+                var leftUpperPoint = this.PointFromScreen(new Point(SelectedArea.X, SelectedArea.Y));
+                var rightBottomPoint = this.PointFromScreen(new Point(SelectedArea.Right, SelectedArea.Bottom));
                 DrawSelection(leftUpperPoint.X, leftUpperPoint.Y, rightBottomPoint.X - leftUpperPoint.X, rightBottomPoint.Y - leftUpperPoint.Y);
             }
         }

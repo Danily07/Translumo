@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -10,7 +9,6 @@ using Translumo.HotKeys;
 using Translumo.Infrastructure;
 using Translumo.Infrastructure.Constants;
 using Translumo.Infrastructure.Dispatching;
-using Translumo.MVVM.Common;
 using Translumo.MVVM.Models;
 using Translumo.Services;
 using Translumo.Update;
@@ -58,6 +56,7 @@ namespace Translumo.MVVM.ViewModels
             hotKeysManager.ChatVisibilityKeyPressed += HotKeysManagerOnChatVisibilityKeyPressed;
             hotKeysManager.SettingVisibilityKeyPressed += HotKeysManagerOnSettingVisibilityKeyPressed;
             hotKeysManager.ShowSelectionAreaKeyPressed += HotKeysManagerOnShowSelectionAreaKeyPressed;
+            hotKeysManager.OnceTranslateKeyPressed += HotKeysManagerOnOnceTranslateKeyPressed;
             chatTextMediator.TextRaised += ChatTextMediatorOnTextRaised;
         }
 
@@ -95,8 +94,7 @@ namespace Translumo.MVVM.ViewModels
             var result = _dialogService.ShowWindowDialog<SelectionAreaWindow>(out var window);
             if (result.HasValue && result.Value)
             {
-                Model.CaptureConfiguration.CaptureAreaP1 = window.MouseInitialPos;
-                Model.CaptureConfiguration.CaptureAreaP2 = window.MouseEndPos;
+                Model.CaptureConfiguration.CaptureArea = window.SelectedArea;
             }
         }
 
@@ -107,6 +105,16 @@ namespace Translumo.MVVM.ViewModels
                 _dialogService.ShowWindowDialog<SelectionAreaWindow>(out _, Model.CaptureConfiguration.CaptureArea);
             }
         }
+
+        private void HotKeysManagerOnOnceTranslateKeyPressed(object sender, EventArgs e)
+        {
+            var result = _dialogService.ShowWindowDialog<SelectionAreaWindow>(out var window);
+            if (result.HasValue && result.Value)
+            {
+                Model.OnceTranslation(window.SelectedArea);
+            }
+        }
+
 
         private void OnShowHideSettings()
         {

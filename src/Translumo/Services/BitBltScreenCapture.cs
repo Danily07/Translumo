@@ -38,14 +38,19 @@ namespace Translumo.Services
                 throw new CaptureException($"Capture area is not selected");
             }
 
-            return MakeScreenshotInternal(1);
+            return MakeScreenshotInternal(_configuration.CaptureArea, 1);
+        }
+
+        public byte[] CaptureScreen(RectangleF captureArea)
+        {
+            return MakeScreenshotInternal(captureArea, 1);
         }
 
         public void Dispose()
         {
         }
 
-        private byte[] MakeScreenshotInternal(int curAttempt)
+        private byte[] MakeScreenshotInternal(RectangleF captureArea, int curAttempt)
         {
             IntPtr hdcSrc = IntPtr.Zero;
             IntPtr hdcDest = IntPtr.Zero;
@@ -62,7 +67,7 @@ namespace Translumo.Services
                 Win32Interfaces.SelectObject(hdcDest, hOld);
 
                 using var img = Image.FromHbitmap(hBitmap);
-                using var bitmap = img.Clone(_configuration.CaptureArea, PixelFormat.Format32bppArgb);
+                using var bitmap = img.Clone(captureArea, PixelFormat.Format32bppArgb);
 
                 return bitmap.ToBytes(ImageFormat.Tiff);
             }
@@ -75,7 +80,7 @@ namespace Translumo.Services
 
                 Thread.Sleep(AttemptDelayMs);
 
-                return MakeScreenshotInternal(++curAttempt);
+                return MakeScreenshotInternal(captureArea, ++curAttempt);
             }
             finally
             {

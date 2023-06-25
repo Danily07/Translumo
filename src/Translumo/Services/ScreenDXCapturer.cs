@@ -88,7 +88,23 @@ namespace Translumo.Services
                     throw new CaptureException($"Capture area is not selected");
                 }
 
-                return MakeScreenshotInternal(1);
+                return MakeScreenshotInternal(_configuration.CaptureArea, 1);
+            }
+            catch (CaptureException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new CaptureException("Failed to capture screen", ex);
+            }
+        }
+
+        public byte[] CaptureScreen(RectangleF captureArea)
+        {
+            try
+            {
+                return MakeScreenshotInternal(captureArea, 1);
             }
             catch (CaptureException)
             {
@@ -118,7 +134,7 @@ namespace Translumo.Services
             _initalized = false;
         }
 
-        private byte[] MakeScreenshotInternal(int curAttempt)
+        private byte[] MakeScreenshotInternal(RectangleF captureArea, int curAttempt)
         {
             SharpDX.DXGI.Resource screenResource = null;
             OutputDuplicateFrameInformation duplicateFrameInformation;
@@ -164,7 +180,7 @@ namespace Translumo.Services
                     bitmap.UnlockBits(mapDest);
                     _device.ImmediateContext.UnmapSubresource(_screenTexture, 0);
 
-                    return bitmap.Clone(_configuration.CaptureArea, bitmap.PixelFormat)
+                    return bitmap.Clone(captureArea, bitmap.PixelFormat)
                         .ToBytes(ImageFormat.Tiff);
                 }
             }
@@ -177,7 +193,7 @@ namespace Translumo.Services
 
                 Thread.Sleep(AttemptDelayMs);
 
-                return MakeScreenshotInternal(++curAttempt);
+                return MakeScreenshotInternal(captureArea, ++curAttempt);
             }
             finally
             {

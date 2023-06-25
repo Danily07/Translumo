@@ -15,6 +15,7 @@ namespace Translumo.HotKeys
         public event EventHandler TranslationStateKeyPressed;
         public event EventHandler SettingVisibilityKeyPressed;
         public event EventHandler ShowSelectionAreaKeyPressed;
+        public event EventHandler OnceTranslateKeyPressed;
 
         public HotKeysConfiguration Configuration { get; }
         public bool GamepadHotkeysEnabled { get; }

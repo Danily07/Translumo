@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace Translumo.Processing.Interfaces
 {
@@ -8,5 +9,6 @@ namespace Translumo.Processing.Interfaces
 
         void Initialize();
         byte[] CaptureScreen();
+        byte[] CaptureScreen(RectangleF captureArea);
     }
 }
