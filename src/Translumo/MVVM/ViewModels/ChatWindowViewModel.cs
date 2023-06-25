@@ -33,6 +33,7 @@ namespace Translumo.MVVM.ViewModels
         public ICommand LoadedCommand => new RelayCommand(OnLoadedCommand);
 
         private bool _chatWindowIsVisible = true;
+        private bool _hasUpdates = false;
 
         private readonly DialogService _dialogService;
         private readonly IServiceProvider _serviceProvider;
@@ -104,7 +105,9 @@ namespace Translumo.MVVM.ViewModels
             {
                 Model.EndTranslation();
                 var scope = _serviceProvider.CreateScope();
-                _dialogService.ShowWindowAsync(scope.ServiceProvider.GetService<SettingsViewModel>(), () =>
+                var viewModel = scope.ServiceProvider.GetService<SettingsViewModel>();
+                viewModel.HasUpdates = _hasUpdates;
+                _dialogService.ShowWindowAsync(viewModel, () =>
                 {
                     scope.Dispose();
                     GC.Collect(2);
@@ -129,8 +132,8 @@ namespace Translumo.MVVM.ViewModels
         {
             SendHelpText(_hotKeysServiceManager.Configuration);
 
-            var hasNewVersion = await _updateManager.CheckNewVersionAsync();
-            if (hasNewVersion)
+            _hasUpdates = await _updateManager.CheckNewVersionAsync();
+            if (_hasUpdates)
             {
                 Model.AddChatItem(LocalizationManager.GetValue("Str.NewVersion"), TextTypes.Info);
             }

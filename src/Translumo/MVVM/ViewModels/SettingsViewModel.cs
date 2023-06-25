@@ -29,6 +29,7 @@ namespace Translumo.MVVM.ViewModels
             get => _additionalPanelOpened;
             set => SetProperty(ref _additionalPanelOpened, value);
         }
+        public bool HasUpdates { get; set; }
         public CultureInfo[] AvailableLanguages { get; set; }
 
         public SystemConfiguration SystemConfiguration { get; set; }
@@ -91,7 +92,7 @@ namespace Translumo.MVVM.ViewModels
 
         private async void OnAboutDialogOpened()
         {
-            await DialogService.ShowDialogAsync(new AboutDialogViewModel());
+            await DialogService.ShowDialogAsync(new AboutDialogViewModel() {HasUpdates = HasUpdates});
         }
 
         public void Dispose()
