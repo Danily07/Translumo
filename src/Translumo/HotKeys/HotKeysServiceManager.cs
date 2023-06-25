@@ -14,6 +14,8 @@ namespace Translumo.HotKeys
         public event EventHandler ChatVisibilityKeyPressed;
         public event EventHandler TranslationStateKeyPressed;
         public event EventHandler SettingVisibilityKeyPressed;
+        public event EventHandler ShowSelectionAreaKeyPressed;
+
         public HotKeysConfiguration Configuration { get; }
         public bool GamepadHotkeysEnabled { get; }
 
@@ -34,7 +36,8 @@ namespace Translumo.HotKeys
                 (nameof(configuration.ChatVisibilityKey), nameof(configuration.ChatVisibilityGamepadKey)),
                 (nameof(configuration.SelectAreaKey), nameof(configuration.SelectAreaGamepadKey)),
                 (nameof(configuration.TranslationStateKey), nameof(configuration.TranslationStateGamepadKey)),
-                (nameof(configuration.SettingVisibilityKey), nameof(configuration.SettingVisibilityGamepadKey))
+                (nameof(configuration.SettingVisibilityKey), nameof(configuration.SettingVisibilityGamepadKey)),
+                (nameof(configuration.ShowSelectionAreaKey), nameof(configuration.ShowSelectionAreaGamepadKey)),
             };
 
             if (GamepadHotkeysEnabled)
@@ -178,6 +181,11 @@ namespace Translumo.HotKeys
             SettingVisibilityKeyPressed?.Invoke(this, EventArgs.Empty);
         }
 
+        private void OnShowSelectionAreaPressed()
+        {
+            ShowSelectionAreaKeyPressed?.Invoke(this, EventArgs.Empty);
+        }
+
         private IDictionary<string, HotKey> InitializeHotKeys(HotKeysConfiguration configuration)
         {
             return new Dictionary<string, HotKey>()
@@ -197,6 +205,10 @@ namespace Translumo.HotKeys
                 {
                     nameof(configuration.SettingVisibilityKey), new HotKey(configuration.SettingVisibilityKey.Key,
                         configuration.SettingVisibilityKey.KeyModifier, OnSettingVisibilityPressed)
+                },
+                {
+                    nameof(configuration.ShowSelectionAreaKey), new HotKey(configuration.ShowSelectionAreaKey.Key,
+                        configuration.ShowSelectionAreaKey.KeyModifier, OnShowSelectionAreaPressed)
                 }
             };
         }
@@ -208,7 +220,8 @@ namespace Translumo.HotKeys
                 { nameof(configuration.ChatVisibilityGamepadKey), new GamepadHotKey(configuration.ChatVisibilityGamepadKey.Key, OnChatVisibilityPressed) },
                 { nameof(configuration.SelectAreaGamepadKey), new GamepadHotKey(configuration.SelectAreaGamepadKey.Key, OnSelectAreaPressed) },
                 { nameof(configuration.TranslationStateGamepadKey), new GamepadHotKey(configuration.TranslationStateGamepadKey.Key, OnTranslationStatePressed) },
-                { nameof(configuration.SettingVisibilityGamepadKey), new GamepadHotKey(configuration.SettingVisibilityGamepadKey.Key, OnSettingVisibilityPressed) }
+                { nameof(configuration.SettingVisibilityGamepadKey), new GamepadHotKey(configuration.SettingVisibilityGamepadKey.Key, OnSettingVisibilityPressed) },
+                { nameof(configuration.ShowSelectionAreaGamepadKey), new GamepadHotKey(configuration.ShowSelectionAreaGamepadKey.Key, OnShowSelectionAreaPressed) }
             };
         }
     }

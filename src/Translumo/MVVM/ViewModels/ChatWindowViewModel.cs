@@ -53,6 +53,7 @@ namespace Translumo.MVVM.ViewModels
             hotKeysManager.TranslationStateKeyPressed += HotKeysManagerOnTranslationStateKeyPressed;
             hotKeysManager.ChatVisibilityKeyPressed += HotKeysManagerOnChatVisibilityKeyPressed;
             hotKeysManager.SettingVisibilityKeyPressed += HotKeysManagerOnSettingVisibilityKeyPressed;
+            hotKeysManager.ShowSelectionAreaKeyPressed += HotKeysManagerOnShowSelectionAreaKeyPressed;
             chatTextMediator.TextRaised += ChatTextMediatorOnTextRaised;
         }
 
@@ -92,6 +93,14 @@ namespace Translumo.MVVM.ViewModels
             {
                 Model.CaptureConfiguration.CaptureAreaP1 = window.MouseInitialPos;
                 Model.CaptureConfiguration.CaptureAreaP2 = window.MouseEndPos;
+            }
+        }
+
+        private void HotKeysManagerOnShowSelectionAreaKeyPressed(object sender, EventArgs e)
+        {
+            if (!Model.CaptureConfiguration.CaptureArea.IsEmpty)
+            {
+                _dialogService.ShowWindowDialog<SelectionAreaWindow>(out _, Model.CaptureConfiguration.CaptureArea);
             }
         }
 

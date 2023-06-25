@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Color = System.Windows.Media.Color;
+using Point = System.Windows.Point;
 
 namespace Translumo
 {
@@ -14,14 +17,25 @@ namespace Translumo
         private bool _mouseIsDown = false; // Set to 'true' when mouse is held down.
         private Point _relativeInitialPos; // The point where the mouse button was clicked down.
 
+        private readonly bool _readonlyMode = false;
+        private readonly RectangleF _savedRectangle;
+
         public SelectionAreaWindow()
         {
             InitializeComponent();
         }
 
+        public SelectionAreaWindow(RectangleF rectangle)
+        {
+            InitializeComponent();
+
+            this._readonlyMode = true;
+            this._savedRectangle = rectangle;
+        }
+
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton != MouseButton.Left)
+            if (e.ChangedButton != MouseButton.Left || _readonlyMode)
             {
                 CloseDialog(true);
                 return;
@@ -34,11 +48,16 @@ namespace Translumo
 
             theGrid.CaptureMouse();
 
+            DrawSelection(_relativeInitialPos.X, _relativeInitialPos.Y, 0, 0);
+        }
+
+        private void DrawSelection(double x, double y, double width, double height)
+        {
             // Initial placement of the drag selection box.         
-            Canvas.SetLeft(selectionBox, _relativeInitialPos.X);
-            Canvas.SetTop(selectionBox, _relativeInitialPos.Y);
-            selectionBox.Width = 0;
-            selectionBox.Height = 0;
+            Canvas.SetLeft(selectionBox, x);
+            Canvas.SetTop(selectionBox, y);
+            selectionBox.Width = width;
+            selectionBox.Height = height;
 
             selectionBox.Fill = new SolidColorBrush(Color.FromRgb(191, 255, 40));
 
@@ -48,6 +67,11 @@ namespace Translumo
 
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            if (_readonlyMode)
+            {
+                return;
+            }
+
             // Release the mouse capture and stop tracking it.
             _mouseIsDown = false;
             theGrid.ReleaseMouseCapture();
@@ -101,6 +125,24 @@ namespace Translumo
         private void Window_Activated(object sender, EventArgs e)
         {
             this.Topmost = true;
+        }
+
+        private void SelectionAreaWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (!_savedRectangle.IsEmpty)
+            {
+                var leftUpperPoint = this.PointFromScreen(new Point(_savedRectangle.X, _savedRectangle.Y));
+                var rightBottomPoint = this.PointFromScreen(new Point(_savedRectangle.Right, _savedRectangle.Bottom));
+                DrawSelection(leftUpperPoint.X, leftUpperPoint.Y, rightBottomPoint.X - leftUpperPoint.X, rightBottomPoint.Y - leftUpperPoint.Y);
+            }
+        }
+
+        private void SelectionAreaWindow_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (_readonlyMode)
+            {
+                CloseDialog(true);
+            }
         }
     }
 }
