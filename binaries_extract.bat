@@ -17,7 +17,7 @@ set "targetPaths[3]=%1models\prediction\"
 
 set "inputBinariesPaths[0]=%componentsPath%\python"
 set "inputBinariesPaths[1]=%componentsPath%\models\easyocr"
-set "inputBinariesPaths[2]=%componentsPath%\models\tesseract"
+set "inputBinariesPaths[2]=%componentsPath%\models\tessdata"
 set "inputBinariesPaths[3]=%componentsPath%\models\prediction"
 
 for %%i in (0,1,2,3) do (
