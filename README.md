@@ -10,14 +10,17 @@
 <ul>
   <li><b>High text recognition precision</b></li>
   <p>Translumo allows to combine the usage of several OCR engines simultaneously. It uses machine learning training model for scoring each recognized result by OCR and chooses the best one.</p>
-  <img width="740" src="https://github.com/Danily07/Translumo/assets/29047281/7800ca08-71e9-41c2-ab05-d30e2b5a7269">
+  <p align="center">
+    <img width="740" src="https://github.com/Danily07/Translumo/assets/29047281/649e5fab-a5de-4c54-a3d8-f7ea95b8f218">
+  </p>
   <li><b>Simple interface</b></li>
   The main idea was to make tool, that does not require manual adjustments for each case and convenient for everyday use. 
   <li><b>Low latency</b></li>
   There are several implemented optimizations to reduce impact on system performance and minimize latency between the moment a text appears and actual translation. 
-  <li><b>Integrated modern OCR engines:</b> Tesseract 5.0, WindowsOCR, EasyOCR</li>
+  <li><b>Integrated modern OCR engines:</b> Tesseract 5.2, WindowsOCR, EasyOCR</li>
   <li><b>Available translators:</b> Google Translate, Yandex translate, Naver Papago, DeepL</li>
-  <li><b>Available translation languages:</b> English, Russian, Japanese, Chinese (simplified), Korean</li>
+  <li><b>Available recognition languages:</b> English, Russian, Japanese, Chinese (simplified), Korean</li>
+  <li><b>Available translation languages:</b> English, Russian, Japanese, Chinese (simplified), Korean, French, Spanish, German, Portuguese, Italian</li>
 </ul>
 <h1>System requirements</h1>
 <ul>
@@ -65,9 +68,9 @@ Generally, I recommend always keep Windows OCR turned on. This is the most effec
 <h4>Hotkeys don't work</h4>
 <p>Other applications may intercept specific hotkeys handling</p>
 <h4>I got error "Text detection is failed (TesseractOCREngine)"</h4>
-<p>Make sure that application path contains only latin letters.</p>
+<p>Make sure that the application path contains only latin letters.</p>
 <h1>Build</h1>
-<p><i>Visual Studio 2019 (or later) and .NET 5 SDK are required</i></p>
+<p><i>Visual Studio 2022 and .NET 7 SDK are required</i></p>
 <ul>
   <li>Clone repository (<b>master</b> branch always equals last release version):</li>
   
