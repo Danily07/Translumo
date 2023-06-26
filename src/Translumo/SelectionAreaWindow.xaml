@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="SelectionAreaWindow" Height="450" Width="800" WindowStyle="None" AllowsTransparency="True" Opacity="0.13" Background="White" Activated="Window_Activated" ResizeMode="NoResize" WindowState="Maximized">
+        Title="SelectionAreaWindow" Height="450" Width="800" WindowStyle="None" AllowsTransparency="True" Opacity="0.13" Background="White" Activated="Window_Activated" ResizeMode="NoResize" WindowState="Maximized" Loaded="SelectionAreaWindow_OnLoaded" KeyDown="SelectionAreaWindow_OnKeyDown">
     <Grid
         x:Name="theGrid"
         MouseDown="Grid_MouseDown"

@@ -24,6 +24,8 @@
 
         public bool UseSpaceRemover { get; set; }
 
+        public bool TranslationOnly { get; set; } = false;
+
         public override bool Equals(object obj)
         {
             var langDesc = obj as LanguageDescriptor;

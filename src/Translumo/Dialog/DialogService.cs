@@ -78,7 +78,7 @@ namespace Translumo.Dialog
             _openedWindows[typeof(TViewModel)] = view;
         }
 
-        public bool? ShowWindowDialog<TView>(out TView windowView)
+        public bool? ShowWindowDialog<TView>(out TView windowView, object param = null)
             where TView: Window
         {
             if (_openedWindows.ContainsKey(typeof(TView)))
@@ -87,7 +87,7 @@ namespace Translumo.Dialog
                 return null;
             }
 
-            windowView = Activator.CreateInstance<TView>();
+            windowView = param != null ? (TView) Activator.CreateInstance(typeof(TView), param) : Activator.CreateInstance<TView>();
             _openedWindows[typeof(TView)] = windowView;
 
             try

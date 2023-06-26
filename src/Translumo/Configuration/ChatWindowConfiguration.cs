@@ -63,7 +63,7 @@ namespace Translumo.Configuration
         {
             BackgroundColor = Color.FromRgb(0, 0, 0),
             FontColor = Color.FromRgb(255, 128, 0),
-            BackgroundOpacity = 0.2f,
+            BackgroundOpacity = 0.35f,
             FontSize = 15,
             FontBold = true,
             LineSpacing = 14

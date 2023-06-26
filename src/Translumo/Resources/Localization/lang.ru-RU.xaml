@@ -7,6 +7,7 @@
     <system:String x:Key="Str.Password">Пароль</system:String>
     <system:String x:Key="Str.ExitConfirmation" xml:space="preserve">Хотите выйти из приложения?&#13;Можете использовать кнопку сворачивания для скрытия окна настроек (доступ к приложению останется через трей).</system:String>
     <system:String x:Key="Str.ExitConfirmationCaption">Подтверждение выхода</system:String>
+    <system:String x:Key="Str.NewVersion">Доступна новая версия Translumo. Пожалуйста перейдите на страницу проекта на Github, чтобы скачать.</system:String>
 
     <!--Notifications-->
     <system:String x:Key="Str.Notification.CaptchaPass" xml:space="preserve">Пожалуйста пройдите капчу для использования сервиса&#13;Это окно может появиться для каждого задействованного прокси.</system:String>
@@ -33,7 +34,8 @@
     <system:String x:Key="Str.Hotkeys.SettingsVisibility">Показать/закрыть окно настроек</system:String>
     <system:String x:Key="Str.Hotkeys.SelectArea">Выбрать область перевода</system:String>
     <system:String x:Key="Str.Hotkeys.OnOffTranslation">Включить/выключить перевод</system:String>
-    <system:String x:Key="Str.Hotkeys.PostScriptum">*Конфигурирования горячих клавиш будет добавлено в следующих версиях</system:String>
+    <system:String x:Key="Str.Hotkeys.ShowSelectArea">Показать выбранную область перевода</system:String>
+    <system:String x:Key="Str.Hotkeys.OnceTranslate">Выбрать область и перевести текст один раз</system:String>
     <system:String x:Key="Str.Hotkeys.SettingsShowHelp">Нажмите '{0}' чтобы открыть настройки</system:String>
     <system:String x:Key="Str.Hotkeys.SelectAreaHelp">Нажмите '{0}' чтобы выбрать область захвата текста</system:String>
     <system:String x:Key="Str.Hotkeys.OnTranslationHelp">Нажмите '{0}' чтобы начать перевод</system:String>
@@ -83,7 +85,12 @@
     <system:String x:Key="Str.Languages.Russian">Русский</system:String>
     <system:String x:Key="Str.Languages.Japanese">Японский</system:String>
     <system:String x:Key="Str.Languages.Korean">Корейский</system:String>
-    <system:String x:Key="Str.Languages.Chinese">Китайский</system:String>
+    <system:String x:Key="Str.Languages.Chinese">Китайский (упрощенный)</system:String>
+    <system:String x:Key="Str.Languages.Italian">Итальянский</system:String>
+    <system:String x:Key="Str.Languages.French">Французский</system:String>
+    <system:String x:Key="Str.Languages.German">Немецкий</system:String>
+    <system:String x:Key="Str.Languages.Spanish">Испанский</system:String>
+    <system:String x:Key="Str.Languages.Portuguese">Португальский</system:String>
 
     <!--Dialog stages-->
     <system:String x:Key="Str.Stages.CheckPyModules">Проверка установленных модулей...</system:String>

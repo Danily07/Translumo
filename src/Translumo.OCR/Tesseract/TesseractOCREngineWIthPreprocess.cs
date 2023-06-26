@@ -7,7 +7,7 @@ using Size = OpenCvSharp.Size;
 
 namespace Translumo.OCR.Tesseract
 {
-    public class TesseractOCREngineWIthPreprocess : TesseractOCREngine
+    public sealed class TesseractOCREngineWIthPreprocess : TesseractOCREngine
     {
         public override byte PrimaryPriority => 1;
         public override int Confidence => 2;

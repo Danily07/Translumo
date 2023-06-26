@@ -36,6 +36,7 @@
             <views:OcrSettingsView />
         </DataTemplate>
         <common:CaseConverter x:Key="CaseConverter" Case="Upper"></common:CaseConverter>
+        <common:BoolBrushConverter x:Key="HasUpdatesConverter" TrueBrush="{StaticResource WarningBrush}" FalseBrush="{StaticResource PrimaryHueLightBrush}"/>
         <system:Boolean x:Key="ConfirmationClose">True</system:Boolean>
     </Window.Resources>
 
@@ -82,7 +83,7 @@
                         </ListView.ItemsPanel>
                     </ListView>
                     <Button DockPanel.Dock="Right" Style="{StaticResource SystemAdditionalButton}" Command="{Binding AboutDialogOpenedCommand}" VerticalAlignment="Top" HorizontalAlignment="Right">
-                        <wpf:PackIcon Kind="Information" Style="{StaticResource SystemAdditionalIcon}"></wpf:PackIcon>
+                        <wpf:PackIcon Kind="Information" Style="{StaticResource SystemAdditionalIcon}" Foreground="{Binding HasUpdates, Mode=OneWay, Converter={StaticResource HasUpdatesConverter}}"></wpf:PackIcon>
                     </Button>
                 </DockPanel>
 

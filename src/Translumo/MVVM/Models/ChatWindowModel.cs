@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using Translumo.Configuration;
 using Translumo.Infrastructure;
 using Translumo.Processing;
@@ -60,6 +61,11 @@ namespace Translumo.MVVM.Models
 
             ClearAllChatItems();
             _translationProcessingService.StartProcessing();
+        }
+
+        public void OnceTranslation(RectangleF captureArea)
+        {
+            _translationProcessingService.ProcessOnce(captureArea);
         }
 
         public void EndTranslation()

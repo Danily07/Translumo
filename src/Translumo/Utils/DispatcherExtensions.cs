@@ -8,7 +8,6 @@ namespace Translumo.Utils
     public static class DispatcherExtensions
     {
         public static void RaiseOnUIThread<TArg>(this EventHandler<TArg> eventHandler, object sender, TArg arg)
-            where TArg : EventArgs
         {
             foreach (var @delegate in eventHandler.GetInvocationList())
             {

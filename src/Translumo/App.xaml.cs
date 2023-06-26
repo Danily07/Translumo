@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+using SharpDX.XInput;
 using Translumo.Configuration;
 using Translumo.Dialog;
 using Translumo.HotKeys;
@@ -23,6 +25,7 @@ using Translumo.Processing.TextProcessing;
 using Translumo.Services;
 using Translumo.Translation;
 using Translumo.Translation.Configuration;
+using Translumo.Update;
 using Translumo.Utils;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
@@ -76,9 +79,9 @@ namespace Translumo
 
             var chatViewModel = _serviceProvider.GetService<ChatWindowViewModel>();
             var dialogService = _serviceProvider.GetService<DialogService>();
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
             dialogService.ShowWindowAsync(chatViewModel);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
+            
+            _serviceProvider.RegisterUIInputController();
         }
 
         private void ConfigureServices(ServiceCollection services)
@@ -106,10 +109,15 @@ namespace Translumo
             services.AddSingleton<ScreenCaptureConfiguration>();
             services.AddSingleton<DialogService>();
             services.AddSingleton<LanguageService>();
-            services.AddSingleton<IScreenCapturer, ScreenDXCapturer>();
             services.AddSingleton<TextDetectionProvider>();
             services.AddSingleton<IActionDispatcher, InteractionActionDispatcher>();
             services.AddSingleton<TextValidityPredictor>();
+            services.AddSingleton<IControllerService, GamepadService>();
+            services.AddSingleton<IControllerInputProvider, ControllerInputProvider>();
+            services.AddSingleton<ObservablePipe<Keystroke>>(new ObservablePipe<Keystroke>(Application.Current.Dispatcher));
+            services.AddSingleton<UpdateManager>();
+            services.AddSingleton<IReleasesClient, GithubApiClient>(provider => new GithubApiClient("Danily07", "Translumo"));
+            services.AddSingleton<ICapturerFactory, ScreenCapturerFactory>();
 
             services.AddTransient<IProcessingService, TranslationProcessingService>();
             services.AddTransient<OcrEnginesFactory>();

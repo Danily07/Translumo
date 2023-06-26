@@ -7,6 +7,7 @@
     <system:String x:Key="Str.Password">Password</system:String>
     <system:String x:Key="Str.ExitConfirmation" xml:space="preserve">Do you want to close the application?&#13;You can use minimize button for hiding settings window (the app will still be available via tray icon).</system:String>
     <system:String x:Key="Str.ExitConfirmationCaption">Exit confirmation</system:String>
+    <system:String x:Key="Str.NewVersion">The new version of Translumo is already available. Please check Github page to download.</system:String>
 
     <!--Notifications-->
     <system:String x:Key="Str.Notification.CaptchaPass" xml:space="preserve">Please complete captcha on the website to use service.&#13;Also it may be required for each registered proxy.</system:String>
@@ -31,9 +32,10 @@
     <!--Hotkeys descriptions-->
     <system:String x:Key="Str.Hotkeys.ChatVisibility">Show/hide translation window</system:String>
     <system:String x:Key="Str.Hotkeys.SettingsVisibility">Open/close the Settings window</system:String>
-    <system:String x:Key="Str.Hotkeys.SelectArea">Select detection area</system:String>
+    <system:String x:Key="Str.Hotkeys.SelectArea">Select screen capture area</system:String>
     <system:String x:Key="Str.Hotkeys.OnOffTranslation">On/off translation</system:String>
-    <system:String x:Key="Str.Hotkeys.PostScriptum">*Hotkeys configuration will be added in the future versions</system:String>
+    <system:String x:Key="Str.Hotkeys.ShowSelectArea">Show selected screen capture area</system:String>
+    <system:String x:Key="Str.Hotkeys.OnceTranslate">Select area and translate text once</system:String>
     <system:String x:Key="Str.Hotkeys.SettingsShowHelp">Press '{0}' to open the Settings</system:String>
     <system:String x:Key="Str.Hotkeys.SelectAreaHelp">Press '{0}' to select detection area</system:String>
     <system:String x:Key="Str.Hotkeys.OnTranslationHelp">Press '{0}' to start translation</system:String>
@@ -83,7 +85,12 @@
     <system:String x:Key="Str.Languages.Russian">Russian</system:String>
     <system:String x:Key="Str.Languages.Japanese">Japanese</system:String>
     <system:String x:Key="Str.Languages.Korean">Korean</system:String>
-    <system:String x:Key="Str.Languages.Chinese">Chinese</system:String>
+    <system:String x:Key="Str.Languages.Chinese">Chinese (Simplified)</system:String>
+    <system:String x:Key="Str.Languages.Italian">Italian</system:String>
+    <system:String x:Key="Str.Languages.French">French</system:String>
+    <system:String x:Key="Str.Languages.German">German</system:String>
+    <system:String x:Key="Str.Languages.Spanish">Spanish</system:String>
+    <system:String x:Key="Str.Languages.Portuguese">Portuguese</system:String>
 
     <!--Dialog stages-->
     <system:String x:Key="Str.Stages.CheckPyModules">Checking installed modules...</system:String>

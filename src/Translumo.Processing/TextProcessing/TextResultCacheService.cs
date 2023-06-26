@@ -16,7 +16,7 @@ namespace Translumo.Processing.TextProcessing
 
         public int CacheLifeTimeMs { get; set; } = 3000;
 
-        private const int CACHE_DEF_CAPACITY = 30;
+        private const int CACHE_DEF_CAPACITY = 28;
         private const int CACHE_TRANSLATED_DEF_CAPACITY = 6;
         private const double SIMILARITY_THRESHOLD = 0.7;
         private const double TRANSLATED_SIMILARITY_THRESHOLD = 0.955;

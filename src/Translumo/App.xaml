@@ -40,6 +40,7 @@
                 <ResourceDictionary>
                     <SolidColorBrush x:Key="ErrorBrush" Color="#f03a16" />
                     <SolidColorBrush x:Key="HoverBackgroundBrush" Color="#ebf5f7"></SolidColorBrush>
+                    <SolidColorBrush x:Key="WarningBrush" Color="#ffdad6"></SolidColorBrush>
                 </ResourceDictionary>
 
                 <ResourceDictionary Source="/Themes/Label.xaml"></ResourceDictionary>
@@ -47,6 +48,7 @@
                 <ResourceDictionary Source="/Themes/Button.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="/Themes/List.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="/Themes/PackIcon.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="/Themes/TextBox.xaml"></ResourceDictionary>
 
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>

@@ -4,10 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:common="clr-namespace:Translumo.MVVM.Common"
+             xmlns:controls="clr-namespace:Translumo.Controls"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <common:HotKeyValueConverter x:Key="HotKeyValueConverter"/>
+        <common:KeyCombinationValueConverter x:Key="KeyCombinationConverter"/>
+        <common:GamepadKeyCombinationValueConverter x:Key="GamepadKeyCombinationValueConverter"/>
     </UserControl.Resources>
 
     <DockPanel LastChildFill="True">
@@ -20,25 +23,20 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <TextBox Text="{Binding HotKey, Mode=OneWay, Converter={StaticResource HotKeyValueConverter}}"  IsReadOnly="True" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="15" Width="70">
-                            <TextBox.Style>
-                                <Style TargetType="TextBox">
-                                    <Setter Property="Background" Value="#c9d4d4"></Setter>
-                                    <Setter Property="BorderBrush" Value="#868787"></Setter>
-                                    <Setter Property="BorderThickness" Value="1"></Setter>
-                                    <Style.Resources>
-                                        <Style TargetType="Border">
-                                            <Setter Property="CornerRadius" Value="4"></Setter>
-                                        </Style>
-                                    </Style.Resources>
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
+                        <controls:HotkeyInput HotKey="{Binding HotKey, Mode=TwoWay, Converter={StaticResource KeyCombinationConverter}}" GamepadHotKey="{Binding GamepadHotKey, Mode=TwoWay, Converter={StaticResource GamepadKeyCombinationValueConverter}}" VerticalContentAlignment="Center" Width="90">
+                            <b:Interaction.Triggers>
+                                <b:EventTrigger EventName="LostFocus">
+                                    <b:InvokeCommandAction Command="{Binding DataContext.ExitEditModeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                </b:EventTrigger>
+                                <b:EventTrigger EventName="GotFocus">
+                                    <b:InvokeCommandAction Command="{Binding DataContext.EnterEditModeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                </b:EventTrigger>
+                            </b:Interaction.Triggers>
+                        </controls:HotkeyInput>
                         <Label Content="{Binding Description}" Style="{StaticResource ControlCaptionLabel}"></Label>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Label DockPanel.Dock="Bottom" Content="{DynamicResource Str.Hotkeys.PostScriptum}" Style="{StaticResource PostscriptLabel}" VerticalAlignment="Bottom" HorizontalAlignment="Right"></Label>
     </DockPanel>
 </UserControl>

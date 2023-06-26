@@ -23,11 +23,13 @@ namespace Translumo.HotKeys
 
         public Key Key { get; private set; }
         public KeyModifier KeyModifiers { get; private set; }
-        public Action<HotKey> Action { get; private set; }
+        public Action Action { get; private set; }
         public int Id { get; set; }
+        public bool Registered { get; private set; }
+        public bool Suspended { get; private set; } = false;
 
         // ******************************************************************
-        public HotKey(Key k, KeyModifier keyModifiers, Action<HotKey> action, bool register = true)
+        public HotKey(Key k, KeyModifier keyModifiers, Action action, bool register = true)
         {
             Key = k;
             KeyModifiers = keyModifiers;
@@ -38,9 +40,28 @@ namespace Translumo.HotKeys
             }
         }
 
-        // ******************************************************************
-        public bool Register()
+        public void Reassign(Key k, KeyModifier keyModifiers, bool forceSuspend = false)
         {
+            Unregister();
+
+            Key = k;
+            KeyModifiers = keyModifiers;
+            Register(forceSuspend);
+        }
+
+        // ******************************************************************
+        public bool Register(bool forceSuspend = false)
+        {
+            if (forceSuspend)
+            {
+                Suspended = false;
+            }
+
+            if (Registered || Suspended)
+            {
+                return false;
+            }
+
             int virtualKeyCode = KeyInterop.VirtualKeyFromKey(Key);
             Id = virtualKeyCode + ((int)KeyModifiers * 0x10000);
             bool result = RegisterHotKey(IntPtr.Zero, Id, (UInt32)KeyModifiers, (UInt32)virtualKeyCode);
@@ -48,13 +69,21 @@ namespace Translumo.HotKeys
             if (_dictHotKeyToCalBackProc == null)
             {
                 _dictHotKeyToCalBackProc = new Dictionary<int, HotKey>();
-                ComponentDispatcher.ThreadFilterMessage += new ThreadMessageEventHandler(ComponentDispatcherThreadFilterMessage);
+                ComponentDispatcher.ThreadFilterMessage += ComponentDispatcherThreadFilterMessage;
             }
 
             _dictHotKeyToCalBackProc.Add(Id, this);
 
             Debug.Print(result.ToString() + ", " + Id + ", " + virtualKeyCode);
+            Registered = result;
+
             return result;
+        }
+
+        public void Suspend()
+        {
+            Suspended = true;
+            Unregister();
         }
 
         // ******************************************************************
@@ -63,7 +92,12 @@ namespace Translumo.HotKeys
             HotKey hotKey;
             if (_dictHotKeyToCalBackProc.TryGetValue(Id, out hotKey))
             {
-                UnregisterHotKey(IntPtr.Zero, Id);
+                Registered = !UnregisterHotKey(IntPtr.Zero, Id);
+                _dictHotKeyToCalBackProc.Remove(Id);
+            }
+            else
+            {
+                Registered = false;
             }
         }
 
@@ -80,7 +114,7 @@ namespace Translumo.HotKeys
                     {
                         if (hotKey.Action != null)
                         {
-                            hotKey.Action.Invoke(hotKey);
+                            hotKey.Action.Invoke();
                         }
                         handled = true;
                     }

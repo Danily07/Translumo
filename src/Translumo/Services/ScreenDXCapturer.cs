@@ -17,8 +17,6 @@ namespace Translumo.Services
         public int CaptureAttempts { get; set; } = 5;
         public int AttemptDelayMs { get; set; } = 250;
 
-        public bool HasCaptureArea => !_configuration.CaptureArea.IsEmpty;
-
         private Factory1 _factory;
         private Adapter1 _adapter;
         private SharpDX.Direct3D11.Device _device;
@@ -39,8 +37,6 @@ namespace Translumo.Services
         public ScreenDXCapturer(ScreenCaptureConfiguration configuration)
         {
             _configuration = configuration;
-
-            Initialize();
         }
 
         public void Initialize()
@@ -49,7 +45,7 @@ namespace Translumo.Services
             {
                 Dispose();
             }
-
+            
             _factory = new Factory1();
             //Get first adapter
             _adapter = _factory.GetAdapter1(0);
@@ -87,7 +83,28 @@ namespace Translumo.Services
         {
             try
             {
-                return MakeScreenshotInternal(1);
+                if (_configuration.CaptureArea.IsEmpty)
+                {
+                    throw new CaptureException($"Capture area is not selected");
+                }
+
+                return MakeScreenshotInternal(_configuration.CaptureArea, 1);
+            }
+            catch (CaptureException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new CaptureException("Failed to capture screen", ex);
+            }
+        }
+
+        public byte[] CaptureScreen(RectangleF captureArea)
+        {
+            try
+            {
+                return MakeScreenshotInternal(captureArea, 1);
             }
             catch (CaptureException)
             {
@@ -101,17 +118,23 @@ namespace Translumo.Services
 
         public void Dispose()
         {
-            _duplicatedOutput.Dispose();
-            _device.Dispose();
-            _screenTexture.Dispose();
-            _adapter.Dispose();
-            _output.Dispose();
-            _output1.Dispose();
+            _duplicatedOutput?.Dispose();
+            _duplicatedOutput = null;
+            _device?.Dispose();
+            _device = null;
+            _screenTexture?.Dispose();
+            _screenTexture = null;
+            _adapter?.Dispose();
+            _adapter = null;
+            _output?.Dispose();
+            _output = null;
+            _output1?.Dispose();
+            _output1 = null;
 
             _initalized = false;
         }
 
-        private byte[] MakeScreenshotInternal(int curAttempt)
+        private byte[] MakeScreenshotInternal(RectangleF captureArea, int curAttempt)
         {
             SharpDX.DXGI.Resource screenResource = null;
             OutputDuplicateFrameInformation duplicateFrameInformation;
@@ -120,7 +143,7 @@ namespace Translumo.Services
             {
                 // Try to get duplicated frame within given time is ms
                 var resultAcquire =
-                    _duplicatedOutput.TryAcquireNextFrame(80, out duplicateFrameInformation, out screenResource);
+                    _duplicatedOutput.TryAcquireNextFrame(100, out duplicateFrameInformation, out screenResource);
                 if (!resultAcquire.Success)
                 {
                     throw new CaptureException("Failed to acquire frame", resultAcquire.Code);
@@ -157,7 +180,7 @@ namespace Translumo.Services
                     bitmap.UnlockBits(mapDest);
                     _device.ImmediateContext.UnmapSubresource(_screenTexture, 0);
 
-                    return bitmap.Clone(_configuration.CaptureArea, bitmap.PixelFormat)
+                    return bitmap.Clone(captureArea, bitmap.PixelFormat)
                         .ToBytes(ImageFormat.Tiff);
                 }
             }
@@ -170,7 +193,7 @@ namespace Translumo.Services
 
                 Thread.Sleep(AttemptDelayMs);
 
-                return MakeScreenshotInternal(++curAttempt);
+                return MakeScreenshotInternal(captureArea, ++curAttempt);
             }
             finally
             {

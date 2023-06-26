@@ -3,6 +3,7 @@
 
     <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignTextBlock}" x:Key="TextBlockBase">
         <Setter Property="FontSize" Value="11"/>
+        <Setter Property="TextWrapping" Value="Wrap"></Setter>
     </Style>
 
     <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource TextBlockBase}" x:Key="NotificationTextBlock">
@@ -13,6 +14,12 @@
 
     <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource TextBlockBase}" x:Key="ButtonTextBlock">
         <Setter Property="FontSize" Value="15"/>
+    </Style>
+
+    <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource TextBlockBase}" x:Key="AdditionalTextBlock">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontStyle" Value="Italic"></Setter>
+        <Setter Property="HorizontalAlignment" Value="Center"></Setter>
     </Style>
 
     <Style TargetType="{x:Type Run}"  x:Key="PrimaryHeaderRun">

@@ -77,11 +77,17 @@ namespace Translumo.MVVM.ViewModels
 
         private async Task CheckWindowsOcrAvailabilityAsync()
         {
+            if (_ocrConfiguration.InstalledWinOcrLanguages.Contains(_translationConfiguration.TranslateFromLang))
+            {
+                return;
+            }
+
             var langCode = _languageService.GetLanguageDescriptor(_translationConfiguration.TranslateFromLang).Code;
             var toEnableWindowsOcr = false;
             ActionInteractionStage stageToEnableFlag = new ActionInteractionStage(_dialogService, () =>
             {
                 toEnableWindowsOcr = true;
+                _ocrConfiguration.InstalledWinOcrLanguages.Add(_translationConfiguration.TranslateFromLang);
                 return Task.CompletedTask;
             });
             try

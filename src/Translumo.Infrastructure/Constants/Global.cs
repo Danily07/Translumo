@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
@@ -27,9 +28,9 @@ namespace Translumo.Infrastructure.Constants
         }
 
 
-        public static string GetVersion()
+        public static Version GetVersion()
         {
-            return FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).ProductVersion;
+            return new Version(FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).ProductVersion);
         }
     }
 }

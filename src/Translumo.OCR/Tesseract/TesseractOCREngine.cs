@@ -9,8 +9,7 @@ using Translumo.Infrastructure.Language;
 
 namespace Translumo.OCR.Tesseract
 {
-    public class 
-        TesseractOCREngine : IOCREngine, IDisposable
+    public class TesseractOCREngine : IOCREngine, IDisposable
     {
         public bool SecondaryPrimaryCheck => true;
         public Languages DetectionLanguage => _languageDescriptor.Language;

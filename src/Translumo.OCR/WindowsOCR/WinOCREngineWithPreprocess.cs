@@ -7,7 +7,7 @@ using Size = OpenCvSharp.Size;
 
 namespace Translumo.OCR.WindowsOCR
 {
-    public class WinOCREngineWithPreprocess : WindowsOCREngine
+    public sealed class WinOCREngineWithPreprocess : WindowsOCREngine
     {
         public override int Confidence => 4;
         public override byte PrimaryPriority => 5;

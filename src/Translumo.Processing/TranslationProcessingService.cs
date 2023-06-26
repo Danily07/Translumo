@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,14 +24,14 @@ namespace Translumo.Processing
     {
         public bool IsStarted => !_ctSource?.IsCancellationRequested ?? false;
 
-        private readonly IScreenCapturer _capturer;
+        private readonly ICapturerFactory _capturerFactory;
         private readonly IChatTextMediator _chatTextMediator;
         private readonly OcrEnginesFactory _enginesFactory;
         private readonly TranslatorFactory _translatorFactory;
         private readonly TextDetectionProvider _textProvider;
         private readonly TextResultCacheService _textResultCacheService;
         private readonly ILogger _logger;
-        private readonly AutoResetEvent _translationSync = new AutoResetEvent(true);
+        private static readonly object _obj = new object();
 
         private IEnumerable<IOCREngine> _engines;
         private ITranslator _translator;
@@ -38,16 +39,18 @@ namespace Translumo.Processing
         private OcrGeneralConfiguration _ocrGeneralConfiguration;
 
         private CancellationTokenSource _ctSource;
+        private IScreenCapturer _capturer;
+        private IScreenCapturer _onceTimeCapturer;
 
         private const float MIN_SCORE_THRESHOLD = 2.1f;
         
-        public TranslationProcessingService(IScreenCapturer capturer, IChatTextMediator chatTextMediator, OcrEnginesFactory ocrEnginesFactory, TranslatorFactory translationFactory,
+        public TranslationProcessingService(ICapturerFactory capturerFactory, IChatTextMediator chatTextMediator, OcrEnginesFactory ocrEnginesFactory, TranslatorFactory translationFactory,
             TextDetectionProvider textProvider, TranslationConfiguration translationConfiguration, OcrGeneralConfiguration ocrConfiguration, 
             TextResultCacheService textResultCacheService, ILogger<TranslationProcessingService> logger)
         {
             _logger = logger;
             _chatTextMediator = chatTextMediator;
-            _capturer = capturer;
+            _capturerFactory = capturerFactory;
             _translationConfiguration = translationConfiguration;
             _ocrGeneralConfiguration = ocrConfiguration;
             _enginesFactory = ocrEnginesFactory;
@@ -76,16 +79,21 @@ namespace Translumo.Processing
                 return;
             }
 
-            if (!_capturer.HasCaptureArea)
-            {
-                _chatTextMediator.SendText("Capture area is not selected!", false);
-                return;
-            }
-
             _ctSource = new CancellationTokenSource();
             Task.Factory.StartNew(() => TranslateInternal(_ctSource.Token));
 
             _chatTextMediator.SendText("Translation started", TextTypes.Info);
+        }
+
+        public void ProcessOnce(RectangleF captureArea)
+        {
+            if (!_engines.Any())
+            {
+                _chatTextMediator.SendText("No OCR engine is selected!", false);
+                return;
+            }
+
+            Task.Factory.StartNew(() => TranslateOnceInternal(captureArea));
         }
 
         public void StopProcessing()
@@ -97,11 +105,7 @@ namespace Translumo.Processing
 
         private void TranslateInternal(CancellationToken cancellationToken)
         {
-            _translationSync.WaitOne();
-
             const int MAX_TRANSLATE_TASK_POOL = 4;
-            const int SHORT_ITERATION_DELAY_MS = 130;
-            const int ITERATION_DELAY_MS = 330;
             const int SEQUENTIAL_DIFF_LETTERS = 3;
 
             IOCREngine primaryOcr = _engines.OrderByDescending(e => e.PrimaryPriority).First();
@@ -111,109 +115,127 @@ namespace Translumo.Processing
             var activeTranslationTasks = new List<Task>();
             Mat cachedImg = null;
             Guid iterationId;
-            bool? lastIterationFull = true;
+            IterationType lastIterationType = IterationType.None;
             bool sequentialText = false;
 
-            TextDetectionResult GetSecondaryCheckText(byte[] screen, out Mat secondaryMat)
+            TextDetectionResult GetSecondaryCheckText(byte[] screen)
             {
-                Mat grayScaleScreen = secondaryMat = ImageHelper.ToGrayScale(screen);
+                Mat grayScaleScreen = ImageHelper.ToGrayScale(screen);
                 if (cachedImg != null)
                 {
                     var unitedScreen = ImageHelper.UnionImages(cachedImg, grayScaleScreen);
 
+                    cachedImg?.Dispose();
+                    cachedImg = grayScaleScreen;
+
                     return _textProvider.GetText(primaryOcr, unitedScreen);
                 }
-                
+
+                cachedImg = grayScaleScreen;
+
                 return null;
             }
 
+            void CapturerEnsureInitialized()
+            {
+                lock (_obj)
+                {
+                    if (_capturer == null)
+                    {
+                        _capturer = _capturerFactory.CreateCapturer(false);
+                        if (_capturer == null)
+                        {
+                            _chatTextMediator.SendText("Failed to initialize capturer. Please check logs for details", false);
+                            _ctSource.Cancel();
+                        }
+                    }
+                }
+            }
+
+            CapturerEnsureInitialized();
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
-                    if (lastIterationFull.HasValue)
+                    Thread.Sleep(GetIterationDelayMs(lastIterationType, sequentialText));
+                    lock (_obj)
                     {
-                        Thread.Sleep(lastIterationFull.Value ? SHORT_ITERATION_DELAY_MS : ITERATION_DELAY_MS);
                         _textResultCacheService.EndIteration();
-                    }
 
-                    var faultedTask = activeTranslationTasks.FirstOrDefault(t => t.IsFaulted);
-                    activeTranslationTasks.RemoveAll(task => task.IsCompleted);
-                    if (faultedTask != null)
-                    {
-                        throw faultedTask.Exception.InnerException;
-                    }
-
-                    if (activeTranslationTasks.Count >= MAX_TRANSLATE_TASK_POOL)
-                    {
-                        continue;
-                    }
-
-                    byte[] screenshot = _capturer.CaptureScreen();
-                    lastIterationFull = false;
-                    var primaryDetected = _textProvider.GetText(primaryOcr, screenshot);
-                    if (primaryDetected.ValidityScore == 0 || _textResultCacheService.IsCached(primaryDetected.Text, sequentialText))
-                    {
-                        continue;
-                    }
-
-                    if (primaryOcr.SecondaryPrimaryCheck)
-                    {
-                        var res = GetSecondaryCheckText(screenshot, out var secondaryMat);
-                        if (res != null && _textResultCacheService.IsCached(res.Text, false))
+                        var faultedTask = activeTranslationTasks.FirstOrDefault(t => t.IsFaulted);
+                        activeTranslationTasks.RemoveAll(task => task.IsCompleted);
+                        if (faultedTask != null)
                         {
-                            if (primaryDetected.Text.Length - res.Text.Length > SEQUENTIAL_DIFF_LETTERS)
-                            {
-                                sequentialText = true;
-                            }
-                            else
-                            {
-                                cachedImg?.Dispose();
-                                cachedImg = secondaryMat;
-                            }
-                            
+                            throw faultedTask.Exception.InnerException;
+                        }
+
+                        if (activeTranslationTasks.Count >= MAX_TRANSLATE_TASK_POOL)
+                        {
                             continue;
                         }
 
-                        cachedImg?.Dispose();
-                        cachedImg = secondaryMat;
-                    }
+                        byte[] screenshot = _capturer.CaptureScreen();
+                        var primaryDetected = _textProvider.GetText(primaryOcr, screenshot);
+                        lastIterationType = IterationType.Short;
+                        if (primaryDetected.ValidityScore == 0 || _textResultCacheService.IsCached(primaryDetected.Text, sequentialText))
+                        {
+                            continue;
+                        }
 
-                    for (var i = 0; i < otherOcr.Length; i++)
-                    {
-                        detectedResults[i] = _textProvider.GetTextAsync(otherOcr[i], screenshot);
-                    }
+                        if (primaryOcr.SecondaryPrimaryCheck)
+                        {
+                            var res = GetSecondaryCheckText(screenshot);
+                            if (res != null && _textResultCacheService.IsCached(res.Text, false))
+                            {
+                                if (primaryDetected.Text.Length - res.Text.Length > SEQUENTIAL_DIFF_LETTERS)
+                                {
+                                    sequentialText = true;
+                                }
 
-                    detectedResults[^1] = Task.FromResult(primaryDetected);
-                    Task.WaitAll(detectedResults);
+                                continue;
+                            }
+                        }
 
-                    TextDetectionResult bestDetected = GetBestDetectionResult(detectedResults, 3);
-                    if (bestDetected.ValidityScore <= MIN_SCORE_THRESHOLD)
-                    {
+                        for (var i = 0; i < otherOcr.Length; i++)
+                        {
+                            detectedResults[i] = _textProvider.GetTextAsync(otherOcr[i], screenshot);
+                        }
+
+                        detectedResults[^1] = Task.FromResult(primaryDetected);
+                        lastIterationType = IterationType.Full;
+                        Task.WaitAll(detectedResults);
+
+                        TextDetectionResult bestDetected = GetBestDetectionResult(detectedResults, 3);
+                        if (bestDetected.ValidityScore <= MIN_SCORE_THRESHOLD)
+                        {
+                            sequentialText = false;
+                            continue;
+                        }
+
+                        if (_textResultCacheService.IsCached(bestDetected.Text, bestDetected.ValidityScore, sequentialText, out iterationId))
+                        {
+                            sequentialText = false;
+                            continue;
+                        }
+
                         sequentialText = false;
-                        continue;
+                        //resultLogger.LogResults(detectedResults.Select(res => res.Result), screenshot);
+                        activeTranslationTasks.Add(TranslateTextAsync(bestDetected.Text, iterationId));
                     }
-
-                    lastIterationFull = true;
-                    if (_textResultCacheService.IsCached(bestDetected.Text, bestDetected.ValidityScore, sequentialText, out iterationId))
-                    {
-                        sequentialText = false;
-                        continue;
-                    }
-
-                    sequentialText = false;
-                    //resultLogger.LogResults(detectedResults.Select(res => res.Result), screenshot);
-                    activeTranslationTasks.Add(TranslateTextAsync(bestDetected.Text, iterationId));
                 }
                 catch (CaptureException ex)
                 {
-                    if (!lastIterationFull.HasValue)
+                    if (lastIterationType == IterationType.None)
                     {
-                        _chatTextMediator.SendText($"Failed to capture screen", false);
+                        _chatTextMediator.SendText($"Failed to capture screen ({ex.Message})", false);
+                        lastIterationType = IterationType.Short;
                     }
 
                     _logger.LogError(ex, $"Screen capture failed (code: {ex.ErrorCode})");
-                    _capturer.Initialize();
+                    
+                    _capturer.Dispose();
+                    _capturer = null;
+                    CapturerEnsureInitialized();
                 }
                 catch (TranslationException)
                 {
@@ -232,7 +254,53 @@ namespace Translumo.Processing
             }
             _textResultCacheService.Reset();
             _logger.LogTrace("Translation finished");
-            _translationSync.Set();
+        }
+
+        private void TranslateOnceInternal(RectangleF captureArea)
+        {
+            const int TRANSLATION_TIMEOUT_MS = 10000;
+
+            if (_onceTimeCapturer == null)
+            {
+                _onceTimeCapturer = _capturerFactory.CreateCapturer(true);
+                if (_onceTimeCapturer == null)
+                {
+                    _chatTextMediator.SendText("Failed to initialize capturer. Please check logs for details", false);
+
+                    return;
+                }
+            }
+
+            try
+            {
+                Task translationTask;
+                lock (_obj)
+                {
+                    byte[] screenshot = _onceTimeCapturer.CaptureScreen(captureArea);
+                    var taskResults = _engines.Select(engine => _textProvider.GetTextAsync(engine, screenshot)).ToArray();
+
+                    Task.WaitAll(taskResults);
+                    TextDetectionResult bestDetected = GetBestDetectionResult(taskResults, 3);
+                    translationTask = TranslateTextAsync(bestDetected.Text, Guid.NewGuid());
+                }
+
+                translationTask.Wait(TRANSLATION_TIMEOUT_MS);
+            }
+            catch (CaptureException ex)
+            {
+                _chatTextMediator.SendText($"Failed to capture screen ({ex.Message})", false);
+                _logger.LogError(ex, $"Screen capture failed (code: {ex.ErrorCode})");
+            }
+            catch (AggregateException ex) when (ex.InnerException is TextDetectionException innerEx)
+            {
+                _chatTextMediator.SendText($"Text detection is failed ({innerEx.SourceOCREngineType.Name})", false);
+                _logger.LogError(ex, $"Unexpected error during text detection ({innerEx.SourceOCREngineType})");
+            }
+            catch (Exception ex)
+            {
+                _chatTextMediator.SendText($"Unknown error: {ex.Message}", false);
+                _logger.LogError(ex, $"Processing iteration failed due to unknown error");
+            }
         }
 
         private async Task TranslateTextAsync(string text, Guid iterationId)
@@ -241,6 +309,24 @@ namespace Translumo.Processing
             if (!string.IsNullOrWhiteSpace(translation) && !_textResultCacheService.IsTranslatedCached(translation, iterationId))
             {
                 _chatTextMediator.SendText(translation, true);
+            }
+        }
+
+        private int GetIterationDelayMs(IterationType lastIterationType, bool withSequentialText)
+        {
+            if (withSequentialText)
+            {
+                return 700;
+            }
+
+            switch (lastIterationType)
+            {
+                case IterationType.Full:
+                    return 320;
+                case IterationType.Short:
+                    return 115;
+                default:
+                    return 0;
             }
         }
 
@@ -299,6 +385,13 @@ namespace Translumo.Processing
             return _enginesFactory
                 .GetEngines(_ocrGeneralConfiguration.OcrConfigurations, _translationConfiguration.TranslateFromLang)
                 .ToArray();
+        }
+
+        private enum IterationType : byte
+        {
+            None = 0,
+            Full = 1,
+            Short = 2
         }
     }
 }
