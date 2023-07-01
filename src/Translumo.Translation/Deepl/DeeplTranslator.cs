@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.Extensions.Logging;
 using Translumo.Infrastructure.Language;
 using Translumo.Translation.Configuration;
@@ -20,6 +21,17 @@ namespace Translumo.Translation.Deepl
         public DeepLTranslator(TranslationConfiguration translationConfiguration, LanguageService languageService, ILogger logger)
             : base(translationConfiguration, languageService, logger)
         {
+        }
+
+        public override Task<string> TranslateTextAsync(string sourceText)
+        {
+            //TODO: Temp implementation for specific lang
+            if (TargetLangDescriptor.Language == Languages.Vietnamese)
+            {
+                throw new TransactionException("DeepL translator for this language is unavailable");
+            }
+
+            return base.TranslateTextAsync(sourceText);
         }
 
         protected override async Task<string> TranslateTextInternal(DeeplContainer container, string sourceText)
