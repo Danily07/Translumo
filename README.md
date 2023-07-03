@@ -63,6 +63,8 @@ Generally, I recommend always keep Windows OCR turned on. This is the most effec
 <p>There is a high probability that translation service temporarily blocked requests from your IP. You can change translator or configure proxy list.</p>
 <h4>Can't enable Windows OCR</h4>
 <p>Make sure that the application is runned as an Administrator. Translumo each time tries check installed Windows language pack via PowerShell.</p>
+<h4>I set borderless/windowed mode, but a translation window is still displayed under a game</h4>
+<p>When game is running and focused use the hotkey (ALT+T by default) to hide and then show again translation window</p>
 <h4>Package downloading for EasyOCR failed</h4>
 <p>Try to re-install it under VPN</p>
 <h4>Hotkeys don't work</h4>
