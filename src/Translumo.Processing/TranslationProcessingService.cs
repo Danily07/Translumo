@@ -316,7 +316,7 @@ namespace Translumo.Processing
         {
             if (withSequentialText)
             {
-                return 700;
+                return 620;
             }
 
             switch (lastIterationType)
