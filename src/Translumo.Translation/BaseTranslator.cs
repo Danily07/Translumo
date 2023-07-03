@@ -60,14 +60,19 @@ namespace Translumo.Translation
                         Logger.LogWarning($"Translation container is blocked until {container.BlockedUntilUtc.Value.ToLocalTime()} ({container.Proxy})");
                     }
                     
-                    container = GetContainer(false, container);
-                    if (container == null)
+                    var backupContainer = GetContainer(false, container);
+                    if (backupContainer == null)
                     {
                         Logger.LogError(ex, $"Translation attempts were exceeded. Source text: '{sourceText}'");
                         throw new TranslationException("Failed to to translate text. Attempts were attempts exceeded");
                     }
 
-                    await Task.Delay(AttemptDelayMs);
+                    if (backupContainer == container)
+                    {
+                        await Task.Delay(AttemptDelayMs);
+                    }
+
+                    container = backupContainer;
                 }
                 catch (Exception ex)
                 {
@@ -83,8 +88,7 @@ namespace Translumo.Translation
         protected virtual TContainer GetContainer(bool usePrimary, TContainer lastUsedContainer = null)
         {
             var targetContainer = Containers.Where(container => !container.IsBlocked)
-                .OrderBy(container => container == lastUsedContainer ? DateTime.MinValue :  container.LastTimeUsedUtc)
-                .FirstOrDefault();
+                .MinBy(container => container == lastUsedContainer ? DateTime.MaxValue :  container.LastTimeUsedUtc);
 
             if (targetContainer == null && usePrimary)
             {

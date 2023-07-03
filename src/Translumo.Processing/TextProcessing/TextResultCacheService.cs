@@ -16,9 +16,10 @@ namespace Translumo.Processing.TextProcessing
 
         public int CacheLifeTimeMs { get; set; } = 3000;
 
-        private const int CACHE_DEF_CAPACITY = 28;
+        private const int CACHE_DEF_CAPACITY = 24;
         private const int CACHE_TRANSLATED_DEF_CAPACITY = 6;
         private const double SIMILARITY_THRESHOLD = 0.7;
+        private const double UPPER_SIMILARITY_THRESHOLD = 0.9;
         private const double TRANSLATED_SIMILARITY_THRESHOLD = 0.955;
 
         private DateTime? _cachedDateTime;
@@ -145,7 +146,14 @@ namespace Translumo.Processing.TextProcessing
                 var textSimilarity = cachedTextPair.Key.GetSimilarity(text);
                 if (textSimilarity > SIMILARITY_THRESHOLD)
                 {
-                    if (cachedTextPair.Value >= score && (cachedTextPair.Value != float.MaxValue || score != float.MaxValue))
+                    if (cachedTextPair.Value == float.MaxValue)
+                    {
+                        if (score != float.MaxValue && textSimilarity > UPPER_SIMILARITY_THRESHOLD)
+                        {
+                            return true;
+                        }
+                    }
+                    else if (cachedTextPair.Value >= score)
                     {
                         return true;
                     }

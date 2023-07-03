@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Translumo.Infrastructure.Constants;
 using Translumo.Infrastructure.Language;
@@ -33,6 +35,7 @@ namespace Translumo.Processing.TextProcessing
         private readonly LanguageService _languageService;
         private readonly string _predictionModelsPath = Path.Combine(Global.ModelsPath, "Prediction");
         private readonly ILogger _logger;
+        private readonly ManualResetEvent _sync = new ManualResetEvent(false);
 
         private IReadOnlyDictionary<string, string> _replacers = new Dictionary<string, string>()
         {
@@ -99,6 +102,11 @@ namespace Translumo.Processing.TextProcessing
             }
 
             var curAttempt = 0;
+            if (!_validityPredictor.Loaded)
+            {
+                _sync.WaitOne(6000);
+            }
+
             while (true)
             {
                 curAttempt++;
@@ -118,6 +126,7 @@ namespace Translumo.Processing.TextProcessing
 
         private void Init()
         {
+            _sync.Reset();
             _logger.LogTrace($"Initialization prediction model (lang: {Language})");
             _languageDescriptor = _languageService.GetLanguageDescriptor(Language);
             var modelPath = Path.Combine(_predictionModelsPath, _languageDescriptor.TextScorePredictorModel);
@@ -132,6 +141,7 @@ namespace Translumo.Processing.TextProcessing
                 throw;
             }
 
+            _sync.Set();
             _langAlphabetRegex = BuildAlphabetRegex(_languageDescriptor.SupportedNamedBlocks);
             _textTokenizer = _languageDescriptor.UseWordTokenizer ? new TextTokenizer(_languageDescriptor.Code) : null;
         }

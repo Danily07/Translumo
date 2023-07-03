@@ -8,7 +8,7 @@ namespace Translumo.Infrastructure.MachineLearning
         where TInput: class
         where TOutput: class, new()
     {
-        public bool Loaded => _model != null;
+        public bool Loaded { get; private set; }
 
         private readonly MLContext _context;
         private ITransformer _model;
@@ -17,6 +17,7 @@ namespace Translumo.Infrastructure.MachineLearning
         public MlPredictor()
         {
             this._context = new MLContext();
+            this.Loaded = false;
         }
 
         public void LoadModel(string path)
@@ -25,15 +26,21 @@ namespace Translumo.Infrastructure.MachineLearning
             {
                 throw new ArgumentException($"Model '{path}' is not found");
             }
-            _predictor?.Dispose();
+
+            if (Loaded)
+            {
+                UnloadModel();
+            }
             
             _model = _context.Model.Load(path, out var schema);
             _predictor = _context.Model.CreatePredictionEngine<TInput, TOutput>(_model);
+            Loaded = true;
         }
 
         public void UnloadModel()
         {
-            _predictor?.Dispose();
+            Dispose();
+            Loaded = false;
             _model = null;
             _predictor = null;
         }

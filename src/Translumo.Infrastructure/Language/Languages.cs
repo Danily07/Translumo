@@ -14,6 +14,7 @@ namespace Translumo.Infrastructure.Language
         French = 6,
         German = 7,
         Spanish = 8,
-        Portuguese = 9
+        Portuguese = 9,
+        Vietnamese = 10
     }
 }
