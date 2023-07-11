@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.Extensions.Logging;
 using Translumo.Infrastructure.Language;
 using Translumo.Translation.Configuration;
@@ -18,6 +19,18 @@ namespace Translumo.Translation.Papago
         {
             this._sync = new AutoResetEvent(true);
         }
+
+        public override Task<string> TranslateTextAsync(string sourceText)
+        {
+            //TODO: Temp implementation for specific lang
+            if (TargetLangDescriptor.Language == Languages.Turkish)
+            {
+                throw new TransactionException("Papago translator is unavailable for this language");
+            }
+
+            return base.TranslateTextAsync(sourceText);
+        }
+
 
         protected override async Task<string> TranslateTextInternal(PapagoContainer container, string sourceText)
         {
