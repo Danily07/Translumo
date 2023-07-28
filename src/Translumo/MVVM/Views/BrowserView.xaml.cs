@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json;
 using Translumo.MVVM.Common;
+using Translumo.Translation.Configuration;
 using Translumo.Utils;
 
 namespace Translumo.MVVM.Views
@@ -41,7 +43,11 @@ namespace Translumo.MVVM.Views
 
         public string TargetPageUrl { get; set; }
 
+        public string SourcePageUrl { get; set; }
+
         public WebPageInfo TargetPageInfo { get; set; }
+
+        public WebProxy Proxy { get; set; }
 
         public BrowserView(Guid sessionId)
         {
@@ -50,6 +56,26 @@ namespace Translumo.MVVM.Views
             this.SessionId = sessionId;
             this.Browser.NavigationCompleted += BrowserOnNavigationCompleted;
             this.Browser.CoreWebView2InitializationCompleted += BrowserOnCoreWebView2InitializationCompleted;
+            this.Loaded += OnLoaded;
+        }
+
+        private async void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (Proxy != null)
+            {
+                var credential = Proxy.Credentials as NetworkCredential;
+                var options = new CoreWebView2EnvironmentOptions(additionalBrowserArguments: $"--proxy-server=\"{Proxy.Address.Host}:{Proxy.Address.Port}\"");
+                var env = await CoreWebView2Environment.CreateAsync(options: options);
+                await Browser.EnsureCoreWebView2Async(env);
+
+                Browser.CoreWebView2.BasicAuthenticationRequested += (sender, args) =>
+                {
+                    args.Response.UserName = credential.UserName;
+                    args.Response.Password = credential.Password;
+                };
+            }
+            
+            Browser.Source = new Uri(SourcePageUrl);
         }
 
         private void BrowserOnCoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
@@ -59,9 +85,10 @@ namespace Translumo.MVVM.Views
 
         private async void BrowserOnNavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
+            var content = await GetInnerHtmlPageAsync();
             if (!string.IsNullOrEmpty(TargetPageUrl) && Browser.Source == new Uri(TargetPageUrl))
             {
-                await this.ProcessClose();
+                await this.ProcessClose(content);
             }
         }
 
@@ -76,10 +103,23 @@ namespace Translumo.MVVM.Views
             this.Activate();
         }
 
-        private async Task ProcessClose()
+        private void Window_SourceInitialized(object sender, EventArgs e)
         {
-            var htmlContent = await Browser.CoreWebView2.ExecuteScriptAsync("document.body.outerHTML");
+            WindowHelper.RemoveIcon(this);
+            if (string.IsNullOrEmpty(NotificationCaption))
+            {
+                OverlayNotification.Visibility = Visibility.Hidden;
+            }
+        }
 
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            OverlayNotification.Dispose();
+            Browser.Dispose();
+        }
+
+        private async Task ProcessClose(string htmlContent)
+        {
             TargetPageInfo = new WebPageInfo()
             {
                 Body = JsonConvert.DeserializeObject(htmlContent)?.ToString(),
@@ -89,20 +129,21 @@ namespace Translumo.MVVM.Views
             this.Close();
         }
 
-        private void Window_SourceInitialized(object sender, EventArgs e)
+        private async Task<string> GetInnerHtmlPageAsync()
         {
-            WindowHelper.RemoveIcon(this);
-            if (string.IsNullOrEmpty(NotificationCaption))
-            {
-                OverlayNotification.Visibility = Visibility.Hidden;
-                //Overlay.Visibility = Visibility.Hidden;
-            }
-        }
+            const int LOAD_DELAY_MS = 400;
+            const int LOAD_ATTEMPTS = 7;
 
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            OverlayNotification.Dispose();
-            Browser.Dispose();
+            var htmlContent = string.Empty;
+            var curAttempt = 1;
+            while (htmlContent.Length < 5 && curAttempt <= LOAD_ATTEMPTS)
+            {
+                htmlContent = await Browser.CoreWebView2.ExecuteScriptAsync("document.body.innerHTML");
+                curAttempt++;
+                await Task.Delay(LOAD_DELAY_MS);
+            }
+
+            return htmlContent;
         }
     }
 }

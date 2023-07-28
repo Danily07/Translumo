@@ -36,23 +36,14 @@ namespace Translumo.Services
 
         private static async Task<BrowserView> CreateBrowserView(Guid sessionId, string sourceAddress, string targetUrl, WebProxy proxy = null, string notificationDescription = null)
         {
-            var browserView = new BrowserView(sessionId);
-            browserView.TargetPageUrl = targetUrl;
-            browserView.Browser.Source = new Uri(sourceAddress);
-            browserView.NotificationCaption = notificationDescription;
-            if (proxy != null)
+            var browserView = new BrowserView(sessionId)
             {
-                var credential = proxy.Credentials as NetworkCredential;
-                browserView.Browser.CoreWebView2.BasicAuthenticationRequested += (sender, args) =>
-                {
-                    args.Response.UserName = credential.UserName;
-                    args.Response.Password = credential.Password;
-                };
-                var options = new CoreWebView2EnvironmentOptions(additionalBrowserArguments: $"--proxy-server=\"{proxy.Address.Host}:{proxy.Address.Port}\"");
-                var env = await CoreWebView2Environment.CreateAsync(options: options);
-                await browserView.Browser.EnsureCoreWebView2Async(env);
-            }
-            
+                TargetPageUrl = targetUrl,
+                SourcePageUrl = sourceAddress,
+                NotificationCaption = notificationDescription,
+                Proxy = proxy
+            };
+
             browserView.Closed += BrowserViewOnClosed;
 
             return browserView;
