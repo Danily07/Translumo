@@ -16,10 +16,13 @@ namespace Translumo.Translation.Yandex
         public readonly string YandexApiUrl = "https://translate.yandex.net/api/v1/tr.json/translate";
 
         public HttpReader HttpReader { get; protected set; }
+        public Uri YandexRuUri { get; }
+
 
         public YandexReaderProxy(Proxy proxy = null)
         {
             HttpReader = CreateReader(proxy);
+            YandexRuUri = new Uri(YandexRuUrl);
         }
 
         public async Task<string> RequestSidAsync()
@@ -42,7 +45,7 @@ namespace Translumo.Translation.Yandex
             if (response.IsSuccessful)
             {
                 var deserialized = JsonSerializer.Deserialize<YandexResponse>(response.Body);
-                if (deserialized != null && deserialized.Text.Any())
+                if (deserialized != null && (deserialized.Text?.Any() ?? false))
                 {
                     return Uri.UnescapeDataString(string.Join(" ", deserialized.Text));
                 }
@@ -92,6 +95,9 @@ namespace Translumo.Translation.Yandex
             reader.OptionalHeaders.Add("Sec-Fetch-Dest", "document");
             reader.OptionalHeaders.Add("Sec-Fetch-User", "?1");
             reader.OptionalHeaders.Add("Upgrade-Insecure-Requests", "1");
+            reader.OptionalHeaders.Add("Sec-Ch-Ua-Platform", "Windows");
+            reader.OptionalHeaders.Add("Sec-Ch-Ua", "\"Not/A)Brand\";v=\"99\", \"Microsoft Edge\";v=\"115\", \"Chromium\";v=\"115\"");
+            reader.OptionalHeaders.Add("X-Retpath-Y", "https://translate.yandex.ru");
 
             return reader;
         }

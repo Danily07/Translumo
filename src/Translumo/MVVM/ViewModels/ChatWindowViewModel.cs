@@ -172,8 +172,8 @@ namespace Translumo.MVVM.ViewModels
 
             return new BrowseSiteDispatchResult()
             {
-                HtmlPage = result.Body,
-                Cookies = result.Cookies
+                HtmlPage = result?.Body,
+                Cookies = result?.Cookies
             };
         }
 

@@ -49,6 +49,12 @@ namespace Translumo.MVVM.Views
 
             this.SessionId = sessionId;
             this.Browser.NavigationCompleted += BrowserOnNavigationCompleted;
+            this.Browser.CoreWebView2InitializationCompleted += BrowserOnCoreWebView2InitializationCompleted;
+        }
+
+        private void BrowserOnCoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
+        {
+            Browser.CoreWebView2.CookieManager.DeleteAllCookies();
         }
 
         private async void BrowserOnNavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
