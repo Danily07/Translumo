@@ -14,15 +14,22 @@ namespace Translumo.Processing.TextProcessing
         public Languages Language
         {
             get => _textValidityPredictor.Language;
-            set => _textValidityPredictor.Language = value;
+            set
+            {
+                _textValidityPredictor.Language = value;
+                _languageDescriptor = _languageService.GetLanguageDescriptor(value);
+            }
         }
 
-        private readonly TextValidityPredictor _textValidityPredictor;
+        private LanguageDescriptor _languageDescriptor;
 
+        private readonly TextValidityPredictor _textValidityPredictor;
+        private readonly LanguageService _languageService;
         
-        public TextDetectionProvider(TextValidityPredictor textValidityPredictor)
+        public TextDetectionProvider(TextValidityPredictor textValidityPredictor, LanguageService languageService)
         {
             this._textValidityPredictor = textValidityPredictor;
+            this._languageService = languageService;
         }
 
         public virtual TextDetectionResult GetText(IOCREngine ocrEngine, byte[] img)
@@ -34,7 +41,7 @@ namespace Translumo.Processing.TextProcessing
 
                 var scorePrediction = _textValidityPredictor.Predict(detectedLines, out var validatedText);
 
-                return new TextDetectionResult(ocrEngine)
+                return new TextDetectionResult(ocrEngine, _languageDescriptor)
                 {
                     ValidityScore = scorePrediction,
                     Text = resultText,

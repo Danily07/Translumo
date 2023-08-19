@@ -26,6 +26,8 @@
 
         public bool TranslationOnly { get; set; } = false;
 
+        public bool Asian { get; set; } = false;
+
         public override bool Equals(object obj)
         {
             var langDesc = obj as LanguageDescriptor;

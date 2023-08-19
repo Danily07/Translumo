@@ -212,7 +212,8 @@ namespace Translumo.Processing
                             continue;
                         }
 
-                        if (_textResultCacheService.IsCached(bestDetected.Text, bestDetected.ValidityScore, sequentialText, out iterationId))
+                        if (_textResultCacheService.IsCached(bestDetected.Text, bestDetected.ValidityScore, sequentialText, 
+                                bestDetected.Language.Asian, out iterationId))
                         {
                             sequentialText = false;
                             continue;
