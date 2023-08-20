@@ -92,6 +92,8 @@
     <system:String x:Key="Str.Languages.Spanish">Spanish</system:String>
     <system:String x:Key="Str.Languages.Portuguese">Portuguese</system:String>
     <system:String x:Key="Str.Languages.Vietnamese">Vietnamese</system:String>
+    <system:String x:Key="Str.Languages.Turkish">Turkish</system:String>
+    <system:String x:Key="Str.Languages.Thai">Thai</system:String>
 
     <!--Dialog stages-->
     <system:String x:Key="Str.Stages.CheckPyModules">Checking installed modules...</system:String>

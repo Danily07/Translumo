@@ -8,7 +8,10 @@ namespace Translumo.Translation.Yandex
     {
         public static YandexRequest CreateRequest(YandexContainer container, string text, string sourceLangCode, string targetLangCode)
         {
-            string yandexUid = GetYandexUid(container.Reader.HttpReader, container.Reader.YandexRuUrl);
+            string yandexUid = GetYandexCookieValue(container.Reader, "yandexuid");
+            string yandexYum = GetYandexCookieValue(container.Reader, "_ym_uid");
+            string yandexSpravka = GetYandexCookieValue(container.Reader, "spravka");
+
             return new YandexRequest()
             {
                 QueryParams = new YandexRequest.YandexRequestQuery()
@@ -20,7 +23,9 @@ namespace Translumo.Translation.Yandex
                     Reason = "auto",
                     Format = "text",
                     Ajax = 1,
-                    Yu = yandexUid
+                    Yu = yandexUid,
+                    Yum = yandexYum,
+                    Sprvk = yandexSpravka
                 },
                 Body = new YandexRequest.YandexRequestBody()
                 {
@@ -30,11 +35,11 @@ namespace Translumo.Translation.Yandex
             };
         }
 
-        private static string GetYandexUid(HttpReader yandexReader, string yandexUrl)
+        private static string GetYandexCookieValue(YandexReaderProxy yandexReader, string cookieName)
         {
-            return yandexReader.Cookies
-                .GetCookies(new Uri(yandexUrl))
-                .FirstOrDefault(cookie => cookie.Name == "yandexuid")
+            return yandexReader.HttpReader.Cookies
+                .GetCookies(yandexReader.YandexRuUri)
+                .FirstOrDefault(cookie => cookie.Name == cookieName)
                 ?.Value;
         }
     }

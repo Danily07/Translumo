@@ -16,9 +16,10 @@ namespace Translumo.Processing.TextProcessing
 
         public int CacheLifeTimeMs { get; set; } = 3000;
 
-        private const int CACHE_DEF_CAPACITY = 24;
+        private const int CACHE_DEF_CAPACITY = 20;
         private const int CACHE_TRANSLATED_DEF_CAPACITY = 6;
-        private const double SIMILARITY_THRESHOLD = 0.7;
+        private const double SIMILARITY_THRESHOLD = 0.65;
+        private const double LOWER_SIMILARITY_THRESHOLD = 0.55;
         private const double UPPER_SIMILARITY_THRESHOLD = 0.9;
         private const double TRANSLATED_SIMILARITY_THRESHOLD = 0.955;
 
@@ -49,7 +50,7 @@ namespace Translumo.Processing.TextProcessing
             return isCached;
         }
 
-        public bool IsCached(string text, float score, bool isSequentialText, out Guid iterationId)
+        public bool IsCached(string text, float score, bool isSequentialText, bool isAsianLanguage, out Guid iterationId)
         {
             try
             {
@@ -60,7 +61,7 @@ namespace Translumo.Processing.TextProcessing
                 
                 _cachedTextsCurrentIteration.Add(new KeyValuePair<string, float>(text, score));
 
-                return HasBetterSimilarText(text, score) && !isSequentialText;
+                return HasBetterSimilarText(text, score, isAsianLanguage) && !isSequentialText;
             }
             finally
             {
@@ -71,7 +72,7 @@ namespace Translumo.Processing.TextProcessing
         public bool IsTranslatedCached(string text, Guid iterationId)
         {
             var hasSimilarity = _cachedTranslated.Any(cached => 
-                cached.Item2 == iterationId && cached.Item1.GetSimilarity(text) > TRANSLATED_SIMILARITY_THRESHOLD);
+                cached.Item2 == iterationId && cached.Item1.GetJaroSimilarity(text) > TRANSLATED_SIMILARITY_THRESHOLD);
             if (!hasSimilarity)
             {
                 _cachedTranslated.Enqueue((text, iterationId));
@@ -138,13 +139,14 @@ namespace Translumo.Processing.TextProcessing
             }
         }
 
-        private bool HasBetterSimilarText(string text, float score)
+        private bool HasBetterSimilarText(string text, float score, bool isAsianLanguage)
         {
             var hasSimilar = false;
+            var threshold = isAsianLanguage ? LOWER_SIMILARITY_THRESHOLD : SIMILARITY_THRESHOLD;
             foreach (var cachedTextPair in _cachedTexts)
             {
-                var textSimilarity = cachedTextPair.Key.GetSimilarity(text);
-                if (textSimilarity > SIMILARITY_THRESHOLD)
+                var textSimilarity = GetTextSimilarity(cachedTextPair.Key, text);
+                if (textSimilarity > threshold)
                 {
                     if (cachedTextPair.Value == float.MaxValue)
                     {
@@ -168,6 +170,14 @@ namespace Translumo.Processing.TextProcessing
             }
 
             return false;
+        }
+
+        private double GetTextSimilarity(string text1, string text2)
+        {
+            var jaroSimilarity = text1.GetJaroSimilarity(text2);
+            var diceSimilarity = text1.GetDiceSimilarity(text2);
+
+            return ((jaroSimilarity == 0 ? diceSimilarity : jaroSimilarity) + diceSimilarity) / 2.0;
         }
     }
 }

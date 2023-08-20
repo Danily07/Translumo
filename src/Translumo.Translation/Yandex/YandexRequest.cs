@@ -23,6 +23,10 @@
             public int Ajax { get; set; }
 
             public string Yu { get; set; }
+
+            public string Yum { get; set; }
+
+            public string Sprvk { get; set; }
         }
 
         public class YandexRequestBody

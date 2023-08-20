@@ -14,7 +14,7 @@ namespace Translumo.Translation.Google
 {
     public class GoogleTranslator : BaseTranslator<GoogleContainer>
     {
-        private const string TRANSLATE_URL = "https://translate.google.com/m?hl=ru&sl={0}&tl={1}&ie=UTF-8&prev=_m&q={2}";
+        private const string TRANSLATE_URL = "https://translate.google.com/m?hl={1}&sl={0}&tl={1}&ie=UTF-8&prev=_m&q={2}";
         
         public GoogleTranslator(TranslationConfiguration translationConfiguration, LanguageService languageService, ILogger logger) 
             : base(translationConfiguration, languageService, logger)

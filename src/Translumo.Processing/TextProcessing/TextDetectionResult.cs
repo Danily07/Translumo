@@ -1,4 +1,5 @@
 ﻿using System;
+using Translumo.Infrastructure.Language;
 using Translumo.OCR;
 
 namespace Translumo.Processing.TextProcessing
@@ -13,12 +14,15 @@ namespace Translumo.Processing.TextProcessing
         
         public IOCREngine SourceEngine { get; }
 
+        public LanguageDescriptor Language { get; }
+
         private const float LONG_SCORE_THRESHOLD = 3.81f;
         private const float EQUAL_TOLERANCE = 0.001f;
 
-        public TextDetectionResult(IOCREngine engine)
+        public TextDetectionResult(IOCREngine engine, LanguageDescriptor languageDescriptor)
         {
             SourceEngine = engine;
+            Language = languageDescriptor;
         }
 
         public int CompareTo(object obj)
