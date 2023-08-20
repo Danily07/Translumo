@@ -20,7 +20,7 @@
   <li><b>Integrated modern OCR engines:</b> Tesseract 5.2, WindowsOCR, EasyOCR</li>
   <li><b>Available translators:</b> Google Translate, Yandex translate, Naver Papago, DeepL</li>
   <li><b>Available recognition languages:</b> English, Russian, Japanese, Chinese (simplified), Korean</li>
-  <li><b>Available translation languages:</b> English, Russian, Japanese, Chinese (simplified), Korean, French, Spanish, German, Portuguese, Italian</li>
+  <li><b>Available translation languages:</b> English, Russian, Japanese, Chinese (simplified), Korean, French, Spanish, German, Portuguese, Italian, Vietnamese, Thai, Turkish</li>
 </ul>
 <h1>System requirements</h1>
 <ul>
