@@ -43,7 +43,7 @@
 Generally, I recommend always keep Windows OCR turned on. This is the most effective OCR for the primary text detection with less impact on performance. 
 <h3>Recommended combinations of OCR engines</h3>
 <ul>
-  <li><b>Tesseract-Windows OCR-EasyOCR</b> - advanced mode with the highest percision</li>
+  <li><b>Tesseract-Windows OCR-EasyOCR</b> - advanced mode with the highest precision</li>
   <li><b>Tesseract-Windows OCR</b> - noticeably less impact on system performance. It will be enough for cases when text has simple solid background and font is quite common</li>
   <li><b>Windows OCR-EasyOCR</b> - for very specific complex cases it makes sense to disable Tesseract and avoid unnecessary text noises</li>
 </ul>
