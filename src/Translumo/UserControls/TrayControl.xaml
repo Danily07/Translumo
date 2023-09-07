@@ -16,7 +16,7 @@
         <system:Boolean x:Key="ConfirmationClose">False</system:Boolean>
     </UserControl.Resources>
     <Grid>
-        <tb:TaskbarIcon Name="TiIcon" IconSource="/Resources/Icons/favicon.ico" ToolTipText="{StaticResource ApplicationName}" DataContext="{Binding RelativeSource={RelativeSource AncestorType=controls:TrayControl}}">
+        <tb:TaskbarIcon Name="TiIcon" IconSource="/Resources/Icons/favicon.ico" ToolTipText="{StaticResource ApplicationName}" DataContext="{Binding RelativeSource={RelativeSource AncestorType=controls:TrayControl}}" LeftClickCommand="{Binding SettingsOpeningCommand}">
             <tb:TaskbarIcon.ContextMenu>
                 <ContextMenu Style="{StaticResource ContextMenuDefaultStyle}">
                     <MenuItem x:Name="First" Header="{DynamicResource Str.Tray.ShowHideSettings}" Style="{StaticResource MenuItemDefaultStyle}" Command="{Binding SettingsOpeningCommand}"/>
