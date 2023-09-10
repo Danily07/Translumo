@@ -14,7 +14,7 @@ namespace Translumo.Utils.Http
         public bool ThrowExceptions { get; set; }
         public IDictionary<string, string> OptionalHeaders { get; set; }
 
-        public string? UserAgent { get; set; } = "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko";
+        public string? UserAgent { get; set; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36";
         public string? Accept { get; set; } = "text/html, application/xhtml+xml, */*";
         public string? ContentType { get; set; } = "application/x-www-form-urlencoded";
         public WebProxy? Proxy { get; set; }
