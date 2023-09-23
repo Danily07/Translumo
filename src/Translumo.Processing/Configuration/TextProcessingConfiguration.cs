@@ -6,7 +6,7 @@ namespace Translumo.Processing.Configuration
     {
         public static TextProcessingConfiguration Default => new TextProcessingConfiguration()
         {
-            KeepFormatting = true
+            KeepFormatting = false
         };
 
         public bool KeepFormatting

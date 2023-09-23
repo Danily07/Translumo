@@ -50,6 +50,7 @@
     <system:String x:Key="Str.AppearanceSettings.WindowOpacity">Прозрачность окна</system:String>
     <system:String x:Key="Str.AppearanceSettings.FontSizePanelCaption">Цвет окна — изменить</system:String>
     <system:String x:Key="Str.AppearanceSettings.FontColorPanelCaption">Цвет шрифта — изменить</system:String>
+    <system:String x:Key="Str.AppearanceSettings.KeepFormatting" xml:space="preserve">Сохранять исходное&#13;форматирование</system:String>
 
     <!--Proxy settings-->
     <system:String x:Key="Str.ProxySettings.Proxy">Прокси</system:String>
