@@ -26,10 +26,10 @@ namespace Translumo.Infrastructure.Constants
             MultipleSpacesRegex = new Regex(@"\s{2,}", RegexOptions.Compiled);
             StartDotRegex = new Regex(@"^\.{3,}", RegexOptions.Compiled);
             EndDotRegex = new Regex(@"\.{3,}$", RegexOptions.Compiled);
-            GoogleTranslateResultRegex = new Regex("(?<=(<div(.*)class=\"result-container\"(.*)>)).*?(?=(<\\/div>))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            GoogleTranslateResultRegex = new Regex("(?<=(<div(.*)class=\"result-container\"(.*)>))[\\s\\S]*?(?=(<\\/div>))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             GuidGenerationRegex = new Regex("[xy]", RegexOptions.Compiled);
             YandexSidRegex = new Regex(@"(?<=(SID\:\s*')).*(?=('))", RegexOptions.Compiled);
-            DeeplSentenceRegex = new Regex(@"(\S.+?([.!?♪。]|$))(?=\s+|$)", RegexOptions.Compiled);
+            DeeplSentenceRegex = new Regex(@"(\S.+?([.!?♪。]|$))(?=\s+|$)", RegexOptions.Compiled | RegexOptions.Multiline);
         }
     }
 }

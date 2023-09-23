@@ -20,6 +20,7 @@ using Translumo.MVVM.ViewModels;
 using Translumo.OCR;
 using Translumo.OCR.Configuration;
 using Translumo.Processing;
+using Translumo.Processing.Configuration;
 using Translumo.Processing.Interfaces;
 using Translumo.Processing.TextProcessing;
 using Translumo.Services;
@@ -99,6 +100,7 @@ namespace Translumo
             services.AddSingleton<ChatWindowConfiguration>(ChatWindowConfiguration.Default);
             services.AddSingleton<HotKeysConfiguration>(HotKeysConfiguration.Default);
             services.AddSingleton<SystemConfiguration>(SystemConfiguration.Default);
+            services.AddSingleton<TextProcessingConfiguration>(TextProcessingConfiguration.Default);
 
             var chatMediatorInstance = new ChatUITextMediator();
             services.AddSingleton<IChatTextMediator, ChatUITextMediator>(provider => chatMediatorInstance);
