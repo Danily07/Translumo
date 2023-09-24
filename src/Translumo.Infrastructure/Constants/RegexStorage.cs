@@ -29,7 +29,7 @@ namespace Translumo.Infrastructure.Constants
             GoogleTranslateResultRegex = new Regex("(?<=(<div(.*)class=\"result-container\"(.*)>))[\\s\\S]*?(?=(<\\/div>))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             GuidGenerationRegex = new Regex("[xy]", RegexOptions.Compiled);
             YandexSidRegex = new Regex(@"(?<=(SID\:\s*')).*(?=('))", RegexOptions.Compiled);
-            DeeplSentenceRegex = new Regex(@"(\S.+?([.!?♪。]|$))(?=\s+|$)", RegexOptions.Compiled | RegexOptions.Multiline);
+            DeeplSentenceRegex = new Regex(@"(\S.+?([.!?♪。]|$))([\r\n]+|(?=\s+|$))", RegexOptions.Compiled | RegexOptions.Multiline);
         }
     }
 }

@@ -104,7 +104,7 @@ namespace Translumo.Translation.Deepl
                 public Job(string sentence, string contextBefore, string contextAfter)
                 {
                     Kind = "default";
-                    NewLineFollows = sentence.EndsWith("\r");
+                    NewLineFollows = sentence.EndsWith("\r\n");
                     RawEnSentence = sentence;
                     RawEnContextBefore = new List<string>();
                     if (contextBefore != null)
