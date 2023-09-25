@@ -53,7 +53,11 @@ namespace Translumo.MVVM.ViewModels
                 new HotKeyModel(_configuration.OnceTranslateKey,
                     hotKeysServiceManager.GamepadHotkeysEnabled ? _configuration.OnceTranslateGamepadKey : defaultGamepadHotKey,
                     nameof(_configuration.OnceTranslateKey), nameof(_configuration.OnceTranslateGamepadKey),
-                    LocalizationManager.GetValue("Str.Hotkeys.OnceTranslate", false, OnLocalizedValueChanged, this))
+                    LocalizationManager.GetValue("Str.Hotkeys.OnceTranslate", false, OnLocalizedValueChanged, this)),
+                new HotKeyModel(_configuration.WindowStyleChangeKey,
+                    hotKeysServiceManager.GamepadHotkeysEnabled ? _configuration.WindowStyleChangeGamepadKey : defaultGamepadHotKey,
+                    nameof(_configuration.WindowStyleChangeKey), nameof(_configuration.WindowStyleChangeGamepadKey),
+                    LocalizationManager.GetValue("Str.Hotkeys.WindowChangeStyle", false, OnLocalizedValueChanged, this))
             });
 
             Model.ForEach(m => m.PropertyChanged += OnPropertyChanged);

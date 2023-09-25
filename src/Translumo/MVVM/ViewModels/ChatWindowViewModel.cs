@@ -57,6 +57,7 @@ namespace Translumo.MVVM.ViewModels
             hotKeysManager.SettingVisibilityKeyPressed += HotKeysManagerOnSettingVisibilityKeyPressed;
             hotKeysManager.ShowSelectionAreaKeyPressed += HotKeysManagerOnShowSelectionAreaKeyPressed;
             hotKeysManager.OnceTranslateKeyPressed += HotKeysManagerOnOnceTranslateKeyPressed;
+            hotKeysManager.WindowStyleChangeKeyPressed += HotKeysManagerOnWindowStyleChangeKeyPressed;
             chatTextMediator.TextRaised += ChatTextMediatorOnTextRaised;
         }
 
@@ -122,6 +123,18 @@ namespace Translumo.MVVM.ViewModels
             }
         }
 
+        private void HotKeysManagerOnWindowStyleChangeKeyPressed(object sender, EventArgs e)
+        { 
+            const int WS_EX_TRANSPARENT = 0x00000020;
+            const int GWL_EXSTYLE = -20;
+
+            IntPtr hwnd = _dialogService.GetWindowHandle<ChatWindowViewModel>();
+            int extendedStyle = Win32Interfaces.GetWindowLong(hwnd, GWL_EXSTYLE);
+            Win32Interfaces.SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle ^ WS_EX_TRANSPARENT);
+            
+            bool isLocked = (extendedStyle | WS_EX_TRANSPARENT) != extendedStyle;
+            Model.AddChatItem(LocalizationManager.GetValue(isLocked ? "Str.Chat.WindowLocked" : "Str.Chat.WindowUnlocked"), TextTypes.Info);
+        }
 
         private void OnShowHideSettings()
         {

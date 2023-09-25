@@ -23,6 +23,8 @@
 
     <!--Chat-->
     <system:String x:Key="Str.Chat.SettingsOpened">Закройте окно настроек чтобы начать перевод</system:String>
+    <system:String x:Key="Str.Chat.WindowLocked">Окно перевода заблокировано</system:String>
+    <system:String x:Key="Str.Chat.WindowUnlocked">Окно перевода разблокировано</system:String>
 
     <!--Language settings-->
     <system:String x:Key="Str.LangSettings.SourceLang">Исходный язык</system:String>
@@ -36,6 +38,7 @@
     <system:String x:Key="Str.Hotkeys.OnOffTranslation">Включить/выключить перевод</system:String>
     <system:String x:Key="Str.Hotkeys.ShowSelectArea">Показать выбранную область перевода</system:String>
     <system:String x:Key="Str.Hotkeys.OnceTranslate">Выбрать область и перевести текст один раз</system:String>
+    <system:String x:Key="Str.Hotkeys.WindowChangeStyle">Заблокировать/разблокировать окно перевода</system:String>
     <system:String x:Key="Str.Hotkeys.SettingsShowHelp">Нажмите '{0}' чтобы открыть настройки</system:String>
     <system:String x:Key="Str.Hotkeys.SelectAreaHelp">Нажмите '{0}' чтобы выбрать область захвата текста</system:String>
     <system:String x:Key="Str.Hotkeys.OnTranslationHelp">Нажмите '{0}' чтобы начать перевод</system:String>

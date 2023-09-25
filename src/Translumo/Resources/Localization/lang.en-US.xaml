@@ -23,6 +23,8 @@
 
     <!--Chat-->
     <system:String x:Key="Str.Chat.SettingsOpened">Close settings to start translation</system:String>
+    <system:String x:Key="Str.Chat.WindowLocked">Translation window has been locked</system:String>
+    <system:String x:Key="Str.Chat.WindowUnlocked">Translation window has been unlocked</system:String>
 
     <!--Language settings-->
     <system:String x:Key="Str.LangSettings.SourceLang">Source language</system:String>
@@ -36,6 +38,7 @@
     <system:String x:Key="Str.Hotkeys.OnOffTranslation">On/off translation</system:String>
     <system:String x:Key="Str.Hotkeys.ShowSelectArea">Show selected screen capture area</system:String>
     <system:String x:Key="Str.Hotkeys.OnceTranslate">Select area and translate text once</system:String>
+    <system:String x:Key="Str.Hotkeys.WindowChangeStyle">Lock/unlock translation window</system:String>
     <system:String x:Key="Str.Hotkeys.SettingsShowHelp">Press '{0}' to open the Settings</system:String>
     <system:String x:Key="Str.Hotkeys.SelectAreaHelp">Press '{0}' to select detection area</system:String>
     <system:String x:Key="Str.Hotkeys.OnTranslationHelp">Press '{0}' to start translation</system:String>
