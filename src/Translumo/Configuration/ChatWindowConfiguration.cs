@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media;
+using Translumo.Processing.Configuration;
 using Translumo.Utils;
 
 namespace Translumo.Configuration
@@ -59,6 +60,16 @@ namespace Translumo.Configuration
             }
         }
 
+        [MapInternal]
+        public TextProcessingConfiguration TextProcessing
+        {
+            get => _textProcessing;
+            set
+            {
+                SetProperty(ref _textProcessing, value);
+            }
+        }
+
         public static ChatWindowConfiguration Default => new()
         {
             BackgroundColor = Color.FromRgb(0, 0, 0),
@@ -75,5 +86,6 @@ namespace Translumo.Configuration
         private int _fontSize;
         private bool _fontBold;
         private int _lineSpacing;
+        private TextProcessingConfiguration _textProcessing = TextProcessingConfiguration.Default;
     }
 }

@@ -21,40 +21,60 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="365"></ColumnDefinition>
+            <ColumnDefinition Width="399"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" >
-            <StackPanel.Resources>
+        <Grid Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" >
+            <Grid.Resources>
                 <Style TargetType="{x:Type StackPanel}">
                     <Setter Property="Margin" Value="0,0,0,7"></Setter>
                 </Style>
-            </StackPanel.Resources>
-            <StackPanel Orientation="Horizontal">
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
                 <Button Name="BtnWidowColor" Style="{StaticResource RoundPrimaryButton}" Background="{StaticResource colorBrushWindow}" Command="{Binding ChangeBackColorClickedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Click="btnWidowColor_Click">
                 </Button>
                 <Label Content="{DynamicResource Str.AppearanceSettings.WindowColor}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="1">
                 <Button Name="BtnFontColor"  Style="{StaticResource RoundPrimaryButton}" Background="{StaticResource colorBrushFont}" Command="{Binding ChangeFontColorClickedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Click="btnFontColor_Click"></Button>
                 <Label Content="{DynamicResource Str.AppearanceSettings.FontColor}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
                 <mde:OversizedNumberSpinner Background="{StaticResource SecondaryHueLightBrush}" Value="{Binding Model.FontSize, Mode=TwoWay}" Min="5" Max="80" Width="30" Height="58" />
                 <Label Content="{DynamicResource Str.AppearanceSettings.FontSize}" Style="{StaticResource ControlCaptionLabel}"/>
-                <CheckBox  Style="{DynamicResource MaterialDesignSwitchToggleButton}" FontSize="16" Margin="18,0,0,0" IsChecked="{Binding Model.FontBold}" />
-                <Label Content="{DynamicResource Str.AppearanceSettings.Bold}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3">
                 <mde:OversizedNumberSpinner Background="{StaticResource SecondaryHueLightBrush}" Value="{Binding Model.LineSpacing, Mode=TwoWay}" Min="1" Max="50" Width="30" Height="58" />
                 <Label Content="{DynamicResource Str.AppearanceSettings.LineSpacing}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
-            <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2">
                 <Label Content="{DynamicResource Str.AppearanceSettings.WindowOpacity}"/>
-                <Slider Name="slicderFontOpacity" Style="{DynamicResource MaterialDesignSlider}" HorizontalAlignment="Stretch" Value="{Binding Model.BackgroundOpacity, Converter={StaticResource SliderPercentValueConverter}}"/>
+                <Slider Name="slicderFontOpacity" Style="{DynamicResource MaterialDesignSlider}" HorizontalAlignment="Left" Width="230" Value="{Binding Model.BackgroundOpacity, Converter={StaticResource SliderPercentValueConverter}}"/>
+                <Button Content="{DynamicResource Str.Button.ShowText}" Command="{Binding SendTestTextCommand}" Style="{DynamicResource MaterialDesignFlatDarkButton}" HorizontalAlignment="Left"></Button>
+
             </StackPanel>
-            <Button Content="{DynamicResource Str.Button.ShowText}" Command="{Binding SendTestTextCommand}" Style="{DynamicResource MaterialDesignFlatDarkButton}" HorizontalAlignment="Left"></Button>
-        </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2">
+                <CheckBox  Style="{DynamicResource MaterialDesignSwitchToggleButton}" FontSize="16" IsChecked="{Binding Model.FontBold}" />
+                <Label Content="{DynamicResource Str.AppearanceSettings.Bold}" Style="{StaticResource ControlCaptionLabel}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3">
+                <CheckBox  Style="{DynamicResource MaterialDesignSwitchToggleButton}" FontSize="16" IsChecked="{Binding Model.TextProcessing.KeepFormatting}" />
+                <Label Content="{DynamicResource Str.AppearanceSettings.KeepFormatting}" Style="{StaticResource ControlCaptionLabel}"/>
+            </StackPanel>
+        </Grid>
         <DockPanel Grid.Row="0" Grid.Column="1" Visibility="{Binding ColorPickerIsOpened, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="9,0,0,0">
             <controls:ColorSelectionControl x:Name="colorSelector" HorizontalAlignment="Stretch" ColorPickedCommand="{Binding ColorIsPickedCommand}" SelectedColor="{Binding SelectedColor, Mode=TwoWay}" UseLayoutRounding="False" BorderBrush="{StaticResource PrimaryHueMidBrush}" BorderThickness="1,0,0,0" Padding="9,0,5,0"/>
         </DockPanel>
