@@ -16,6 +16,7 @@ using Translumo.Processing.TextProcessing;
 using Translumo.Translation;
 using Translumo.Translation.Configuration;
 using Translumo.Translation.Exceptions;
+using Translumo.TTS;
 
 namespace Translumo.Processing
 {
@@ -28,6 +29,7 @@ namespace Translumo.Processing
         private readonly IChatTextMediator _chatTextMediator;
         private readonly OcrEnginesFactory _enginesFactory;
         private readonly TranslatorFactory _translatorFactory;
+        private readonly ITTSEngine _ttsEngine;
         private readonly TextDetectionProvider _textProvider;
         private readonly TextResultCacheService _textResultCacheService;
         private readonly ILogger _logger;
@@ -45,6 +47,7 @@ namespace Translumo.Processing
         private const float MIN_SCORE_THRESHOLD = 2.1f;
         
         public TranslationProcessingService(ICapturerFactory capturerFactory, IChatTextMediator chatTextMediator, OcrEnginesFactory ocrEnginesFactory, TranslatorFactory translationFactory,
+            ITTSEngine ttsEngine,
             TextDetectionProvider textProvider, TranslationConfiguration translationConfiguration, OcrGeneralConfiguration ocrConfiguration, 
             TextResultCacheService textResultCacheService, ILogger<TranslationProcessingService> logger)
         {
@@ -57,7 +60,7 @@ namespace Translumo.Processing
             _textProvider = textProvider;
             _textResultCacheService = textResultCacheService;
             _translatorFactory = translationFactory;
-
+            _ttsEngine = ttsEngine;
             _engines = InitializeEngines();
             _translator = _translatorFactory.CreateTranslator(_translationConfiguration);
             _textProvider.Language = translationConfiguration.TranslateFromLang;
@@ -310,6 +313,7 @@ namespace Translumo.Processing
             if (!string.IsNullOrWhiteSpace(translation) && !_textResultCacheService.IsTranslatedCached(translation, iterationId))
             {
                 _chatTextMediator.SendText(translation, true);
+                _ttsEngine.SpeechText(translation);
             }
         }
 

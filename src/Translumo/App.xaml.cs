@@ -25,6 +25,8 @@ using Translumo.Processing.TextProcessing;
 using Translumo.Services;
 using Translumo.Translation;
 using Translumo.Translation.Configuration;
+using Translumo.TTS;
+using Translumo.TTS.WindowsTTS;
 using Translumo.Update;
 using Translumo.Utils;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -126,6 +128,8 @@ namespace Translumo
             services.AddTransient<IPredictor<InputTextPrediction, OutputTextPrediction>, MlPredictor<InputTextPrediction, OutputTextPrediction>>();
             services.AddTransient<IEncryptionService, AesEncryptionService>();
             services.AddTransient<LanguageDescriptorFactory>();
+            services.AddTransient<ITTSEngine, WindowsTTSEngine>();
+            
 
             services.AddConfigurationStorage();
         }
