@@ -14,6 +14,7 @@ using Translumo.MVVM.Models;
 using Translumo.OCR.Configuration;
 using Translumo.OCR.WindowsOCR;
 using Translumo.Translation.Configuration;
+using Translumo.TTS;
 using Translumo.Utils;
 using Translumo.Utils.Extensions;
 using RelayCommand = Microsoft.Toolkit.Mvvm.Input.RelayCommand;
@@ -28,6 +29,15 @@ namespace Translumo.MVVM.ViewModels
         public IList<DisplayLanguage> AvailableTranslationLanguages { get; set; }
 
         public TranslationConfiguration Model { get; set; }
+
+        public TTSEngines TtsSystem { get; set; }
+        //{
+        //    get => _translator;
+        //    set
+        //    {
+        //        SetProperty(ref _translator, value);
+        //    }
+        //}
 
         public ObservableCollection<ProxyCardItem> ProxyCollection
         {
@@ -47,6 +57,7 @@ namespace Translumo.MVVM.ViewModels
             }
         }
 
+        // TODO: ToLanguage also should be handled, need to check and install tts
         public Languages TranslateFromLang
         {
             get => Model.TranslateFromLang;

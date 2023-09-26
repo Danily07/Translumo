@@ -9,20 +9,28 @@ namespace Translumo.Infrastructure.Powershell
     {
         public static async Task<bool> OcrLanguagePackIsInstalled(string languageCode)
         {
-            const string INSTALLED_STATE = "Installed";
-
             PSObject psObject = await GetPsObjectOcrLanguagePack(languageCode);
-
-            return INSTALLED_STATE == psObject.Properties["State"].Value.ToString();
+            return LanguagePackIsInstalled(psObject);
         }
 
         public static async Task<LanguagePackInstallResult> OcrLanguagePackInstall(string languageCode)
         {
             PSObject psObject = await GetPsObjectOcrLanguagePack(languageCode);
+            return await LanguagePackInstall(psObject);
+        }
+
+        private static bool LanguagePackIsInstalled(PSObject languagePackPsObject)
+        {
+            const string INSTALLED_STATE = "Installed";
+            return INSTALLED_STATE == languagePackPsObject.Properties["State"].Value.ToString();
+        }
+        
+        private static async Task<LanguagePackInstallResult> LanguagePackInstall(PSObject languagePackPsObject)
+        {
             using (var rs = new PowerShellRunspace())
             {
                 rs.PowerShell.AddScript("$args[0] | Add-WindowsCapability -Online");
-                rs.PowerShell.AddArgument(psObject);
+                rs.PowerShell.AddArgument(languagePackPsObject);
 
 
                 var resultPsObject = (await rs.PowerShell.InvokeAsync()).FirstOrDefault();
@@ -37,18 +45,24 @@ namespace Translumo.Infrastructure.Powershell
 
                 return new LanguagePackInstallResult()
                 {
-                    RestartIsNeeded = (bool)psObject.Properties["RestartNeeded"].Value
+                    RestartIsNeeded = (bool)languagePackPsObject.Properties["RestartNeeded"].Value
                 };
             }
         }
 
-        private static async Task<PSObject> GetPsObjectOcrLanguagePack(string languageCode)
+        private static async Task<PSObject> GetPsObjectOcrLanguagePack(string languageCode) =>
+            await GetPsObjectLanguagePack(languageCode, "OCR");
+
+        private static async Task<PSObject> GetPsObjectTextToSpeechLanguagePack(string languageCode) =>
+            await GetPsObjectLanguagePack(languageCode, "TextToSpeech");
+
+        private static async Task<PSObject> GetPsObjectLanguagePack(string languageCode, string languagePackType)
         {
             using (var rs = new PowerShellRunspace())
             {
 
                 rs.PowerShell.AddScript(
-                    $"Get-WindowsCapability -Online | Where-Object {{ $_.Name -Like 'Language.OCR*{languageCode}*' }}");
+                    $"Get-WindowsCapability -Online | Where-Object {{ $_.Name -Like 'Language.{languagePackType}*{languageCode}*' }}");
 
                 var resultPsObject = (await rs.PowerShell.InvokeAsync()).FirstOrDefault();
                 if (resultPsObject == null)
@@ -61,7 +75,7 @@ namespace Translumo.Infrastructure.Powershell
 
                     throw new OptionalFeatureAccessException("Failed to get PS object");
                 }
-                
+
                 return resultPsObject;
             }
         }
