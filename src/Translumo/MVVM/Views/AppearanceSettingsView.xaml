@@ -37,8 +37,9 @@
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
@@ -51,26 +52,29 @@
                 <Button Name="BtnFontColor"  Style="{StaticResource RoundPrimaryButton}" Background="{StaticResource colorBrushFont}" Command="{Binding ChangeFontColorClickedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" Click="btnFontColor_Click"></Button>
                 <Label Content="{DynamicResource Str.AppearanceSettings.FontColor}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
+            <StackPanel  Orientation="Horizontal" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
+                <ComboBox Style="{StaticResource ComboBoxBase}" ItemsSource="{Binding Path=AvailableAlignments}" DisplayMemberPath="DisplayText" SelectedValuePath="TextAlignment" SelectedValue="{Binding Path=Model.TextAlignment, Mode=TwoWay}" ></ComboBox>
+                <Label Content="{DynamicResource Str.AppearanceSettings.TextAlignment}" Style="{StaticResource ControlCaptionLabel}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3">
                 <mde:OversizedNumberSpinner Background="{StaticResource SecondaryHueLightBrush}" Value="{Binding Model.FontSize, Mode=TwoWay}" Min="5" Max="80" Width="30" Height="58" />
                 <Label Content="{DynamicResource Str.AppearanceSettings.FontSize}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3">
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="4">
                 <mde:OversizedNumberSpinner Background="{StaticResource SecondaryHueLightBrush}" Value="{Binding Model.LineSpacing, Mode=TwoWay}" Min="1" Max="50" Width="30" Height="58" />
                 <Label Content="{DynamicResource Str.AppearanceSettings.LineSpacing}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
-            <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2">
+            <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2">
                 <Label Content="{DynamicResource Str.AppearanceSettings.WindowOpacity}"/>
                 <Slider Name="slicderFontOpacity" Style="{DynamicResource MaterialDesignSlider}" HorizontalAlignment="Left" Width="230" Value="{Binding Model.BackgroundOpacity, Converter={StaticResource SliderPercentValueConverter}}"/>
                 <Button Content="{DynamicResource Str.Button.ShowText}" Command="{Binding SendTestTextCommand}" Style="{DynamicResource MaterialDesignFlatDarkButton}" HorizontalAlignment="Left"></Button>
-
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2">
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3">
                 <CheckBox  Style="{DynamicResource MaterialDesignSwitchToggleButton}" FontSize="16" IsChecked="{Binding Model.FontBold}" />
                 <Label Content="{DynamicResource Str.AppearanceSettings.Bold}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3">
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="4">
                 <CheckBox  Style="{DynamicResource MaterialDesignSwitchToggleButton}" FontSize="16" IsChecked="{Binding Model.TextProcessing.KeepFormatting}" />
                 <Label Content="{DynamicResource Str.AppearanceSettings.KeepFormatting}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>

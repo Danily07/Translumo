@@ -54,6 +54,11 @@
     <system:String x:Key="Str.AppearanceSettings.FontSizePanelCaption">Цвет окна — изменить</system:String>
     <system:String x:Key="Str.AppearanceSettings.FontColorPanelCaption">Цвет шрифта — изменить</system:String>
     <system:String x:Key="Str.AppearanceSettings.KeepFormatting" xml:space="preserve">Сохранять исходное&#13;форматирование</system:String>
+    <system:String x:Key="Str.AppearanceSettings.TextAlignment">Выравнивание текста</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Left">По левому краю</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Right">По правому краю</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Center">По центру</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Justify">По ширине</system:String>
 
     <!--Proxy settings-->
     <system:String x:Key="Str.ProxySettings.Proxy">Прокси</system:String>

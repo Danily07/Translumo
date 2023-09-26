@@ -49,6 +49,7 @@
                 <ResourceDictionary Source="/Themes/List.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="/Themes/PackIcon.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="/Themes/TextBox.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="/Themes/ComboBox.xaml"></ResourceDictionary>
 
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>

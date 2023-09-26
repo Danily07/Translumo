@@ -54,6 +54,11 @@
     <system:String x:Key="Str.AppearanceSettings.FontSizePanelCaption">Font size — change</system:String>
     <system:String x:Key="Str.AppearanceSettings.FontColorPanelCaption">Font color — change</system:String>
     <system:String x:Key="Str.AppearanceSettings.KeepFormatting">Keep source formatting</system:String>
+    <system:String x:Key="Str.AppearanceSettings.TextAlignment">Text alignment</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Left">Left</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Right">Right</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Center">Center</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Justify">Justify</system:String>
 
     <!--Proxy settings-->
     <system:String x:Key="Str.ProxySettings.Proxy">Proxy</system:String>

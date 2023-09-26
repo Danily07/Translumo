@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Windows;
+using System.Windows.Media;
 using Translumo.Processing.Configuration;
 using Translumo.Utils;
 
@@ -60,6 +61,15 @@ namespace Translumo.Configuration
             }
         }
 
+        public TextAlignment TextAlignment
+        {
+            get => _textAlignment;
+            set
+            {
+                SetProperty(ref _textAlignment, value);
+            }
+        }
+
         [MapInternal]
         public TextProcessingConfiguration TextProcessing
         {
@@ -77,7 +87,8 @@ namespace Translumo.Configuration
             BackgroundOpacity = 0.35f,
             FontSize = 15,
             FontBold = true,
-            LineSpacing = 14
+            LineSpacing = 14,
+            TextAlignment = TextAlignment.Left
         };
 
         private Color _backgroundColor;
@@ -87,5 +98,6 @@ namespace Translumo.Configuration
         private bool _fontBold;
         private int _lineSpacing;
         private TextProcessingConfiguration _textProcessing = TextProcessingConfiguration.Default;
+        private TextAlignment _textAlignment;
     }
 }
