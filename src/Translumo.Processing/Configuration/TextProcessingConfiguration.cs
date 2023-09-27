@@ -18,7 +18,26 @@ namespace Translumo.Processing.Configuration
             }
         }
 
-        private bool _keepFormatting;
+        public bool AutoClearTexts
+        {
+            get => _autoClearTexts;
+            set
+            {
+                SetProperty(ref _autoClearTexts, value);
+            }
+        }
 
+        public uint AutoClearTextsDelayMs
+        {
+            get => _autoClearTextsDelayMs;
+            set
+            {
+                SetProperty(ref _autoClearTextsDelayMs, value);
+            }
+        }
+
+        private bool _keepFormatting;
+        private bool _autoClearTexts;
+        private uint _autoClearTextsDelayMs;
     }
 }
