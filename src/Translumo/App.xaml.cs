@@ -26,7 +26,6 @@ using Translumo.Services;
 using Translumo.Translation;
 using Translumo.Translation.Configuration;
 using Translumo.TTS;
-using Translumo.TTS.WindowsTTS;
 using Translumo.Update;
 using Translumo.Utils;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -98,7 +97,7 @@ namespace Translumo
 
             services.AddSingleton<OcrGeneralConfiguration>(OcrGeneralConfiguration.Default);
             services.AddSingleton<TranslationConfiguration>(TranslationConfiguration.Default);
-            services.AddSingleton<TtsGeneralConfiguration>(TtsGeneralConfiguration.Default);
+            services.AddSingleton<TtsConfiguration>(TtsConfiguration.Default);
             services.AddSingleton<ChatWindowConfiguration>(ChatWindowConfiguration.Default);
             services.AddSingleton<HotKeysConfiguration>(HotKeysConfiguration.Default);
             services.AddSingleton<SystemConfiguration>(SystemConfiguration.Default);
@@ -129,7 +128,7 @@ namespace Translumo
             services.AddTransient<IPredictor<InputTextPrediction, OutputTextPrediction>, MlPredictor<InputTextPrediction, OutputTextPrediction>>();
             services.AddTransient<IEncryptionService, AesEncryptionService>();
             services.AddTransient<LanguageDescriptorFactory>();
-            services.AddTransient<ITTSEngine, WindowsTTSEngine>();
+            services.AddTransient<TtsFactory>();
             
 
             services.AddConfigurationStorage();

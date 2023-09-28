@@ -4,13 +4,14 @@ using Translumo.Utils;
 namespace Translumo.TTS;
 
 
-public class TtsGeneralConfiguration : BindableBase
+public class TtsConfiguration : BindableBase
 {
-    public static TtsGeneralConfiguration Default =>
-        new TtsGeneralConfiguration()
+    public static TtsConfiguration Default =>
+        new TtsConfiguration()
         {   
             TtsLanguage = Languages.English,
-            TtsSystem = TTSEngines.None
+            TtsSystem = TTSEngines.None,
+            InstalledWinTtsLanguages = new List<Languages>()
         };
 
     private TTSEngines _ttsSystem;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Speech.Synthesis.TtsEngine;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Extensions.Logging;
@@ -31,7 +30,7 @@ namespace Translumo.MVVM.ViewModels
 
         public TranslationConfiguration Model { get; set; }
 
-        public TtsGeneralConfiguration TtsSettings { get; set; }
+        public TtsConfiguration TtsSettings { get; set; }
 
 
         public ObservableCollection<ProxyCardItem> ProxyCollection
@@ -93,7 +92,7 @@ namespace Translumo.MVVM.ViewModels
         private readonly ILogger _logger;
 
         public LanguagesSettingsViewModel(LanguageService languageService, TranslationConfiguration translationConfiguration, 
-            OcrGeneralConfiguration ocrConfiguration, TtsGeneralConfiguration ttsConfiguration, DialogService dialogService, 
+            OcrGeneralConfiguration ocrConfiguration, TtsConfiguration ttsConfiguration, DialogService dialogService, 
             ILogger<LanguagesSettingsViewModel> logger)
         {
             var languages = languageService.GetAll(true)
