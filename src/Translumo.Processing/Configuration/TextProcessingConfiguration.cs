@@ -6,7 +6,9 @@ namespace Translumo.Processing.Configuration
     {
         public static TextProcessingConfiguration Default => new TextProcessingConfiguration()
         {
-            KeepFormatting = false
+            KeepFormatting = false,
+            AutoClearTexts = false,
+            AutoClearTextsDelayMs = 1000
         };
 
         public bool KeepFormatting

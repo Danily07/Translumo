@@ -35,12 +35,13 @@
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="2*"></RowDefinition>
+                <RowDefinition Height="2*"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="2*"></RowDefinition>
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
@@ -57,17 +58,21 @@
                 <Label Content="{DynamicResource Str.AppearanceSettings.TextAlignment}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3">
-                <mde:OversizedNumberSpinner Background="{StaticResource SecondaryHueLightBrush}" Value="{Binding Model.FontSize, Mode=TwoWay}" Min="5" Max="80" Width="30" Height="58" />
+                <mde:OversizedNumberSpinner Value="{Binding Model.FontSize, Mode=TwoWay}" Max="80"/>
                 <Label Content="{DynamicResource Str.AppearanceSettings.FontSize}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="4">
-                <mde:OversizedNumberSpinner Background="{StaticResource SecondaryHueLightBrush}" Value="{Binding Model.LineSpacing, Mode=TwoWay}" Min="1" Max="50" Width="30" Height="58" />
+                <mde:OversizedNumberSpinner Value="{Binding Model.LineSpacing, Mode=TwoWay}" Max="50"/>
                 <Label Content="{DynamicResource Str.AppearanceSettings.LineSpacing}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
             <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2">
                 <Label Content="{DynamicResource Str.AppearanceSettings.WindowOpacity}"/>
                 <Slider Name="slicderFontOpacity" Style="{DynamicResource MaterialDesignSlider}" HorizontalAlignment="Left" Width="230" Value="{Binding Model.BackgroundOpacity, Converter={StaticResource SliderPercentValueConverter}}"/>
                 <Button Content="{DynamicResource Str.Button.ShowText}" Command="{Binding SendTestTextCommand}" Style="{DynamicResource MaterialDesignFlatDarkButton}" HorizontalAlignment="Left"></Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="6">
+                <CheckBox  Style="{DynamicResource MaterialDesignSwitchToggleButton}" FontSize="16" IsChecked="{Binding Model.TextProcessing.AutoClearTexts}" />
+                <Label Content="{DynamicResource Str.AppearanceSettings.AutoClearTexts}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3">
@@ -77,6 +82,11 @@
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="4">
                 <CheckBox  Style="{DynamicResource MaterialDesignSwitchToggleButton}" FontSize="16" IsChecked="{Binding Model.TextProcessing.KeepFormatting}" />
                 <Label Content="{DynamicResource Str.AppearanceSettings.KeepFormatting}" Style="{StaticResource ControlCaptionLabel}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="6" Visibility="{Binding Model.TextProcessing.AutoClearTexts, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Label Content="{DynamicResource Str.AppearanceSettings.AutoClearTexts2}" Style="{StaticResource ControlCaptionLabel}"/>
+                <mde:OversizedNumberSpinner Style="{StaticResource BigOversizedNumberSpinner}" Value="{Binding Model.TextProcessing.AutoClearTextsDelayMs, Mode=TwoWay}" Min="1000"/>
+                <Label Content="{DynamicResource Str.AppearanceSettings.Ms}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
         </Grid>
         <DockPanel Grid.Row="0" Grid.Column="1" Visibility="{Binding ColorPickerIsOpened, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="9,0,0,0">
