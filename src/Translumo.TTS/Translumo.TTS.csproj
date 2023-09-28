@@ -9,4 +9,9 @@
     <PackageReference Include="System.Speech" Version="7.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Translumo.Infrastructure\Translumo.Infrastructure.csproj" />
+    <ProjectReference Include="..\Translumo.Utils\Translumo.Utils.csproj" />
+  </ItemGroup>
+
 </Project>

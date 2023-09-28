@@ -98,6 +98,7 @@ namespace Translumo
 
             services.AddSingleton<OcrGeneralConfiguration>(OcrGeneralConfiguration.Default);
             services.AddSingleton<TranslationConfiguration>(TranslationConfiguration.Default);
+            services.AddSingleton<TtsGeneralConfiguration>(TtsGeneralConfiguration.Default);
             services.AddSingleton<ChatWindowConfiguration>(ChatWindowConfiguration.Default);
             services.AddSingleton<HotKeysConfiguration>(HotKeysConfiguration.Default);
             services.AddSingleton<SystemConfiguration>(SystemConfiguration.Default);

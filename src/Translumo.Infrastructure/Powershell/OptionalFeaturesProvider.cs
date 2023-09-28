@@ -13,9 +13,21 @@ namespace Translumo.Infrastructure.Powershell
             return LanguagePackIsInstalled(psObject);
         }
 
+        public static async Task<bool> TtsLanguagePackIsInstalled(string languageCode)
+        {
+            PSObject psObject = await GetPsObjectTextToSpeechLanguagePack(languageCode);
+            return LanguagePackIsInstalled(psObject);
+        }
+
         public static async Task<LanguagePackInstallResult> OcrLanguagePackInstall(string languageCode)
         {
             PSObject psObject = await GetPsObjectOcrLanguagePack(languageCode);
+            return await LanguagePackInstall(psObject);
+        }
+
+        public static async Task<LanguagePackInstallResult> TtsLanguagePackInstall(string languageCode)
+        {
+            PSObject psObject = await GetPsObjectTextToSpeechLanguagePack(languageCode);
             return await LanguagePackInstall(psObject);
         }
 
