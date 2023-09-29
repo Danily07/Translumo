@@ -29,7 +29,7 @@
             <FlowDocument>
             </FlowDocument>
         </RichTextBox>
-        <TextBlock Name="fontTextBlockInstance" Visibility="Collapsed" LineHeight="{Binding Model.Configuration.LineSpacing}">
+        <TextBlock Name="fontTextBlockInstance" Visibility="Collapsed" LineHeight="{Binding Model.Configuration.LineSpacing}" TextAlignment="{Binding Model.Configuration.TextAlignment}">
             <Run Name="fontRunInstance" 
                  FontSize="{Binding Model.Configuration.FontSize}" Foreground="{StaticResource brushFontColor}" 
                  FontWeight="{Binding Model.Configuration.FontBold, Converter={StaticResource boldFontConverter}}"></Run>

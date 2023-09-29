@@ -98,15 +98,20 @@ namespace Translumo.Translation.Deepl
                 [JsonPropertyName("preferred_num_beams")]
                 public long PreferredNumBeams { get; set; }
 
+                [JsonIgnore] 
+                public bool NewLineFollows { get; set; }
+
                 public Job(string sentence, string contextBefore, string contextAfter)
                 {
                     Kind = "default";
+                    NewLineFollows = sentence.EndsWith("\r\n");
                     RawEnSentence = sentence;
                     RawEnContextBefore = new List<string>();
                     if (contextBefore != null)
                     {
                         RawEnContextBefore.Add(contextBefore);
                     }
+
                     RawEnContextAfter = new List<string>();
                     if (contextAfter != null)
                     {
