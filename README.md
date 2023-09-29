@@ -20,7 +20,7 @@
   <li><b>Integrated modern OCR engines:</b> Tesseract 5.2, WindowsOCR, EasyOCR</li>
   <li><b>Available translators:</b> Google Translate, Yandex translate, Naver Papago, DeepL</li>
   <li><b>Available recognition languages:</b> English, Russian, Japanese, Chinese (simplified), Korean</li>
-  <li><b>Available translation languages:</b> English, Russian, Japanese, Chinese (simplified), Korean, French, Spanish, German, Portuguese, Italian</li>
+  <li><b>Available translation languages:</b> English, Russian, Japanese, Chinese (simplified), Korean, French, Spanish, German, Portuguese, Italian, Vietnamese, Thai, Turkish</li>
 </ul>
 <h1>System requirements</h1>
 <ul>
@@ -43,7 +43,7 @@
 Generally, I recommend always keep Windows OCR turned on. This is the most effective OCR for the primary text detection with less impact on performance. 
 <h3>Recommended combinations of OCR engines</h3>
 <ul>
-  <li><b>Tesseract-Windows OCR-EasyOCR</b> - advanced mode with the highest percision</li>
+  <li><b>Tesseract-Windows OCR-EasyOCR</b> - advanced mode with the highest precision</li>
   <li><b>Tesseract-Windows OCR</b> - noticeably less impact on system performance. It will be enough for cases when text has simple solid background and font is quite common</li>
   <li><b>Windows OCR-EasyOCR</b> - for very specific complex cases it makes sense to disable Tesseract and avoid unnecessary text noises</li>
 </ul>
@@ -63,6 +63,8 @@ Generally, I recommend always keep Windows OCR turned on. This is the most effec
 <p>There is a high probability that translation service temporarily blocked requests from your IP. You can change translator or configure proxy list.</p>
 <h4>Can't enable Windows OCR</h4>
 <p>Make sure that the application is runned as an Administrator. Translumo each time tries check installed Windows language pack via PowerShell.</p>
+<h4>I set borderless/windowed mode, but a translation window is still displayed under a game</h4>
+<p>When game is running and focused use the hotkey (ALT+T by default) to hide and then show again translation window</p>
 <h4>Package downloading for EasyOCR failed</h4>
 <p>Try to re-install it under VPN</p>
 <h4>Hotkeys don't work</h4>
