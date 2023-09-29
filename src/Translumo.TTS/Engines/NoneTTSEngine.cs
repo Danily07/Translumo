@@ -6,6 +6,10 @@ public class NoneTTSEngine : ITTSEngine
     {
     }
 
+    public void Dispose()
+    {
+    }
+
     public void SpeechText(string text)
     {
     }

@@ -22,7 +22,7 @@ using Translumo.TTS.Engines;
 namespace Translumo.Processing
 {
 
-    public class TranslationProcessingService : IProcessingService
+    public class TranslationProcessingService : IProcessingService, IDisposable
     {
         public bool IsStarted => !_ctSource?.IsCancellationRequested ?? false;
 
@@ -391,6 +391,7 @@ namespace Translumo.Processing
             if (e.PropertyName == nameof(_ttsConfiguration.TtsLanguage)
                 || e.PropertyName == nameof(_ttsConfiguration.TtsSystem))
             {
+                _ttsEngine.Dispose();
                 _ttsEngine = _ttsFactory.CreateTtsEngine(_ttsConfiguration);
             }
         }
@@ -405,6 +406,11 @@ namespace Translumo.Processing
             return _enginesFactory
                 .GetEngines(_ocrGeneralConfiguration.OcrConfigurations, _translationConfiguration.TranslateFromLang)
                 .ToArray();
+        }
+
+        public void Dispose()
+        {
+            _ttsEngine.Dispose();
         }
 
         private enum IterationType : byte

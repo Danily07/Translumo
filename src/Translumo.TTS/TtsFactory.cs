@@ -11,8 +11,8 @@ namespace Translumo.TTS
 
         public TtsFactory(LanguageService languageService, ILogger<TtsFactory> logger)
         {
-            this._languageService = languageService;
-            this._logger = logger;
+            _languageService = languageService;
+            _logger = logger;
         }
 
         public ITTSEngine CreateTtsEngine(TtsConfiguration ttsConfiguration) =>

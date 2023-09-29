@@ -1,6 +1,6 @@
 ﻿namespace Translumo.TTS.Engines;
 
-public interface ITTSEngine
+public interface ITTSEngine: IDisposable
 {
     void SpeechText(string text);
 }
