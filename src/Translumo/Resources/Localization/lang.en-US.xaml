@@ -121,6 +121,7 @@
     <system:String x:Key="Str.Stages.LangPackQuestion" xml:space="preserve">Language feature pack '{0}' is not installed.&#13;Do you want to install it now?</system:String>
     <system:String x:Key="Str.Stages.InstallationLangPack">Installation language pack...</system:String>
     <system:String x:Key="Str.Stages.LangPackInstalledRestart">Language pack has been installed. Please restart computer</system:String>
+    <system:String x:Key="Str.Stages.LangPackInstalledTtsRestart" xml:space="preserve">Language pack has been installed.&#13;If TTS doesn't work, please try to restart the application.</system:String>
     <system:String x:Key="Str.Stages.InstallationLangError">Failed to install pack: '{0}'</system:String>
     <system:String x:Key="Str.Stages.CheckLangPackError" xml:space="preserve">Unexpected error of checking Windows feature options.&#13;Please verify that the application is running as an Administrator.</system:String>
     <system:String x:Key="Str.Stages.SwitchLanguage">Switching the language...</system:String>

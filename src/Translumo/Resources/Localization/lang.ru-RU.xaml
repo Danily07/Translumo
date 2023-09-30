@@ -120,6 +120,7 @@
     <system:String x:Key="Str.Stages.LangPackQuestion" xml:space="preserve">Языковой пакет '{0}' не установлен.&#13;Хотите установить сейчас?</system:String>
     <system:String x:Key="Str.Stages.InstallationLangPack">Установка языкового пакета...</system:String>
     <system:String x:Key="Str.Stages.LangPackInstalledRestart">Языковой пакет успешно установлен. Пожалуйста, перезагрузите систему.</system:String>
+    <system:String x:Key="Str.Stages.LangPackInstalledTtsRestart" xml:space="preserve">Языковой пакет успешно установлен.&#13;Если TTS не работает, попробуйте перезапустить приложение.</system:String>
     <system:String x:Key="Str.Stages.InstallationLangError">Ошибка установки пакета: '{0}'</system:String>
     <system:String x:Key="Str.Stages.CheckLangPackError" xml:space="preserve">Ошибка проверки дополнительных компонентов Windows.&#13;Пожалуйста, убедитесь, что приложение запущено с правами администратора.</system:String>
     <system:String x:Key="Str.Stages.SwitchLanguage">Смена языка...</system:String>
