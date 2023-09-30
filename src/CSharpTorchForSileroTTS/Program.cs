@@ -39,16 +39,24 @@ using (Py.GIL())
     model.to(device);
 }
 
+var voice = GetVoices(model).First();
 
 while (true)
 {
     Console.WriteLine("Напиши текст а я скажу:");
     var text = Console.ReadLine();
+
+    if (string.IsNullOrEmpty(text))
+    {
+        voice = ChangeVoice(model);
+        continue;
+    }
+
     dynamic result;
     using (Py.GIL())
     {
         dynamic audio = model.apply_tts(text: text,
-                         speaker: "baya",
+                         speaker: voice,
                          sample_rate: 48000);
         result = ipython.display.Audio(audio, rate: 48000).data;
     }
@@ -59,7 +67,32 @@ while (true)
         var player = new SoundPlayer(ms);
         player.Play();
     }
+}
 
+string ChangeVoice(dynamic model)
+{
+    var result = "";
+    var voices = GetVoices(model);
+    do
+    {
+        Console.WriteLine("Please choose voice:");
+        voices.Select((x, i) => (i + 1, x)).ToList().ForEach(x => Console.WriteLine($"{x.Item1}. {x.Item2}"));
+        var answer = Console.ReadLine();
+        if (int.TryParse(answer, out var choosesVariant)
+            && choosesVariant <= voices.Length
+            && choosesVariant > 0)
+        {
+            result = voices[choosesVariant - 1];
+        }
+
+    } while (string.IsNullOrEmpty(result));
+
+    return result;
+}
+
+string[] GetVoices(dynamic model)
+{
+    return model.speakers.As<string[]>();
 }
 
 
