@@ -33,12 +33,12 @@ namespace Translumo.Processing
         private readonly TranslatorFactory _translatorFactory;
         private readonly TtsFactory _ttsFactory;
         private readonly TtsConfiguration _ttsConfiguration;
-        private ITTSEngine _ttsEngine;
         private readonly TextDetectionProvider _textProvider;
         private readonly TextResultCacheService _textResultCacheService;
         private readonly ILogger _logger;
         private static readonly object _obj = new object();
 
+        private ITTSEngine _ttsEngine;
         private IEnumerable<IOCREngine> _engines;
         private ITranslator _translator;
         private TranslationConfiguration _translationConfiguration;
@@ -427,6 +427,9 @@ namespace Translumo.Processing
         public void Dispose()
         {
             _ttsEngine.Dispose();
+            _textProvider.Dispose();
+            _capturer?.Dispose();
+            _onceTimeCapturer?.Dispose();
         }
 
         private enum IterationType : byte
