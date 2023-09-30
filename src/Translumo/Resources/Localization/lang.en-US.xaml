@@ -60,6 +60,10 @@
     <system:String x:Key="Str.AppearanceSettings.Right">Right</system:String>
     <system:String x:Key="Str.AppearanceSettings.Center">Center</system:String>
     <system:String x:Key="Str.AppearanceSettings.Justify">Justify</system:String>
+    <system:String x:Key="Str.AppearanceSettings.AutoClearTexts">Auto clear window</system:String>
+    <system:String x:Key="Str.AppearanceSettings.AutoClearTexts2">after inactivity</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Ms">ms</system:String>
+
 
     <!--Proxy settings-->
     <system:String x:Key="Str.ProxySettings.Proxy">Proxy</system:String>

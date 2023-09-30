@@ -10,6 +10,7 @@ using OpenCvSharp;
 using Translumo.Infrastructure;
 using Translumo.OCR;
 using Translumo.OCR.Configuration;
+using Translumo.Processing.Configuration;
 using Translumo.Processing.Exceptions;
 using Translumo.Processing.Interfaces;
 using Translumo.Processing.TextProcessing;
@@ -42,17 +43,20 @@ namespace Translumo.Processing
         private ITranslator _translator;
         private TranslationConfiguration _translationConfiguration;
         private OcrGeneralConfiguration _ocrGeneralConfiguration;
+        private TextProcessingConfiguration _textProcessingConfiguration;
 
         private CancellationTokenSource _ctSource;
         private IScreenCapturer _capturer;
         private IScreenCapturer _onceTimeCapturer;
+
+        private long _lastTranslatedTextTicks;
 
         private const float MIN_SCORE_THRESHOLD = 2.1f;
         
         public TranslationProcessingService(ICapturerFactory capturerFactory, IChatTextMediator chatTextMediator, OcrEnginesFactory ocrEnginesFactory,
             TranslatorFactory translationFactory, TtsFactory ttsFactory, TtsConfiguration ttsConfiguration,
             TextDetectionProvider textProvider, TranslationConfiguration translationConfiguration, OcrGeneralConfiguration ocrConfiguration, 
-            TextResultCacheService textResultCacheService, ILogger<TranslationProcessingService> logger)
+            TextResultCacheService textResultCacheService, TextProcessingConfiguration textConfiguration, ILogger<TranslationProcessingService> logger)
         {
             _logger = logger;
             _chatTextMediator = chatTextMediator;
@@ -66,6 +70,7 @@ namespace Translumo.Processing
             _ttsFactory = ttsFactory;
             _ttsConfiguration = ttsConfiguration;
             _ttsEngine = ttsFactory.CreateTtsEngine(ttsConfiguration);
+            _textProcessingConfiguration = textConfiguration;
             _engines = InitializeEngines();
             _translator = _translatorFactory.CreateTranslator(_translationConfiguration);
             _textProvider.Language = translationConfiguration.TranslateFromLang;
@@ -88,6 +93,7 @@ namespace Translumo.Processing
                 return;
             }
 
+            _lastTranslatedTextTicks = DateTime.UtcNow.Ticks;
             _ctSource = new CancellationTokenSource();
             Task.Factory.StartNew(() => TranslateInternal(_ctSource.Token));
 
@@ -126,6 +132,9 @@ namespace Translumo.Processing
             Guid iterationId;
             IterationType lastIterationType = IterationType.None;
             bool sequentialText = false;
+            int clearTextDelayMs = _textProcessingConfiguration.AutoClearTexts
+                ? (int)_textProcessingConfiguration.AutoClearTextsDelayMs * -1
+                : int.MaxValue * -1;
 
             TextDetectionResult GetSecondaryCheckText(byte[] screen)
             {
@@ -169,6 +178,12 @@ namespace Translumo.Processing
                     Thread.Sleep(GetIterationDelayMs(lastIterationType, sequentialText));
                     lock (_obj)
                     {
+                        if (Interlocked.Read(ref _lastTranslatedTextTicks) < DateTime.UtcNow.AddMilliseconds(clearTextDelayMs).Ticks
+                            && !cancellationToken.IsCancellationRequested)
+                        {
+                            _chatTextMediator.ClearTexts();
+                        }
+
                         _textResultCacheService.EndIteration();
 
                         var faultedTask = activeTranslationTasks.FirstOrDefault(t => t.IsFaulted);
@@ -318,6 +333,7 @@ namespace Translumo.Processing
             var translation = await _translator.TranslateTextAsync(text);
             if (!string.IsNullOrWhiteSpace(translation) && !_textResultCacheService.IsTranslatedCached(translation, iterationId))
             {
+                Interlocked.Exchange(ref _lastTranslatedTextTicks, DateTime.UtcNow.Ticks);
                 _chatTextMediator.SendText(translation, true);
                 _ttsEngine.SpeechText(translation);
             }

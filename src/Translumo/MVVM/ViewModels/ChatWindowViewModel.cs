@@ -59,6 +59,7 @@ namespace Translumo.MVVM.ViewModels
             hotKeysManager.OnceTranslateKeyPressed += HotKeysManagerOnOnceTranslateKeyPressed;
             hotKeysManager.WindowStyleChangeKeyPressed += HotKeysManagerOnWindowStyleChangeKeyPressed;
             chatTextMediator.TextRaised += ChatTextMediatorOnTextRaised;
+            chatTextMediator.ClearTextsRaised += ChatTextMediatorOnClearTextsRaised;
         }
 
         private void HotKeysManagerOnSettingVisibilityKeyPressed(object sender, EventArgs e)
@@ -70,6 +71,12 @@ namespace Translumo.MVVM.ViewModels
         {
             Model.AddChatItem(e.Text, e.TextType);
         }
+
+        private void ChatTextMediatorOnClearTextsRaised(object sender, EventArgs e)
+        {
+            Model.ClearAllChatItems();
+        }
+
 
         private void HotKeysManagerOnChatVisibilityKeyPressed(object sender, EventArgs e)
         {
