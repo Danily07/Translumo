@@ -30,7 +30,7 @@
     <system:String x:Key="Str.LangSettings.SourceLang">Source language</system:String>
     <system:String x:Key="Str.LangSettings.TranslationLang">Translation language</system:String>
     <system:String x:Key="Str.LangSettings.Translator">Translator</system:String>
-    <system:String x:Key="Str.LangSettings.TtsSystem">Text to speech system</system:String>
+    <system:String x:Key="Str.LangSettings.TtsSystem">Text to speech system (experimental feature)</system:String>
 
     <!--Hotkeys descriptions-->
     <system:String x:Key="Str.Hotkeys.ChatVisibility">Show/hide translation window</system:String>
