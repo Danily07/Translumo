@@ -107,6 +107,7 @@
     <system:String x:Key="Str.Languages.Vietnamese">Вьетнамский</system:String>
     <system:String x:Key="Str.Languages.Turkish">Турецкий</system:String>
     <system:String x:Key="Str.Languages.Thai">Тайский</system:String>
+    <system:String x:Key="Str.Languages.Arabic">Арабский</system:String>
 
     <!--Dialog stages-->
     <system:String x:Key="Str.Stages.CheckPyModules">Проверка установленных модулей...</system:String>

@@ -27,7 +27,8 @@ namespace Translumo.Translation.Deepl
         public override Task<string> TranslateTextAsync(string sourceText)
         {
             //TODO: Temp implementation for specific lang
-            if (TargetLangDescriptor.Language == Languages.Vietnamese || TargetLangDescriptor.Language == Languages.Thai)
+            if (TargetLangDescriptor.Language == Languages.Vietnamese 
+                || TargetLangDescriptor.Language == Languages.Thai || TargetLangDescriptor.Language == Languages.Arabic)
             {
                 throw new TransactionException("DeepL translator for this language is unavailable");
             }
