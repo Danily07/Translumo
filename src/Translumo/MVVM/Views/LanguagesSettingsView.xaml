@@ -6,6 +6,7 @@
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              xmlns:controls="clr-namespace:Translumo.Controls"
              xmlns:translation="clr-namespace:Translumo.Translation;assembly=Translumo.Translation"
+             xmlns:tts="clr-namespace:Translumo.TTS;assembly=Translumo.TTS"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -13,6 +14,13 @@
                             ObjectType="{x:Type System:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="translation:Translators"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <ObjectDataProvider x:Key="ttsSystems" MethodName="GetValues"
+                            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="tts:TTSEngines"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
 
@@ -35,12 +43,16 @@
                 <Label Content="{DynamicResource Str.LangSettings.SourceLang}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <ComboBox Width="130" Style="{DynamicResource MaterialDesignComboBox}" ItemsSource="{Binding Path=AvailableTranslationLanguages}" DisplayMemberPath="DisplayName" SelectedValuePath="LanguageDescriptor.Language" SelectedValue="{Binding Path=Model.TranslateToLang}" MaxDropDownHeight="180"></ComboBox>
+                <ComboBox Width="130" Style="{DynamicResource MaterialDesignComboBox}" ItemsSource="{Binding Path=AvailableTranslationLanguages}" DisplayMemberPath="DisplayName" SelectedValuePath="LanguageDescriptor.Language" SelectedValue="{Binding Path=TranslateToLang}" MaxDropDownHeight="180"></ComboBox>
                 <Label Content="{DynamicResource Str.LangSettings.TranslationLang}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <ComboBox Width="130" Style="{DynamicResource MaterialDesignComboBox}"  ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Path=Model.Translator}"></ComboBox>
                 <Label HorizontalAlignment="Stretch" Content="{DynamicResource Str.LangSettings.Translator}" Style="{StaticResource ControlCaptionLabel}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <ComboBox Width="130" Style="{DynamicResource MaterialDesignComboBox}"  ItemsSource="{Binding Source={StaticResource ttsSystems}}" SelectedItem="{Binding Path=TtsSystem}"></ComboBox>
+                <Label HorizontalAlignment="Stretch" Content="{DynamicResource Str.LangSettings.TtsSystem}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
             <GroupBox Style="{StaticResource MaterialDesignGroupBox}" Margin="0,20,0,0">
                 <GroupBox.Header>

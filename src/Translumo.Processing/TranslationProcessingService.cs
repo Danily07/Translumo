@@ -16,11 +16,13 @@ using Translumo.Processing.TextProcessing;
 using Translumo.Translation;
 using Translumo.Translation.Configuration;
 using Translumo.Translation.Exceptions;
+using Translumo.TTS;
+using Translumo.TTS.Engines;
 
 namespace Translumo.Processing
 {
 
-    public class TranslationProcessingService : IProcessingService
+    public class TranslationProcessingService : IProcessingService, IDisposable
     {
         public bool IsStarted => !_ctSource?.IsCancellationRequested ?? false;
 
@@ -28,6 +30,9 @@ namespace Translumo.Processing
         private readonly IChatTextMediator _chatTextMediator;
         private readonly OcrEnginesFactory _enginesFactory;
         private readonly TranslatorFactory _translatorFactory;
+        private readonly TtsFactory _ttsFactory;
+        private readonly TtsConfiguration _ttsConfiguration;
+        private ITTSEngine _ttsEngine;
         private readonly TextDetectionProvider _textProvider;
         private readonly TextResultCacheService _textResultCacheService;
         private readonly ILogger _logger;
@@ -44,7 +49,8 @@ namespace Translumo.Processing
 
         private const float MIN_SCORE_THRESHOLD = 2.1f;
         
-        public TranslationProcessingService(ICapturerFactory capturerFactory, IChatTextMediator chatTextMediator, OcrEnginesFactory ocrEnginesFactory, TranslatorFactory translationFactory,
+        public TranslationProcessingService(ICapturerFactory capturerFactory, IChatTextMediator chatTextMediator, OcrEnginesFactory ocrEnginesFactory,
+            TranslatorFactory translationFactory, TtsFactory ttsFactory, TtsConfiguration ttsConfiguration,
             TextDetectionProvider textProvider, TranslationConfiguration translationConfiguration, OcrGeneralConfiguration ocrConfiguration, 
             TextResultCacheService textResultCacheService, ILogger<TranslationProcessingService> logger)
         {
@@ -57,13 +63,16 @@ namespace Translumo.Processing
             _textProvider = textProvider;
             _textResultCacheService = textResultCacheService;
             _translatorFactory = translationFactory;
-
+            _ttsFactory = ttsFactory;
+            _ttsConfiguration = ttsConfiguration;
+            _ttsEngine = ttsFactory.CreateTtsEngine(ttsConfiguration);
             _engines = InitializeEngines();
             _translator = _translatorFactory.CreateTranslator(_translationConfiguration);
             _textProvider.Language = translationConfiguration.TranslateFromLang;
 
             _translationConfiguration.PropertyChanged += TranslationConfigurationOnPropertyChanged;
             _ocrGeneralConfiguration.PropertyChanged += OcrGeneralConfigurationOnPropertyChanged;
+            _ttsConfiguration.PropertyChanged += TtsConfigurationOnPropertyChanged;
         }
 
         public void StartProcessing()
@@ -310,6 +319,7 @@ namespace Translumo.Processing
             if (!string.IsNullOrWhiteSpace(translation) && !_textResultCacheService.IsTranslatedCached(translation, iterationId))
             {
                 _chatTextMediator.SendText(translation, true);
+                _ttsEngine.SpeechText(translation);
             }
         }
 
@@ -376,6 +386,16 @@ namespace Translumo.Processing
             _translator = _translatorFactory.CreateTranslator(_translationConfiguration);
         }
 
+        private void TtsConfigurationOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(_ttsConfiguration.TtsLanguage)
+                || e.PropertyName == nameof(_ttsConfiguration.TtsSystem))
+            {
+                _ttsEngine.Dispose();
+                _ttsEngine = _ttsFactory.CreateTtsEngine(_ttsConfiguration);
+            }
+        }
+
         private void OcrGeneralConfigurationOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             _engines = InitializeEngines();
@@ -386,6 +406,11 @@ namespace Translumo.Processing
             return _enginesFactory
                 .GetEngines(_ocrGeneralConfiguration.OcrConfigurations, _translationConfiguration.TranslateFromLang)
                 .ToArray();
+        }
+
+        public void Dispose()
+        {
+            _ttsEngine.Dispose();
         }
 
         private enum IterationType : byte

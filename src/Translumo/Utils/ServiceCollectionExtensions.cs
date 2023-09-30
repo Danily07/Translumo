@@ -5,6 +5,7 @@ using Translumo.HotKeys;
 using Translumo.Infrastructure.Encryption;
 using Translumo.OCR.Configuration;
 using Translumo.Translation.Configuration;
+using Translumo.TTS;
 
 namespace Translumo.Utils
 {
@@ -18,6 +19,7 @@ namespace Translumo.Utils
                 confStorage.RegisterConfiguration<ChatWindowConfiguration>();
                 confStorage.RegisterConfiguration<OcrGeneralConfiguration>();
                 confStorage.RegisterConfiguration<TranslationConfiguration>();
+                confStorage.RegisterConfiguration<TtsConfiguration>();
                 confStorage.RegisterConfiguration<SystemConfiguration>();
                 confStorage.RegisterConfiguration<HotKeysConfiguration>();
 
