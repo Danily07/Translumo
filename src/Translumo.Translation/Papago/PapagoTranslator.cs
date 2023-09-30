@@ -23,7 +23,7 @@ namespace Translumo.Translation.Papago
         public override Task<string> TranslateTextAsync(string sourceText)
         {
             //TODO: Temp implementation for specific lang
-            if (TargetLangDescriptor.Language == Languages.Turkish)
+            if (TargetLangDescriptor.Language == Languages.Turkish || TargetLangDescriptor.Language == Languages.Arabic)
             {
                 throw new TransactionException("Papago translator is unavailable for this language");
             }

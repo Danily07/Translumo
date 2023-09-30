@@ -31,7 +31,22 @@ namespace Translumo.Dialog.Stages
                 .AddNextStage(enableFlagStage)
                 .AddException(new ExceptionInteractionStage(dialogService, (ex) => logger.LogError(ex, "Checking language pack error"), LocalizationManager.GetValue("Str.Stages.CheckLangPackError", true)));
         }
-        
+
+        public static InteractionStage CreateWindowsTtsCheckingStages(DialogService dialogService, string languageCode, InteractionStage enableFlagStage, ILogger logger)
+        {
+            return new ConditionalInteractionStage(dialogService,
+                    () => OptionalFeaturesProvider.TtsLanguagePackIsInstalled(languageCode), LocalizationManager.GetValue("Str.Stages.CheckLangPack"))
+                .AddNextFalse(new DialogQuestionInteractionStage(dialogService, string.Format(LocalizationManager.GetValue("Str.Stages.LangPackQuestion", true), languageCode))
+                    .AddNextStage(new ConditionalInteractionStage(dialogService, async () => (await OptionalFeaturesProvider.TtsLanguagePackInstall(languageCode)).RestartIsNeeded, LocalizationManager.GetValue("Str.Stages.InstallationLangPack"))
+                        .AddNextFalse(new DialogInteractionStage(dialogService, LocalizationManager.GetValue("Str.Stages.LangPackInstalledTtsRestart", true))
+                            .AddNextStage(enableFlagStage))
+                        .AddNextStage(new DialogInteractionStage(dialogService, LocalizationManager.GetValue("Str.Stages.LangPackInstalledRestart"))
+                            .AddNextStage(enableFlagStage))
+                        .AddException(new ExceptionInteractionStage(dialogService, (ex) => logger.LogError(ex, "Language windows pack install error"), LocalizationManager.GetValue("Str.Stages.InstallationLangError")))))
+                .AddNextStage(enableFlagStage)
+                .AddException(new ExceptionInteractionStage(dialogService, (ex) => logger.LogError(ex, "Checking language pack error"), LocalizationManager.GetValue("Str.Stages.CheckLangPackError", true)));
+        }
+
         public static InteractionStage CreateEasyOcrCheckingStages(DialogService dialogService, InteractionStage enableFlagStage, ILogger logger)
         {
             return new ConditionalInteractionStage(dialogService,

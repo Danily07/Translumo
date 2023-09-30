@@ -23,11 +23,14 @@
 
     <!--Chat-->
     <system:String x:Key="Str.Chat.SettingsOpened">Close settings to start translation</system:String>
+    <system:String x:Key="Str.Chat.WindowLocked">Translation window has been locked</system:String>
+    <system:String x:Key="Str.Chat.WindowUnlocked">Translation window has been unlocked</system:String>
 
     <!--Language settings-->
     <system:String x:Key="Str.LangSettings.SourceLang">Source language</system:String>
     <system:String x:Key="Str.LangSettings.TranslationLang">Translation language</system:String>
     <system:String x:Key="Str.LangSettings.Translator">Translator</system:String>
+    <system:String x:Key="Str.LangSettings.TtsSystem">Text to speech system (experimental feature)</system:String>
 
     <!--Hotkeys descriptions-->
     <system:String x:Key="Str.Hotkeys.ChatVisibility">Show/hide translation window</system:String>
@@ -36,6 +39,7 @@
     <system:String x:Key="Str.Hotkeys.OnOffTranslation">On/off translation</system:String>
     <system:String x:Key="Str.Hotkeys.ShowSelectArea">Show selected screen capture area</system:String>
     <system:String x:Key="Str.Hotkeys.OnceTranslate">Select area and translate text once</system:String>
+    <system:String x:Key="Str.Hotkeys.WindowChangeStyle">Lock/unlock translation window</system:String>
     <system:String x:Key="Str.Hotkeys.SettingsShowHelp">Press '{0}' to open the Settings</system:String>
     <system:String x:Key="Str.Hotkeys.SelectAreaHelp">Press '{0}' to select detection area</system:String>
     <system:String x:Key="Str.Hotkeys.OnTranslationHelp">Press '{0}' to start translation</system:String>
@@ -50,6 +54,16 @@
     <system:String x:Key="Str.AppearanceSettings.WindowOpacity">Window opacity</system:String>
     <system:String x:Key="Str.AppearanceSettings.FontSizePanelCaption">Font size — change</system:String>
     <system:String x:Key="Str.AppearanceSettings.FontColorPanelCaption">Font color — change</system:String>
+    <system:String x:Key="Str.AppearanceSettings.KeepFormatting">Keep source formatting</system:String>
+    <system:String x:Key="Str.AppearanceSettings.TextAlignment">Text alignment</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Left">Left</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Right">Right</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Center">Center</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Justify">Justify</system:String>
+    <system:String x:Key="Str.AppearanceSettings.AutoClearTexts">Auto clear window</system:String>
+    <system:String x:Key="Str.AppearanceSettings.AutoClearTexts2">after inactivity</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Ms">ms</system:String>
+
 
     <!--Proxy settings-->
     <system:String x:Key="Str.ProxySettings.Proxy">Proxy</system:String>
@@ -94,6 +108,7 @@
     <system:String x:Key="Str.Languages.Vietnamese">Vietnamese</system:String>
     <system:String x:Key="Str.Languages.Turkish">Turkish</system:String>
     <system:String x:Key="Str.Languages.Thai">Thai</system:String>
+    <system:String x:Key="Str.Languages.Arabic">Arabic</system:String>
 
     <!--Dialog stages-->
     <system:String x:Key="Str.Stages.CheckPyModules">Checking installed modules...</system:String>
@@ -107,6 +122,7 @@
     <system:String x:Key="Str.Stages.LangPackQuestion" xml:space="preserve">Language feature pack '{0}' is not installed.&#13;Do you want to install it now?</system:String>
     <system:String x:Key="Str.Stages.InstallationLangPack">Installation language pack...</system:String>
     <system:String x:Key="Str.Stages.LangPackInstalledRestart">Language pack has been installed. Please restart computer</system:String>
+    <system:String x:Key="Str.Stages.LangPackInstalledTtsRestart" xml:space="preserve">Language pack has been installed.&#13;If TTS doesn't work, please try to restart the application.</system:String>
     <system:String x:Key="Str.Stages.InstallationLangError">Failed to install pack: '{0}'</system:String>
     <system:String x:Key="Str.Stages.CheckLangPackError" xml:space="preserve">Unexpected error of checking Windows feature options.&#13;Please verify that the application is running as an Administrator.</system:String>
     <system:String x:Key="Str.Stages.SwitchLanguage">Switching the language...</system:String>

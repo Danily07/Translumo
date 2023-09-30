@@ -20,11 +20,13 @@ using Translumo.MVVM.ViewModels;
 using Translumo.OCR;
 using Translumo.OCR.Configuration;
 using Translumo.Processing;
+using Translumo.Processing.Configuration;
 using Translumo.Processing.Interfaces;
 using Translumo.Processing.TextProcessing;
 using Translumo.Services;
 using Translumo.Translation;
 using Translumo.Translation.Configuration;
+using Translumo.TTS;
 using Translumo.Update;
 using Translumo.Utils;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -94,11 +96,14 @@ namespace Translumo
             services.AddScoped<LanguagesSettingsViewModel>();
             services.AddScoped<OcrSettingsViewModel>();
 
+            var chatWindowConfiguration = ChatWindowConfiguration.Default;
             services.AddSingleton<OcrGeneralConfiguration>(OcrGeneralConfiguration.Default);
             services.AddSingleton<TranslationConfiguration>(TranslationConfiguration.Default);
-            services.AddSingleton<ChatWindowConfiguration>(ChatWindowConfiguration.Default);
+            services.AddSingleton<TtsConfiguration>(TtsConfiguration.Default);
+            services.AddSingleton<ChatWindowConfiguration>(chatWindowConfiguration);
             services.AddSingleton<HotKeysConfiguration>(HotKeysConfiguration.Default);
             services.AddSingleton<SystemConfiguration>(SystemConfiguration.Default);
+            services.AddSingleton<TextProcessingConfiguration>(chatWindowConfiguration.TextProcessing);
 
             var chatMediatorInstance = new ChatUITextMediator();
             services.AddSingleton<IChatTextMediator, ChatUITextMediator>(provider => chatMediatorInstance);
@@ -126,6 +131,8 @@ namespace Translumo
             services.AddTransient<IPredictor<InputTextPrediction, OutputTextPrediction>, MlPredictor<InputTextPrediction, OutputTextPrediction>>();
             services.AddTransient<IEncryptionService, AesEncryptionService>();
             services.AddTransient<LanguageDescriptorFactory>();
+            services.AddTransient<TtsFactory>();
+            
 
             services.AddConfigurationStorage();
         }

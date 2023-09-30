@@ -8,6 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Translumo.OCR\Translumo.OCR.csproj" />
     <ProjectReference Include="..\Translumo.Translation\Translumo.Translation.csproj" />
+    <ProjectReference Include="..\Translumo.TTS\Translumo.TTS.csproj" />
   </ItemGroup>
 
 </Project>
