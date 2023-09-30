@@ -20,6 +20,7 @@ jobs:
 
     env:
       Solution_Name: Translumo.sln
+      SkipBinariesExtract: true   # Skip download additional binaries, those are setted in cproj as prebuild step
       
     steps:
     - name: Checkout
