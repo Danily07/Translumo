@@ -23,12 +23,14 @@
 
     <!--Chat-->
     <system:String x:Key="Str.Chat.SettingsOpened">Закройте окно настроек чтобы начать перевод</system:String>
+    <system:String x:Key="Str.Chat.WindowLocked">Окно перевода заблокировано</system:String>
+    <system:String x:Key="Str.Chat.WindowUnlocked">Окно перевода разблокировано</system:String>
 
     <!--Language settings-->
     <system:String x:Key="Str.LangSettings.SourceLang">Исходный язык</system:String>
     <system:String x:Key="Str.LangSettings.TranslationLang">Язык перевода</system:String>
     <system:String x:Key="Str.LangSettings.Translator">Переводчик</system:String>
-    <system:String x:Key="Str.LangSettings.TtsSystem">Система чтения</system:String>
+    <system:String x:Key="Str.LangSettings.TtsSystem">Синтез речи TTS (предварительная версия)</system:String>
 
     <!--Hotkeys descriptions-->
     <system:String x:Key="Str.Hotkeys.ChatVisibility">Показать/скрыть окно перевода</system:String>
@@ -37,6 +39,7 @@
     <system:String x:Key="Str.Hotkeys.OnOffTranslation">Включить/выключить перевод</system:String>
     <system:String x:Key="Str.Hotkeys.ShowSelectArea">Показать выбранную область перевода</system:String>
     <system:String x:Key="Str.Hotkeys.OnceTranslate">Выбрать область и перевести текст один раз</system:String>
+    <system:String x:Key="Str.Hotkeys.WindowChangeStyle">Заблокировать/разблокировать окно перевода</system:String>
     <system:String x:Key="Str.Hotkeys.SettingsShowHelp">Нажмите '{0}' чтобы открыть настройки</system:String>
     <system:String x:Key="Str.Hotkeys.SelectAreaHelp">Нажмите '{0}' чтобы выбрать область захвата текста</system:String>
     <system:String x:Key="Str.Hotkeys.OnTranslationHelp">Нажмите '{0}' чтобы начать перевод</system:String>
@@ -47,10 +50,19 @@
     <system:String x:Key="Str.AppearanceSettings.FontColor">Цвет шрифта</system:String>
     <system:String x:Key="Str.AppearanceSettings.FontSize">Размер шрифта</system:String>
     <system:String x:Key="Str.AppearanceSettings.Bold">Жирный</system:String>
-    <system:String x:Key="Str.AppearanceSettings.LineSpacing">Межстрочный интервал</system:String>
+    <system:String x:Key="Str.AppearanceSettings.LineSpacing" xml:space="preserve">Межстрочный&#13;интервал</system:String>
     <system:String x:Key="Str.AppearanceSettings.WindowOpacity">Прозрачность окна</system:String>
     <system:String x:Key="Str.AppearanceSettings.FontSizePanelCaption">Цвет окна — изменить</system:String>
     <system:String x:Key="Str.AppearanceSettings.FontColorPanelCaption">Цвет шрифта — изменить</system:String>
+    <system:String x:Key="Str.AppearanceSettings.KeepFormatting" xml:space="preserve">Сохранять исходное&#13;форматирование</system:String>
+    <system:String x:Key="Str.AppearanceSettings.TextAlignment">Выравнивание текста</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Left">Левому краю</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Right">Правому краю</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Center">По центру</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Justify">По ширине</system:String>
+    <system:String x:Key="Str.AppearanceSettings.AutoClearTexts">Автоочистка окна</system:String>
+    <system:String x:Key="Str.AppearanceSettings.AutoClearTexts2">после бездействия</system:String>
+    <system:String x:Key="Str.AppearanceSettings.Ms">мс</system:String>
 
     <!--Proxy settings-->
     <system:String x:Key="Str.ProxySettings.Proxy">Прокси</system:String>
@@ -95,6 +107,7 @@
     <system:String x:Key="Str.Languages.Vietnamese">Вьетнамский</system:String>
     <system:String x:Key="Str.Languages.Turkish">Турецкий</system:String>
     <system:String x:Key="Str.Languages.Thai">Тайский</system:String>
+    <system:String x:Key="Str.Languages.Arabic">Арабский</system:String>
 
     <!--Dialog stages-->
     <system:String x:Key="Str.Stages.CheckPyModules">Проверка установленных модулей...</system:String>
@@ -108,6 +121,7 @@
     <system:String x:Key="Str.Stages.LangPackQuestion" xml:space="preserve">Языковой пакет '{0}' не установлен.&#13;Хотите установить сейчас?</system:String>
     <system:String x:Key="Str.Stages.InstallationLangPack">Установка языкового пакета...</system:String>
     <system:String x:Key="Str.Stages.LangPackInstalledRestart">Языковой пакет успешно установлен. Пожалуйста, перезагрузите систему.</system:String>
+    <system:String x:Key="Str.Stages.LangPackInstalledTtsRestart" xml:space="preserve">Языковой пакет успешно установлен.&#13;Если TTS не работает, попробуйте перезапустить приложение.</system:String>
     <system:String x:Key="Str.Stages.InstallationLangError">Ошибка установки пакета: '{0}'</system:String>
     <system:String x:Key="Str.Stages.CheckLangPackError" xml:space="preserve">Ошибка проверки дополнительных компонентов Windows.&#13;Пожалуйста, убедитесь, что приложение запущено с правами администратора.</system:String>
     <system:String x:Key="Str.Stages.SwitchLanguage">Смена языка...</system:String>

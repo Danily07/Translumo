@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Translumo.Infrastructure.Constants;
 using Translumo.Infrastructure.Language;
 using Translumo.OCR;
+using Translumo.Processing.Configuration;
 using Translumo.Processing.Exceptions;
 using static System.Threading.Tasks.Task;
 
@@ -25,11 +27,14 @@ namespace Translumo.Processing.TextProcessing
 
         private readonly TextValidityPredictor _textValidityPredictor;
         private readonly LanguageService _languageService;
+        private readonly TextProcessingConfiguration _configuration;
         
-        public TextDetectionProvider(TextValidityPredictor textValidityPredictor, LanguageService languageService)
+        public TextDetectionProvider(TextValidityPredictor textValidityPredictor, LanguageService languageService, 
+            TextProcessingConfiguration configuration)
         {
             this._textValidityPredictor = textValidityPredictor;
             this._languageService = languageService;
+            this._configuration = configuration;
         }
 
         public virtual TextDetectionResult GetText(IOCREngine ocrEngine, byte[] img)
@@ -38,13 +43,12 @@ namespace Translumo.Processing.TextProcessing
             {
                 var detectedLines = ocrEngine.GetTextLines(img);
                 var resultText = PreProcessTextLines(detectedLines);
-
                 var scorePrediction = _textValidityPredictor.Predict(detectedLines, out var validatedText);
 
                 return new TextDetectionResult(ocrEngine, _languageDescriptor)
                 {
                     ValidityScore = scorePrediction,
-                    Text = resultText,
+                    Text = _configuration.KeepFormatting ? string.Join(Environment.NewLine, detectedLines) :  resultText,
                     ValidatedText = validatedText
                 };
             }

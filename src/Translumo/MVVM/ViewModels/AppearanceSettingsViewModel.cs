@@ -1,17 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Toolkit.Mvvm.Input;
 using Translumo.Configuration;
 using Translumo.MVVM.Common;
+using Translumo.MVVM.Models;
 using Translumo.Services;
 using Translumo.Utils;
 using RelayCommand = Microsoft.Toolkit.Mvvm.Input.RelayCommand;
 
 namespace Translumo.MVVM.ViewModels
 {
-    public sealed class AppearanceSettingsViewModel : BindableBase, IAdditionalPanelController
+    public sealed class AppearanceSettingsViewModel : BindableBase, IAdditionalPanelController, IDisposable
     {
         public event EventHandler<bool> PanelStateIsChanged;
 
@@ -20,6 +24,8 @@ namespace Translumo.MVVM.ViewModels
             get => _model;
             set => SetProperty(ref _model, value);
         }
+
+        public IList<DisplayAlignment> AvailableAlignments { get; set; }
 
         public bool ColorPickerIsOpened
         {
@@ -54,6 +60,15 @@ namespace Translumo.MVVM.ViewModels
         {
             this.Model = model;
             this._chatMediator = chatMediator;
+            this.AvailableAlignments = Enum.GetValues<TextAlignment>()
+                .Select(alignment => new DisplayAlignment(alignment, GetDisplayAlignmentText(alignment)))
+                .ToList();
+        }
+
+        private string GetDisplayAlignmentText(TextAlignment alignment)
+        {
+            return LocalizationManager.GetValue($"Str.AppearanceSettings.{alignment}", false,
+                OnLocalizedValueChanged, this);
         }
 
         private void OnChangeBackColorClicked(Control sender)
@@ -101,6 +116,17 @@ namespace Translumo.MVVM.ViewModels
         {
             _additionalPanelTriggerName = null;
             ColorPickerIsOpened = false;
+        }
+
+        private void OnLocalizedValueChanged(string key, string oldValue)
+        {
+            var availableAlignment = AvailableAlignments.First(alig => alig.DisplayText == oldValue);
+            availableAlignment.DisplayText = LocalizationManager.GetValue(key, false, OnLocalizedValueChanged, this);
+        }
+
+        public void Dispose()
+        {
+            LocalizationManager.ReleaseChangedValuesCallbacks(this);
         }
     }
 }

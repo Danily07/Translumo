@@ -42,9 +42,9 @@ namespace Translumo.Controls
         private static void IpAddressCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var targetControl = (ProxySettingCard)d;
-            string newValue = Regex.Replace((string)e.NewValue, "\\d+", 
+            string newValue = Regex.Replace((e.NewValue as string) ?? string.Empty, "\\d+", 
                 v => v.Value.PadRight(3, targetControl.TbIpAddress.PromptChar));
-            if (newValue == (string)e.OldValue)
+            if (newValue == e.OldValue as string)
             {
                 return;
             }
@@ -54,35 +54,35 @@ namespace Translumo.Controls
 
         private static void PortCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if ((string)e.NewValue == (string)e.OldValue)
+            if (e.NewValue as string == e.OldValue as string)
             {
                 return;
             }
 
             var targetControl = (ProxySettingCard)d;
-            targetControl.TbPort.Value = (string)e.NewValue;
+            targetControl.TbPort.Value = e.NewValue as string;
         }
 
         private static void LoginCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if ((string)e.NewValue == (string)e.OldValue)
+            if (e.NewValue as string == e.OldValue as string)
             {
                 return;
             }
 
             var targetControl = (ProxySettingCard)d;
-            targetControl.TbLogin.Text = (string)e.NewValue;
+            targetControl.TbLogin.Text = e.NewValue as string;
         }
 
         private static void PasswordCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if ((string)e.NewValue == (string)e.OldValue)
+            if (e.NewValue as string == e.OldValue as string)
             {
                 return;
             }
 
             var targetControl = (ProxySettingCard)d;
-            targetControl.TbPassword.Text = (string)e.NewValue;
+            targetControl.TbPassword.Text = e.NewValue as string;
         }
         public ICommand DeleteCommand
         {

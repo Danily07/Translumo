@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +27,8 @@ namespace Translumo.Translation.Deepl
         public override Task<string> TranslateTextAsync(string sourceText)
         {
             //TODO: Temp implementation for specific lang
-            if (TargetLangDescriptor.Language == Languages.Vietnamese || TargetLangDescriptor.Language == Languages.Thai)
+            if (TargetLangDescriptor.Language == Languages.Vietnamese 
+                || TargetLangDescriptor.Language == Languages.Thai || TargetLangDescriptor.Language == Languages.Arabic)
             {
                 throw new TransactionException("DeepL translator for this language is unavailable");
             }
@@ -39,8 +41,8 @@ namespace Translumo.Translation.Deepl
             var sourceLangCode = SourceLangDescriptor.IsoCode.ToUpper();
             var targetLangCode = TargetLangDescriptor.IsoCode.ToUpper();
 
-            string dataIn = new DeepLTranslatorRequest(container.DeeplId, sourceText, sourceLangCode, targetLangCode)
-                .ToJsonString();
+            var request = new DeepLTranslatorRequest(container.DeeplId, sourceText, sourceLangCode, targetLangCode);
+            string dataIn = request.ToJsonString();
             HttpResponse httpResponse = await container.Reader.RequestWebDataAsync(DEEPL_API_URL, HttpMethods.POST, dataIn, acceptCookie: true)
                 .ConfigureAwait(false);
             container.DeeplId++;
@@ -51,15 +53,23 @@ namespace Translumo.Translation.Deepl
                 if (deepLTranslationResponse?.Result?.Translations != null)
                 {
                     StringBuilder stringBuilder = new StringBuilder();
-                    foreach (DeepLResponse.Translation translation in deepLTranslationResponse.Result.Translations)
+                    for (var i = 0; i < deepLTranslationResponse.Result.Translations.Count; i++)
                     {
-                        Beam beam = translation.Beams.FirstOrDefault();
-                        if (beam != null && beam.PostProcessedSentence != null)
+                        Beam beam = deepLTranslationResponse.Result.Translations[i].Beams.FirstOrDefault();
+                        if (beam?.PostProcessedSentence != null)
                         {
                             stringBuilder.Append(beam.PostProcessedSentence);
-                            stringBuilder.Append(" ");
+                            if (i < request.Params.Jobs.Count && request.Params.Jobs[i].NewLineFollows)
+                            {
+                                stringBuilder.Append(Environment.NewLine);
+                            }
+                            else
+                            {
+                                stringBuilder.Append(" ");
+                            }
                         }
                     }
+
                     return stringBuilder.ToString().TrimEnd();
                 }
 
