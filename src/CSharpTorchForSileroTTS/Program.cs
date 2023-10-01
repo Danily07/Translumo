@@ -1,12 +1,5 @@
 ﻿using Python.Runtime;
-using System;
 using System.Media;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static Tensorboard.Summary.Types;
-//using TorchSharp;
-//using static TorchSharp.torch;
-//using static TorchSharp.torch.nn;
 
 // See https://aka.ms/new-console-template for more information
 Console.WriteLine("Hello, World!");
@@ -41,6 +34,15 @@ using (Py.GIL())
 
 var voice = GetVoices(model).First();
 
+//////////
+SoundPlayer? _player = null;
+var _cancellationTokenSource = new CancellationTokenSource();
+////////
+
+SpeechText("Халлоу");
+SpeechText("Привет");
+
+
 while (true)
 {
     Console.WriteLine("Напиши текст а я скажу:");
@@ -52,22 +54,9 @@ while (true)
         continue;
     }
 
-    dynamic result;
-    using (Py.GIL())
-    {
-        dynamic audio = model.apply_tts(text: text,
-                         speaker: voice,
-                         sample_rate: 48000);
-        result = ipython.display.Audio(audio, rate: 48000).data;
-    }
-
-    using (MemoryStream ms = new MemoryStream(result.As<byte[]>()))
-    {
-        // Construct the sound player
-        var player = new SoundPlayer(ms);
-        player.Play();
-    }
+    SpeechText(text);
 }
+
 
 string ChangeVoice(dynamic model)
 {
@@ -97,3 +86,64 @@ string[] GetVoices(dynamic model)
 
 
 
+
+void SpeechText(string text)
+{
+
+    StopSpeech();
+
+    //var token = _cancellationTokenSource.Token;
+    //var task = Task.Factory.StartNew(
+    //    () =>
+    //    {
+
+    //        var bytes = GenerateAudio(text);
+    //        if (token.IsCancellationRequested)
+    //        {
+    //            Console.Write(",");
+    //            return;
+    //        }
+    //        PlayWavBytes(bytes);
+    //    });
+
+    var task = Task.Factory.StartNew(() => GenerateAudio(text), _cancellationTokenSource.Token)
+    .ContinueWith((bytesTask) => {
+        if (!bytesTask.IsCompletedSuccessfully)
+        {
+            return;
+        }
+        PlayWavBytes(bytesTask.Result);
+    }, _cancellationTokenSource.Token);
+}
+
+void StopSpeech()
+{
+    _cancellationTokenSource.Cancel();
+    _player?.Stop();
+    _cancellationTokenSource.Dispose();    
+    _cancellationTokenSource = new CancellationTokenSource();
+}
+
+byte[] GenerateAudio(string text)
+{
+    Console.Write("`");
+    byte[] result;
+    using (Py.GIL())
+    {
+        using PyObject audio = model.apply_tts(text: text, speaker: voice, sample_rate: 48000);
+        using PyObject pyAudio = ipython.display.Audio(audio, rate: 48000);
+        result = ((pyAudio as dynamic).data as PyObject).As<byte[]>();
+    }
+    Console.Write("'");
+    return result;
+}
+
+void PlayWavBytes(byte[] wavBytes)
+{
+    using var ms = new MemoryStream(wavBytes);
+    using var player = new SoundPlayer(ms);
+    _player = player;
+    player.Play();
+    //.player.Dispose();
+    _player = null;
+}

@@ -21,6 +21,7 @@ namespace Translumo.TTS
                 TTSEngines.None => new NoneTTSEngine(),
                 TTSEngines.WindowsTTS => new WindowsTTSEngine(
                     _languageService.GetLanguageDescriptor(ttsConfiguration.TtsLanguage).Code),
+                TTSEngines.SileroTTS => new SileroTTSEngine(),
                 _ => throw new NotSupportedException()
             };
     }
