@@ -2,10 +2,8 @@ name: PR. Build
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "*" ]
 
 jobs:
   build:
