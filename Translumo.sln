@@ -20,9 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Translumo.Translation", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Translumo.Processing", "src\Translumo.Processing\Translumo.Processing.csproj", "{01C146C8-F14C-48E0-BECB-2587392AD1DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Translumo.TTS", "src\Translumo.TTS\Translumo.TTS.csproj", "{03241C57-B380-45E9-92D6-2308A93DC0DB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpTorchForSileroTTS", "src\CSharpTorchForSileroTTS\CSharpTorchForSileroTTS.csproj", "{EDD873D9-5F52-4E35-9FAB-6328ADE6A77A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Translumo.TTS", "src\Translumo.TTS\Translumo.TTS.csproj", "{03241C57-B380-45E9-92D6-2308A93DC0DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,10 +56,6 @@ Global
 		{03241C57-B380-45E9-92D6-2308A93DC0DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03241C57-B380-45E9-92D6-2308A93DC0DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03241C57-B380-45E9-92D6-2308A93DC0DB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EDD873D9-5F52-4E35-9FAB-6328ADE6A77A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EDD873D9-5F52-4E35-9FAB-6328ADE6A77A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EDD873D9-5F52-4E35-9FAB-6328ADE6A77A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EDD873D9-5F52-4E35-9FAB-6328ADE6A77A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
