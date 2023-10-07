@@ -102,6 +102,7 @@
     <system:String x:Key="Str.Stages.PyModulesQuestion2" xml:space="preserve">Дополнительные модули потребуют ~5гб свободного дискового пространства.&#13;Установка может занять от нескольких минут до часа.&#13;Хотите продолжить?</system:String>
     <system:String x:Key="Str.Stages.InstallationPyModule1">(1/2) Установка 'pytorch' модуля...</system:String>
     <system:String x:Key="Str.Stages.InstallationPyModule2">(2/2) Установка 'easyocr' модуля...</system:String>
+    <system:String x:Key="Str.Stages.InstallationPyModuleTemplate">Установка '{0}' модуля...</system:String>
     <system:String x:Key="Str.Stages.PyModulesInstalled">Необходимые модули успешно установлены</system:String>
     <system:String x:Key="Str.Stages.PyModulesCheckError">Не удалось получить доступ к Python для проверки модулей</system:String>
     <system:String x:Key="Str.Stages.CheckLangPack">Проверка установленных языковых пакетов...</system:String>

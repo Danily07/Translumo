@@ -91,8 +91,8 @@ namespace Translumo.MVVM.ViewModels
         private readonly LanguageService _languageService;
         private readonly ILogger _logger;
 
-        public LanguagesSettingsViewModel(LanguageService languageService, TranslationConfiguration translationConfiguration, 
-            OcrGeneralConfiguration ocrConfiguration, TtsConfiguration ttsConfiguration, DialogService dialogService, 
+        public LanguagesSettingsViewModel(LanguageService languageService, TranslationConfiguration translationConfiguration,
+            OcrGeneralConfiguration ocrConfiguration, TtsConfiguration ttsConfiguration, DialogService dialogService,
             ILogger<LanguagesSettingsViewModel> logger)
         {
             var languages = languageService.GetAll(true)
@@ -140,7 +140,7 @@ namespace Translumo.MVVM.ViewModels
                     .Select(pr => pr.MapTo<ProxyCardItem, Proxy>())
                     .ToList();
             }
-            
+
             ProxySettingsIsOpened = false;
         }
 
@@ -148,10 +148,10 @@ namespace Translumo.MVVM.ViewModels
         {
             try
             {
-                var changeLangStage = StagesFactory.CreateLanguageChangeStages(_dialogService, () => Model.TranslateFromLang = language, 
+                var changeLangStage = StagesFactory.CreateLanguageChangeStages(_dialogService, () => Model.TranslateFromLang = language,
                     _logger);
 
-                if (_ocrConfiguration.GetConfiguration<WindowsOCRConfiguration>().Enabled && 
+                if (_ocrConfiguration.GetConfiguration<WindowsOCRConfiguration>().Enabled &&
                     !_ocrConfiguration.InstalledWinOcrLanguages.Contains(language))
                 {
                     var langCode = _languageService.GetLanguageDescriptor(language).Code;
@@ -201,9 +201,8 @@ namespace Translumo.MVVM.ViewModels
                     changeParameter,
                     _logger);
 
-                //if (TtsSettings.GetConfiguration<WindowsTtsConfiguration>().Enabled &&
                 if (engine == TTSEngines.WindowsTTS
-                && !TtsSettings.InstalledWinTtsLanguages.Contains(language))
+                    && !TtsSettings.InstalledWinTtsLanguages.Contains(language))
                 {
                     var langCode = _languageService.GetLanguageDescriptor(language).Code;
                     changeLangStage.AddNextStage(new ActionInteractionStage(_dialogService, () =>
@@ -212,6 +211,10 @@ namespace Translumo.MVVM.ViewModels
                         return Task.CompletedTask;
                     }));
                     changeLangStage = StagesFactory.CreateWindowsTtsCheckingStages(_dialogService, langCode, changeLangStage, _logger);
+                }
+                else if (engine == TTSEngines.SileroTTS)
+                {
+                    changeLangStage = StagesFactory.CreateSileroTtsCheckingStages(_dialogService, changeLangStage, _logger);
                 }
 
                 await changeLangStage.ExecuteAsync();
