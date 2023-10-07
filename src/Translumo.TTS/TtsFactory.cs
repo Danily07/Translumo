@@ -22,10 +22,23 @@ namespace Translumo.TTS
             ttsConfiguration.TtsSystem switch
             {
                 TTSEngines.None => new NoneTTSEngine(),
-                TTSEngines.WindowsTTS => new WindowsTTSEngine(
-                    _languageService.GetLanguageDescriptor(ttsConfiguration.TtsLanguage).Code),
-                TTSEngines.SileroTTS => new SileroTTSEngine(_pythonEngine),
+                TTSEngines.WindowsTTS => new WindowsTTSEngine(GetLangCode(ttsConfiguration)),
+                TTSEngines.SileroTTS => new SileroTTSEngine(_pythonEngine, GetLangCode(ttsConfiguration)),
                 _ => throw new NotSupportedException()
             };
+
+
+        public static bool IsLanguageSupported(TTSEngines engine, Languages language, LanguageService languageService) =>
+            engine switch
+            {
+                TTSEngines.None => true,
+                TTSEngines.WindowsTTS => true,
+                TTSEngines.SileroTTS => SileroTTSEngine.IsLanguageSupport(languageService.GetLanguageDescriptor(language).Code),
+                _ => throw new NotSupportedException()
+            };
+
+
+        private string GetLangCode(TtsConfiguration ttsConfiguration) =>
+            _languageService.GetLanguageDescriptor(ttsConfiguration.TtsLanguage).Code;
     }
 }

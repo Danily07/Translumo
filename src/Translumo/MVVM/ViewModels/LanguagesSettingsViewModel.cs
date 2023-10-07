@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Mvvm.Input;
+using OpenCvSharp;
+using Serilog.Core;
 using Translumo.Dialog;
 using Translumo.Dialog.Stages;
 using Translumo.Infrastructure.Language;
@@ -177,8 +179,8 @@ namespace Translumo.MVVM.ViewModels
         {
             var changeLanguageAction = () =>
             {
-                this.Model.TranslateToLang = language;
                 this.TtsSettings.TtsLanguage = language;
+                this.Model.TranslateToLang = language;
             };
 
             await this.ReconfigureTts(language, TtsSettings.TtsSystem, changeLanguageAction);
@@ -201,7 +203,21 @@ namespace Translumo.MVVM.ViewModels
                     changeParameter,
                     _logger);
 
-                if (engine == TTSEngines.WindowsTTS
+                if (!TtsSettings.IsLanguageSupportedInTtsEngine(engine, language))
+                {
+                    var warningMessage = string.Format(
+                            LocalizationManager.GetValue("Str.Stages.TtsNotSupportLanguageTemplate", true),
+                            LocalizationManager.GetValue("Str.LangSettings.TtsSystem", true),
+                            engine.ToString(),
+                            GetLanguageDisplayName(language));
+
+                    changeLangStage = new ExceptionInteractionStage(
+                        _dialogService,
+                        _ => { return; },
+                        warningMessage)
+                    { InputException = new NotSupportedException() };
+                }
+                else if (engine == TTSEngines.WindowsTTS
                     && !TtsSettings.InstalledWinTtsLanguages.Contains(language))
                 {
                     var langCode = _languageService.GetLanguageDescriptor(language).Code;
@@ -225,11 +241,15 @@ namespace Translumo.MVVM.ViewModels
             }
         }
 
+
         private string GetLanguageDisplayName(LanguageDescriptor languageDescriptor)
         {
             return LocalizationManager.GetValue($"Str.Languages.{languageDescriptor.Language}", false,
                 OnLocalizedValueChanged, this);
         }
+
+        private string GetLanguageDisplayName(Languages language) =>
+            GetLanguageDisplayName(_languageService.GetLanguageDescriptor(language));
 
         private void OnLocalizedValueChanged(string key, string oldValue)
         {

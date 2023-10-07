@@ -113,6 +113,7 @@
     <system:String x:Key="Str.Stages.CheckLangPackError" xml:space="preserve">Ошибка проверки дополнительных компонентов Windows.&#13;Пожалуйста, убедитесь, что приложение запущено с правами администратора.</system:String>
     <system:String x:Key="Str.Stages.SwitchLanguage">Смена языка...</system:String>
     <system:String x:Key="Str.Stages.SwitchLanguageError">Ошибка смены языка: '{0}'</system:String>
+    <system:String x:Key="Str.Stages.TtsNotSupportLanguageTemplate">{0} '{1}' не поддерживает '{2}' язык</system:String>
 
     <!--Buttons-->
     <system:String x:Key="Str.Button.SettingProxy">Настроить прокси</system:String>

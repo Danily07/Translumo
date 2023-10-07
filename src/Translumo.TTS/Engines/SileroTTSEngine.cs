@@ -1,4 +1,5 @@
 ﻿using System.Media;
+using Translumo.Infrastructure.Constants;
 using Translumo.Infrastructure.Python;
 
 namespace Translumo.TTS.Engines;
@@ -8,19 +9,22 @@ public class SileroTTSEngine : ITTSEngine
     private dynamic _ipython;
     private dynamic _model;
     private string _voice;
-    private List<IDisposable> _pyObjects = new();
-    private object _syncContext = new object();
-    private bool _disposed = true;
-    private readonly SoundPlayer _player = new SoundPlayer();
+    private readonly string _modelPath;
     private readonly PythonEngineWrapper _pythonEngine;
+    private readonly List<IDisposable> _pyObjects = new();
+    private readonly SoundPlayer _player = new SoundPlayer();
     private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
+    private const string _sileroModelDirectory = "Silero";
+
 
     private const int _wave_rate = 48000;
 
 
-    public SileroTTSEngine(PythonEngineWrapper pythonEngine)
+    public SileroTTSEngine(PythonEngineWrapper pythonEngine, string langCode)
     {
         _pythonEngine = pythonEngine;
+        _modelPath = GetModelFullPath(langCode);
         Init();
     }
 
@@ -37,7 +41,7 @@ public class SileroTTSEngine : ITTSEngine
             using dynamic device = torch.device("cpu");
             torch.set_num_threads(4);
 
-            _model = torch.package.PackageImporter("v4_ru.pt").load_pickle("tts_models", "model");
+            _model = torch.package.PackageImporter(_modelPath).load_pickle("tts_models", "model");
             _model.to(device);
 
             _pyObjects.Add(_model);
@@ -98,4 +102,43 @@ public class SileroTTSEngine : ITTSEngine
 
         _pythonEngine.Dispose();
     }
+
+    public static bool IsLanguageSupport(string langCode) => GetModelForLanguage(langCode) != null;
+
+    private string GetModelFullPath(string langCode)
+    {
+        var modelUrl = GetModelForLanguage(langCode)?.FileUrl
+            ?? throw new NotSupportedException($"{nameof(SileroTTSEngine)} not support language '{langCode}'");
+
+        var fileName = Path.GetFileName(modelUrl);
+        var fullPath = Path.Combine(
+            Global.ModelsPath,
+            _sileroModelDirectory,
+            fileName);
+
+        return fullPath;
+    }
+
+    private static ModelDescription? GetModelForLanguage(string lang) =>
+        lang switch
+        {
+            "en-US" =>
+                new("https://models.silero.ai/models/tts/en/v3_en.pt",
+                    "Can you can a canned can into an un-canned can like a canner can can a canned can into an un-canned can?"),
+            "ru-RU" =>
+                new("https://models.silero.ai/models/tts/ru/v4_ru.pt",
+                    "В н+едрах т+ундры в+ыдры в г+етрах т+ырят в в+ёдра +ядра к+едров."),
+            "fr-FR" =>
+                new("https://models.silero.ai/models/tts/fr/v3_fr.pt",
+                    "Je suis ce que je suis, et si je suis ce que je suis, qu’est ce que je suis."),
+            "de-DE" =>
+                new("https://models.silero.ai/models/tts/de/v3_de.pt",
+                    "Fischers Fritze fischt frische Fische, Frische Fische fischt Fischers Fritze.'"),
+            "es-ES" =>
+                new("https://models.silero.ai/models/tts/es/v3_es.pt",
+                    "Hoy ya es ayer y ayer ya es hoy, ya llegó el día, y hoy es hoy."),
+            _ => null
+        };
+
+    private sealed record ModelDescription(string FileUrl, string WarmUpText);
 }

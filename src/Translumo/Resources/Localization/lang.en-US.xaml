@@ -113,6 +113,7 @@
     <system:String x:Key="Str.Stages.CheckLangPackError" xml:space="preserve">Unexpected error of checking Windows feature options.&#13;Please verify that the application is running as an Administrator.</system:String>
     <system:String x:Key="Str.Stages.SwitchLanguage">Switching the language...</system:String>
     <system:String x:Key="Str.Stages.SwitchLanguageError">Failed to switch language: '{0}'</system:String>
+    <system:String x:Key="Str.Stages.TtsNotSupportLanguageTemplate">{0} '{1}' doesn't support '{2}' language</system:String>
 
     <!--Buttons-->
     <system:String x:Key="Str.Button.SettingProxy">Configure proxy</system:String>
