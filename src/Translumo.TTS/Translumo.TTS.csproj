@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-    <PackageReference Include="pythonnet" Version="3.0.2" />
     <PackageReference Include="System.Speech" Version="7.0.0" />
   </ItemGroup>
 

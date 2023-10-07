@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Python.Runtime;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -15,6 +16,7 @@ using Translumo.Infrastructure.Dispatching;
 using Translumo.Infrastructure.Encryption;
 using Translumo.Infrastructure.Language;
 using Translumo.Infrastructure.MachineLearning;
+using Translumo.Infrastructure.Python;
 using Translumo.MVVM.Models;
 using Translumo.MVVM.ViewModels;
 using Translumo.OCR;
@@ -120,6 +122,7 @@ namespace Translumo
             services.AddSingleton<UpdateManager>();
             services.AddSingleton<IReleasesClient, GithubApiClient>(provider => new GithubApiClient("Danily07", "Translumo"));
             services.AddSingleton<ICapturerFactory, ScreenCapturerFactory>();
+            services.AddSingleton<PythonEngineWrapper>();
 
             services.AddTransient<IProcessingService, TranslationProcessingService>();
             services.AddTransient<OcrEnginesFactory>();

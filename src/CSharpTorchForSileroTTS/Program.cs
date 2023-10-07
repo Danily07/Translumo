@@ -21,8 +21,11 @@ using (Py.GIL())
     //dynamic io = Py.Import("io");
     //Py.Import("ffmpegio");   
     //dynamic ipython = Py.Import("ipykernel");
-    dynamic np = Py.Import("numpy");
+    var np = Py.Import("numpy");
     ipython = Py.Import("IPython");
+    var ipython2 = Py.Import("IPython");
+    ipython2.Dispose();
+
     // dynamic torchaudio = Py.Import("torchaudio");
     dynamic torch = Py.Import("torch");
 
@@ -45,6 +48,7 @@ SpeechText("Привет");
 
 while (true)
 {
+
     Console.WriteLine("Напиши текст а я скажу:");
     var text = Console.ReadLine();
 
@@ -74,6 +78,11 @@ string ChangeVoice(dynamic model)
             result = voices[choosesVariant - 1];
         }
 
+        using (Py.GIL())
+        {
+            var ipython3 = Py.Import("torch");
+            ipython3.Dispose();
+        }
     } while (string.IsNullOrEmpty(result));
 
     return result;

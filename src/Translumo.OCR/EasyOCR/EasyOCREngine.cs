@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Python.Runtime;
 using Translumo.Infrastructure.Constants;
 using Translumo.Infrastructure.Language;
+using Translumo.Infrastructure.Python;
 
 namespace Translumo.OCR.EasyOCR
 {
@@ -21,7 +22,7 @@ namespace Translumo.OCR.EasyOCR
         private bool _objectsInitialized;
         private bool _readerIsUsed;
 
-        private readonly object _obj = new object(); 
+        private readonly object _obj = new object();
         private readonly LanguageDescriptor _languageDescriptor;
         private readonly string _modelPath = Path.Combine(Global.ModelsPath, "easyocr");
         private readonly ILogger _logger;
@@ -35,8 +36,11 @@ namespace Translumo.OCR.EasyOCR
 
         public EasyOCREngine(LanguageDescriptor languageDescriptor, ILogger logger)
         {
+            // PythonEngineWrapper
             Runtime.PythonDLL = Path.Combine(Global.PythonPath, "python38.dll");
             PythonEngine.PythonHome = Global.PythonPath;
+            //
+
             _languageDescriptor = languageDescriptor;
             _logger = logger;
 
@@ -119,6 +123,7 @@ namespace Translumo.OCR.EasyOCR
                     _objectsInitialized = false;
                 }
 
+                // TODO: move to common place
                 if (PythonEngine.IsInitialized)
                 {
                     //Causes PythonEngine.Shutdown() hanging (https://github.com/pythonnet/pythonnet/issues/1701)

@@ -1,6 +1,5 @@
-﻿using Python.Runtime;
-using System.Media;
-using Translumo.Infrastructure.Constants;
+﻿using System.Media;
+using Translumo.Infrastructure.Python;
 
 namespace Translumo.TTS.Engines;
 
@@ -9,36 +8,31 @@ public class SileroTTSEngine : ITTSEngine
     private dynamic _ipython;
     private dynamic _model;
     private string _voice;
-    private List<PyObject> _pyObjects = new();
+    private List<IDisposable> _pyObjects = new();
     private object _syncContext = new object();
     private bool _disposed = true;
     private readonly SoundPlayer _player = new SoundPlayer();
-
+    private readonly PythonEngineWrapper _pythonEngine;
     private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
     private const int _wave_rate = 48000;
 
 
-    public SileroTTSEngine()
+    public SileroTTSEngine(PythonEngineWrapper pythonEngine)
     {
+        _pythonEngine = pythonEngine;
         Init();
     }
 
     private void Init()
     {
-        if (!PythonEngine.IsInitialized)
-        {
-            // TODO: move to common place, also used in EasyOCR
-            Runtime.PythonDLL = Path.Combine(Global.PythonPath, "python38.dll");
-            PythonEngine.Initialize();
-            PythonEngine.BeginAllowThreads();
-        }
+        _pythonEngine.Init();
 
-        using (Py.GIL())
+        _pythonEngine.Execute(() =>
         {
-            var np = Py.Import("numpy");
-            _ipython = Py.Import("IPython");
-            dynamic torch = Py.Import("torch");
+            var np = _pythonEngine.Import("numpy");
+            _ipython = _pythonEngine.Import("IPython");
+            dynamic torch = _pythonEngine.Import("torch");
 
             using dynamic device = torch.device("cpu");
             torch.set_num_threads(4);
@@ -50,10 +44,9 @@ public class SileroTTSEngine : ITTSEngine
             _pyObjects.Add(np);
             _pyObjects.Add(torch);
             _pyObjects.Add(_ipython);
-        }
+        });
 
-        using PyObject speakers = _model.speakers;
-        _voice = speakers.As<string[]>().First();
+        _voice = ((string[])_model.speakers).First();
     }
 
     public void SpeechText(string text)
@@ -73,18 +66,13 @@ public class SileroTTSEngine : ITTSEngine
              }, _cancellationTokenSource.Token);
     }
 
-    private byte[] GenerateAudio(string text)
-    {
-        byte[] result;
-        using (Py.GIL())
+    private byte[] GenerateAudio(string text) =>
+        _pythonEngine.Execute(() =>
         {
-            using PyObject audio = _model.apply_tts(text: text, speaker: _voice, sample_rate: _wave_rate);
-            using PyObject pyAudio = _ipython.display.Audio(audio, rate: _wave_rate);
-            result = ((pyAudio as dynamic).data as PyObject).As<byte[]>();
-        }
-
-        return result;
-    }
+            using var audio = _model.apply_tts(text: text, speaker: _voice, sample_rate: _wave_rate);
+            using var pyAudio = _ipython.display.Audio(audio, rate: _wave_rate);
+            return (byte[])pyAudio.data;
+        });
 
     private void PlayWavBytes(byte[] wavBytes)
     {
@@ -108,11 +96,6 @@ public class SileroTTSEngine : ITTSEngine
             pyObject.Dispose();
         }
 
-        if (PythonEngine.IsInitialized)
-        {
-            //Causes PythonEngine.Shutdown() hanging (https://github.com/pythonnet/pythonnet/issues/1701)
-            //PythonEngine.EndAllowThreads(_threadState);
-            PythonEngine.Shutdown();
-        }
+        _pythonEngine.Dispose();
     }
 }
