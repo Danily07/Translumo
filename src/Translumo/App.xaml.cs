@@ -22,6 +22,7 @@ using Translumo.MVVM.ViewModels;
 using Translumo.OCR;
 using Translumo.OCR.Configuration;
 using Translumo.Processing;
+using Translumo.Processing.Configuration;
 using Translumo.Processing.Interfaces;
 using Translumo.Processing.TextProcessing;
 using Translumo.Services;
@@ -97,13 +98,13 @@ namespace Translumo
             services.AddScoped<LanguagesSettingsViewModel>();
             services.AddScoped<OcrSettingsViewModel>();
 
+            var chatWindowConfiguration = ChatWindowConfiguration.Default;
             services.AddSingleton<OcrGeneralConfiguration>(OcrGeneralConfiguration.Default);
-            services.AddSingleton<TranslationConfiguration>(TranslationConfiguration.Default);
-            //services.AddSingleton<TtsConfiguration>(TtsConfiguration.Default);
             services.AddSingleton<TtsConfiguration>();
-            services.AddSingleton<ChatWindowConfiguration>(ChatWindowConfiguration.Default);
+            services.AddSingleton<ChatWindowConfiguration>(chatWindowConfiguration);
             services.AddSingleton<HotKeysConfiguration>(HotKeysConfiguration.Default);
             services.AddSingleton<SystemConfiguration>(SystemConfiguration.Default);
+            services.AddSingleton<TextProcessingConfiguration>(chatWindowConfiguration.TextProcessing);
 
             var chatMediatorInstance = new ChatUITextMediator();
             services.AddSingleton<IChatTextMediator, ChatUITextMediator>(provider => chatMediatorInstance);

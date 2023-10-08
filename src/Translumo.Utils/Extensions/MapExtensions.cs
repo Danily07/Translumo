@@ -71,6 +71,15 @@ namespace Translumo.Utils.Extensions
             foreach (PropertyInfo propertyInfo in sourceProperties)
             {
                 object? value = propertyInfo.GetValue(source);
+                if (propertyInfo.GetCustomAttribute<MapInternalAttribute>() != null)
+                {
+                    var destinationValue = propertyInfo.GetValue(destination);
+                    if (value != null && destinationValue != null)
+                    {
+                        value.MapTo(destinationValue);
+                        continue;
+                    }
+                }
                 if (propertyInfo.GetSetMethod() == null)
                 {
                     continue;
