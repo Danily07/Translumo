@@ -23,6 +23,7 @@ namespace Translumo.Utils
             catch
             {
                 member = previuosValue;
+                OnPropertyChanged(propertyName);
                 throw;
             }
         }
