@@ -100,6 +100,7 @@ namespace Translumo
 
             var chatWindowConfiguration = ChatWindowConfiguration.Default;
             services.AddSingleton<OcrGeneralConfiguration>(OcrGeneralConfiguration.Default);
+            services.AddSingleton<TranslationConfiguration>(TranslationConfiguration.Default);
             services.AddSingleton<TtsConfiguration>();
             services.AddSingleton<ChatWindowConfiguration>(chatWindowConfiguration);
             services.AddSingleton<HotKeysConfiguration>(HotKeysConfiguration.Default);
