@@ -54,6 +54,10 @@
                 <ComboBox Width="130" Style="{DynamicResource MaterialDesignComboBox}"  ItemsSource="{Binding Source={StaticResource ttsSystems}}" SelectedItem="{Binding Path=TtsSystem}"></ComboBox>
                 <Label HorizontalAlignment="Stretch" Content="{DynamicResource Str.LangSettings.TtsSystem}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <ComboBox Style="{StaticResource ComboBoxBase}" ItemsSource="{Binding Path=TtsSettings.AvailableVoices}" SelectedValue="{Binding Path=TtsSettings.CurrentVoice, Mode=TwoWay}" MaxDropDownHeight="180"></ComboBox>
+                <Label Content="{DynamicResource Str.LangSettings.Voice}" Style="{StaticResource ControlCaptionLabel}"/>
+            </StackPanel>
             <GroupBox Style="{StaticResource MaterialDesignGroupBox}" Margin="0,20,0,0">
                 <GroupBox.Header>
                     <Label Style="{StaticResource SecondaryHeaderLabel}" Margin="0,-7,0,-7" Content="{DynamicResource Str.ProxySettings.Proxy}" />

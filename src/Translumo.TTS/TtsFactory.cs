@@ -18,8 +18,9 @@ namespace Translumo.TTS
             _logger = logger;
         }
 
-        public ITTSEngine CreateTtsEngine(TtsConfiguration ttsConfiguration) =>
-            ttsConfiguration.TtsSystem switch
+        public ITTSEngine CreateTtsEngine(TtsConfiguration ttsConfiguration)
+        {
+            ITTSEngine ttsEngine = ttsConfiguration.TtsSystem switch
             {
                 TTSEngines.None => new NoneTTSEngine(),
                 TTSEngines.WindowsTTS => new WindowsTTSEngine(GetLangCode(ttsConfiguration)),
@@ -27,6 +28,19 @@ namespace Translumo.TTS
                 _ => throw new NotSupportedException()
             };
 
+            var voices = ttsEngine.GetVoices();
+            var currentVoice = voices.Contains(ttsConfiguration.CurrentVoice)
+                ? ttsConfiguration.CurrentVoice
+                : voices.First();
+
+            ttsConfiguration.AvailableVoices.Clear();
+            ttsConfiguration.AvailableVoices.AddRange(voices);
+
+            ttsConfiguration.CurrentVoice = currentVoice;
+            ttsEngine.SetVoice(currentVoice);
+
+            return ttsEngine;
+        }
 
         public static bool IsLanguageSupported(TTSEngines engine, Languages language, LanguageService languageService) =>
             engine switch

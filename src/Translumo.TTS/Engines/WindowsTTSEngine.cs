@@ -1,20 +1,22 @@
-﻿using System.Globalization;
+﻿using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Speech.Synthesis;
 
 namespace Translumo.TTS.Engines;
 
 public class WindowsTTSEngine : ITTSEngine
 {
-    private readonly VoiceInfo _voiceInfo;
+    private VoiceInfo _voiceInfo;
     private readonly SpeechSynthesizer _synthesizer;
+    private readonly ReadOnlyDictionary<string, VoiceInfo> _voices;
 
     public WindowsTTSEngine(string languageCode)
     {
         _synthesizer = new SpeechSynthesizer();
         _synthesizer.SetOutputToDefaultAudioDevice();
         _synthesizer.Rate = 1;
-
-        _voiceInfo = _synthesizer.GetInstalledVoices(new CultureInfo(languageCode)).FirstOrDefault()?.VoiceInfo;
+        _voices = _synthesizer.GetInstalledVoices(new CultureInfo(languageCode)).ToDictionary(x => x.VoiceInfo.Name, x => x.VoiceInfo).AsReadOnly();
+        _voiceInfo = _voices.First().Value;
     }
 
     public void SpeechText(string text)
@@ -36,4 +38,8 @@ public class WindowsTTSEngine : ITTSEngine
     {
         _synthesizer.Dispose();
     }
+
+    public string[] GetVoices() => _voices.Keys.ToArray();
+
+    public void SetVoice(string voice) => _voiceInfo = _voices.First(x => x.Key.Equals(voice, StringComparison.OrdinalIgnoreCase)).Value;
 }

@@ -10,6 +10,12 @@ public class NoneTTSEngine : ITTSEngine
     {
     }
 
+    public string[] GetVoices() => new[] { "None" };
+
+    public void SetVoice(string voice)
+    {
+    }
+
     public void SpeechText(string text)
     {
     }
