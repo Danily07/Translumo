@@ -20,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Translumo.Translation", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Translumo.Processing", "src\Translumo.Processing\Translumo.Processing.csproj", "{01C146C8-F14C-48E0-BECB-2587392AD1DC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Translumo.TTS", "src\Translumo.TTS\Translumo.TTS.csproj", "{03241C57-B380-45E9-92D6-2308A93DC0DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Translumo.TTS", "src\Translumo.TTS\Translumo.TTS.csproj", "{03241C57-B380-45E9-92D6-2308A93DC0DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
