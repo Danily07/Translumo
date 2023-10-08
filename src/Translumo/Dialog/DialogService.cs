@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using MaterialDesignThemes.Wpf;
 using Translumo.MVVM.ViewModels;
 using Translumo.Utils;
@@ -115,6 +116,16 @@ namespace Translumo.Dialog
             }
 
             return false;
+        }
+
+        public IntPtr GetWindowHandle<TViewModel>()
+        {
+            if (!_openedWindows.ContainsKey(typeof(TViewModel)))
+            {
+                return default(IntPtr);
+            }
+
+            return new WindowInteropHelper(_openedWindows[typeof(TViewModel)]).Handle;
         }
 
         private void ViewOnClosed(object sender, EventArgs e)

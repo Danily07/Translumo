@@ -1,4 +1,6 @@
-﻿using System.Windows.Media;
+﻿using System.Windows;
+using System.Windows.Media;
+using Translumo.Processing.Configuration;
 using Translumo.Utils;
 
 namespace Translumo.Configuration
@@ -59,6 +61,25 @@ namespace Translumo.Configuration
             }
         }
 
+        public TextAlignment TextAlignment
+        {
+            get => _textAlignment;
+            set
+            {
+                SetProperty(ref _textAlignment, value);
+            }
+        }
+
+        [MapInternal]
+        public TextProcessingConfiguration TextProcessing
+        {
+            get => _textProcessing;
+            set
+            {
+                SetProperty(ref _textProcessing, value);
+            }
+        }
+
         public static ChatWindowConfiguration Default => new()
         {
             BackgroundColor = Color.FromRgb(0, 0, 0),
@@ -66,7 +87,8 @@ namespace Translumo.Configuration
             BackgroundOpacity = 0.35f,
             FontSize = 15,
             FontBold = true,
-            LineSpacing = 14
+            LineSpacing = 14,
+            TextAlignment = TextAlignment.Left
         };
 
         private Color _backgroundColor;
@@ -75,5 +97,7 @@ namespace Translumo.Configuration
         private int _fontSize;
         private bool _fontBold;
         private int _lineSpacing;
+        private TextProcessingConfiguration _textProcessing = TextProcessingConfiguration.Default;
+        private TextAlignment _textAlignment;
     }
 }
