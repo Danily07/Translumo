@@ -1,0 +1,29 @@
+name: PR. Build
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  build:
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    env:
+      Solution_Name: Translumo.sln
+      SkipBinariesExtract: true   # Skip download additional binaries, those are setted in cproj as prebuild step
+      
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+        
+    - name: Build the application
+      run: dotnet build $env:Solution_Name /p:Configuration=Release
