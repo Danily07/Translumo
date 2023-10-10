@@ -25,7 +25,7 @@
   <li>DirectX11</li>
   <li>8 GB ОЗУ <i>(для режима с EasyOCR)</i></li>
   <li>5 GB свободного места на диске <i>(для режима с EasyOCR)</i></li>
-  <li>Nvidia GPU с поддержкой CUDA SDK 11.8 (GTX 7xx серия или новее) <i>(для режима с EasyOCR)</i></li>
+  <li>Nvidia GPU с поддержкой CUDA SDK 11.8 (GTX 750, 8xxM, 9xx серия или новее) <i>(для режима с EasyOCR)</i></li>
 </ul>
 <h1>Как использовать</h1>
 <img src="https://github.com/Danily07/Translumo/blob/c1dc35c8f7e074bfcddb5b840deb9534dde581b7/docs/preview-RU.gif">
