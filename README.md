@@ -29,7 +29,7 @@
   <li>DirectX11</li>
   <li>8 GB RAM <i>(for mode with EasyOCR)</i></li>
   <li>5 GB free storage space <i>(for mode with EasyOCR)</i></li>
-  <li>Nvidia GPU with CUDA SDK 11.8 support (GTX 7xx series or later) <i>(for mode with EasyOCR)</i></li>
+  <li>Nvidia GPU with CUDA SDK 11.8 support (GTX 750, 8xxM, 9xx series or later) <i>(for mode with EasyOCR)</i></li>
 </ul>
 <h1>How to use</h1>
 <img src="https://github.com/Danily07/Translumo/blob/7f4a73ffba0e5a0090ea0bfc3d72acb99832a0f4/docs/preview-EN.gif">
