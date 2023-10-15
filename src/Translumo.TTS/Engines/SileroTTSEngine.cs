@@ -13,6 +13,7 @@ public class SileroTTSEngine : ITTSEngine
     private readonly PythonEngineWrapper _pythonEngine;
     private readonly List<IDisposable> _pyObjects = new();
     private readonly SoundPlayer _player = new SoundPlayer();
+    private readonly object _lockObject = new();
     private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
     private const string _sileroModelDirectory = "Silero";
@@ -55,10 +56,15 @@ public class SileroTTSEngine : ITTSEngine
 
     public void SpeechText(string text)
     {
-        _cancellationTokenSource.Cancel();
-        _cancellationTokenSource = new CancellationTokenSource();
+        CancellationTokenSource currentToken;
+        lock (_lockObject)
+        {
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource = new CancellationTokenSource();
+            currentToken = _cancellationTokenSource;
+        }
 
-        Task.Factory.StartNew(() => GenerateAudio(text), _cancellationTokenSource.Token)
+        Task.Factory.StartNew(() => GenerateAudio(text), currentToken.Token)
             .ContinueWith((bytesTask) =>
              {
                  if (!bytesTask.IsCompletedSuccessfully)
@@ -67,7 +73,7 @@ public class SileroTTSEngine : ITTSEngine
                  }
 
                  PlayWavBytes(bytesTask.Result);
-             }, _cancellationTokenSource.Token);
+             }, currentToken.Token);
     }
 
     private byte[] GenerateAudio(string text) =>
