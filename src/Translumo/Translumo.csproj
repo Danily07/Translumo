@@ -92,7 +92,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Translumo.Processing\Translumo.Processing.csproj" />
-    <ProjectReference Include="..\Translumo.TTS\Translumo.TTS.csproj" />
   </ItemGroup>
 
   <ItemGroup>

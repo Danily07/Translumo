@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Translumo.Infrastructure.Language;
 using Translumo.Infrastructure.Powershell;
 using Translumo.Infrastructure.Python;
+using Translumo.TTS;
+using Translumo.TTS.Engines;
 using Translumo.Utils;
 
 namespace Translumo.Dialog.Stages
@@ -68,8 +71,16 @@ namespace Translumo.Dialog.Stages
                 .AddException(new ExceptionInteractionStage(dialogService, (ex) => logger.LogError(ex, "Easy OCR installation checking error"), LocalizationManager.GetValue("Str.Stages.PyModulesCheckError")));
         }
 
-        public static InteractionStage CreateSileroTtsCheckingStages(DialogService dialogService, InteractionStage enableFlagStage, ILogger logger)
+        public static InteractionStage CreateSileroTtsCheckingStages(LanguageDescriptor languageDescriptor, DialogService dialogService, InteractionStage enableFlagStage, ILogger logger)
         {
+
+            var warningMessage = string.Format(
+                LocalizationManager.GetValue("Str.Stages.TtsNotSupportLanguageTemplate", true),
+                LocalizationManager.GetValue("Str.LangSettings.TtsSystem", true),
+                TTSEngines.SileroTTS.ToString(),
+                LocalizationManager.GetValue($"Str.Languages.{languageDescriptor.Language}", true));
+
+
             InteractionStage InstallPythonModuleStage(string moduleName) =>
                 new ActionInteractionStage(
                     dialogService,
@@ -79,20 +90,28 @@ namespace Translumo.Dialog.Stages
 
             return new ConditionalInteractionStage(
                 dialogService,
-                async () => 
-                    await PythonProvider.ModuleIsInstalledAsync("numpy")
-                    && await PythonProvider.ModuleIsInstalledAsync("torch")
-                    && await PythonProvider.ModuleIsInstalledAsync("IPython"),
-                LocalizationManager.GetValue("Str.Stages.CheckPyModules"))
-                .AddNextFalse(
-                    new DialogQuestionInteractionStage(dialogService, LocalizationManager.GetValue("Str.Stages.PyModulesQuestion2", true))
-                        .AddNextStage(InstallPythonModuleStage("torch")
-                            .AddNextStage(InstallPythonModuleStage("numpy")
-                                .AddNextStage(InstallPythonModuleStage("IPython")
-                                    .AddNextStage(new DialogInteractionStage(dialogService, LocalizationManager.GetValue("Str.Stages.PyModulesInstalled"))
-                                        .AddNextStage(enableFlagStage))))))
-                .AddNextStage(enableFlagStage)
-                .AddException(new ExceptionInteractionStage(dialogService, (ex) => logger.LogError(ex, "Silero TTS installation checking error"), LocalizationManager.GetValue("Str.Stages.PyModulesCheckError")));
+                () => Task.FromResult(SileroTTSEngine.IsLanguageSupported(languageDescriptor.Code)))
+                .AddNextFalse(new ExceptionInteractionStage(
+                    dialogService,
+                    _ => { return; },
+                    warningMessage)
+                { InputException = new NotSupportedException() })
+                .AddNextStage(new ConditionalInteractionStage(
+                    dialogService,
+                    async () =>
+                        await PythonProvider.ModuleIsInstalledAsync("numpy")
+                        && await PythonProvider.ModuleIsInstalledAsync("torch")
+                        && await PythonProvider.ModuleIsInstalledAsync("IPython"),
+                    LocalizationManager.GetValue("Str.Stages.CheckPyModules"))
+                    .AddNextFalse(
+                        new DialogQuestionInteractionStage(dialogService, LocalizationManager.GetValue("Str.Stages.PyModulesQuestion2", true))
+                            .AddNextStage(InstallPythonModuleStage("torch")
+                                .AddNextStage(InstallPythonModuleStage("numpy")
+                                    .AddNextStage(InstallPythonModuleStage("IPython")
+                                        .AddNextStage(new DialogInteractionStage(dialogService, LocalizationManager.GetValue("Str.Stages.PyModulesInstalled"))
+                                            .AddNextStage(enableFlagStage))))))
+                    .AddNextStage(enableFlagStage)
+                    .AddException(new ExceptionInteractionStage(dialogService, (ex) => logger.LogError(ex, "Silero TTS installation checking error"), LocalizationManager.GetValue("Str.Stages.PyModulesCheckError"))));
         }
     }
 }
