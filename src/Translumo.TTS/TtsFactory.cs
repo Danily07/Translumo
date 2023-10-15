@@ -33,7 +33,7 @@ namespace Translumo.TTS
             {
                 TTSEngines.None => true,
                 TTSEngines.WindowsTTS => true,
-                TTSEngines.SileroTTS => SileroTTSEngine.IsLanguageSupport(languageService.GetLanguageDescriptor(language).Code),
+                TTSEngines.SileroTTS => SileroTTSEngine.IsLanguageSupported(languageService.GetLanguageDescriptor(language).Code),
                 _ => throw new NotSupportedException()
             };
 

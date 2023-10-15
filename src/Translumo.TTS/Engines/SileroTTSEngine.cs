@@ -103,7 +103,7 @@ public class SileroTTSEngine : ITTSEngine
         _pythonEngine.Dispose();
     }
 
-    public static bool IsLanguageSupport(string langCode) => GetModelForLanguage(langCode) != null;
+    public static bool IsLanguageSupported(string langCode) => GetModelForLanguage(langCode) != null;
 
     private string GetModelFullPath(string langCode)
     {
