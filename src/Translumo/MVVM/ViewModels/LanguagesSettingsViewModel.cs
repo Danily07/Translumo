@@ -203,21 +203,7 @@ namespace Translumo.MVVM.ViewModels
                     changeParameter,
                     _logger);
 
-                if (!TtsSettings.IsLanguageSupportedInTtsEngine(engine, language))
-                {
-                    var warningMessage = string.Format(
-                            LocalizationManager.GetValue("Str.Stages.TtsNotSupportLanguageTemplate", true),
-                            LocalizationManager.GetValue("Str.LangSettings.TtsSystem", true),
-                            engine.ToString(),
-                            GetLanguageDisplayName(language));
-
-                    changeLangStage = new ExceptionInteractionStage(
-                        _dialogService,
-                        _ => { return; },
-                        warningMessage)
-                    { InputException = new NotSupportedException() };
-                }
-                else if (engine == TTSEngines.WindowsTTS
+                if (engine == TTSEngines.WindowsTTS
                     && !TtsSettings.InstalledWinTtsLanguages.Contains(language))
                 {
                     var langCode = _languageService.GetLanguageDescriptor(language).Code;
@@ -230,7 +216,8 @@ namespace Translumo.MVVM.ViewModels
                 }
                 else if (engine == TTSEngines.SileroTTS)
                 {
-                    changeLangStage = StagesFactory.CreateSileroTtsCheckingStages(_dialogService, changeLangStage, _logger);
+                    var languageDescriptor = _languageService.GetLanguageDescriptor(language);
+                    changeLangStage = StagesFactory.CreateSileroTtsCheckingStages(languageDescriptor, _dialogService, changeLangStage, _logger);
                 }
 
                 await changeLangStage.ExecuteAsync();
@@ -241,15 +228,11 @@ namespace Translumo.MVVM.ViewModels
             }
         }
 
-
         private string GetLanguageDisplayName(LanguageDescriptor languageDescriptor)
         {
             return LocalizationManager.GetValue($"Str.Languages.{languageDescriptor.Language}", false,
                 OnLocalizedValueChanged, this);
         }
-
-        private string GetLanguageDisplayName(Languages language) =>
-            GetLanguageDisplayName(_languageService.GetLanguageDescriptor(language));
 
         private void OnLocalizedValueChanged(string key, string oldValue)
         {

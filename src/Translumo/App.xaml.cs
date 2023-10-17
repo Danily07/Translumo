@@ -51,9 +51,9 @@ namespace Translumo
             ConfigureServices(services);
             this._serviceProvider = services.BuildServiceProvider();
             this._logger = _serviceProvider.GetService<ILogger<App>>();
-            
+
             this.DispatcherUnhandledException += OnDispatcherUnhandledException;
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;  
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
         }
 
         private void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -84,14 +84,14 @@ namespace Translumo
             var chatViewModel = _serviceProvider.GetService<ChatWindowViewModel>();
             var dialogService = _serviceProvider.GetService<DialogService>();
             dialogService.ShowWindowAsync(chatViewModel);
-            
+
             _serviceProvider.RegisterUIInputController();
         }
 
         private void ConfigureServices(ServiceCollection services)
         {
             services.AddLogging(builder => builder.AddSerilog(/*Log.Logger,*/ dispose: true));
-            
+
             services.AddScoped<SettingsViewModel>();
             services.AddScoped<AppearanceSettingsViewModel>();
             services.AddScoped<HotkeysSettingsViewModel>();
@@ -101,7 +101,7 @@ namespace Translumo
             var chatWindowConfiguration = ChatWindowConfiguration.Default;
             services.AddSingleton<OcrGeneralConfiguration>(OcrGeneralConfiguration.Default);
             services.AddSingleton<TranslationConfiguration>(TranslationConfiguration.Default);
-            services.AddSingleton<TtsConfiguration>();
+            services.AddSingleton<TtsConfiguration>(TtsConfiguration.Default);
             services.AddSingleton<ChatWindowConfiguration>(chatWindowConfiguration);
             services.AddSingleton<HotKeysConfiguration>(HotKeysConfiguration.Default);
             services.AddSingleton<SystemConfiguration>(SystemConfiguration.Default);
@@ -135,7 +135,7 @@ namespace Translumo
             services.AddTransient<IEncryptionService, AesEncryptionService>();
             services.AddTransient<LanguageDescriptorFactory>();
             services.AddTransient<TtsFactory>();
-            
+
 
             services.AddConfigurationStorage();
         }
@@ -145,7 +145,7 @@ namespace Translumo
             var configuration = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .MinimumLevel.Verbose()
-                .WriteTo.File("Logs/log.txt", LogEventLevel.Warning, rollingInterval: RollingInterval.Day, outputTemplate: "{Timestamp:HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}", retainedFileCountLimit:10);
+                .WriteTo.File("Logs/log.txt", LogEventLevel.Warning, rollingInterval: RollingInterval.Day, outputTemplate: "{Timestamp:HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}", retainedFileCountLimit: 10);
 
 #if DEBUG
             configuration = configuration.WriteTo.File("Logs/trace.txt", LogEventLevel.Verbose, rollingInterval: RollingInterval.Day, outputTemplate: "{Timestamp:HH:mm:ss.fff} [{Level:u3}] [{SourceContext}] {Message:lj}{NewLine}");

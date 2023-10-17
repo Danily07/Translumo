@@ -42,16 +42,6 @@ namespace Translumo.TTS
             return ttsEngine;
         }
 
-        public static bool IsLanguageSupported(TTSEngines engine, Languages language, LanguageService languageService) =>
-            engine switch
-            {
-                TTSEngines.None => true,
-                TTSEngines.WindowsTTS => true,
-                TTSEngines.SileroTTS => SileroTTSEngine.IsLanguageSupport(languageService.GetLanguageDescriptor(language).Code),
-                _ => throw new NotSupportedException()
-            };
-
-
         private string GetLangCode(TtsConfiguration ttsConfiguration) =>
             _languageService.GetLanguageDescriptor(ttsConfiguration.TtsLanguage).Code;
     }
