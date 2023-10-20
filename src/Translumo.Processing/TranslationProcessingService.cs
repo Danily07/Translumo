@@ -303,7 +303,7 @@ namespace Translumo.Processing
                 {
                     byte[] screenshot = _onceTimeCapturer.CaptureScreen(captureArea);
                     var taskResults = _engines.Select(engine => _textProvider.GetTextAsync(engine, screenshot)).ToArray();
-
+                    // TODO: sometimes one of task (win tts) is not complete long time and translation is not working
                     Task.WaitAll(taskResults);
                     TextDetectionResult bestDetected = GetBestDetectionResult(taskResults, 3);
                     translationTask = TranslateTextAsync(bestDetected.Text, Guid.NewGuid());

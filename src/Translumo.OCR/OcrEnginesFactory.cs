@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Translumo.Infrastructure.Language;
+using Translumo.Infrastructure.Python;
 using Translumo.OCR.Configuration;
 using Translumo.OCR.EasyOCR;
 using Translumo.OCR.Tesseract;
@@ -15,11 +16,13 @@ namespace Translumo.OCR
         private IList<IOCREngine> _cachedEngines;
 
         private readonly LanguageService _languageService;
+        private readonly PythonEngineWrapper _pythonEngine;
         private readonly ILogger _logger;
 
-        public OcrEnginesFactory(LanguageService languageService, ILogger<OcrEnginesFactory> logger)
+        public OcrEnginesFactory(LanguageService languageService, PythonEngineWrapper pythonEngine, ILogger<OcrEnginesFactory> logger)
         {
             this._languageService = languageService;
+            _pythonEngine = pythonEngine;
             this._logger = logger;
             this._cachedEngines = new List<IOCREngine>();
         }
@@ -36,7 +39,7 @@ namespace Translumo.OCR
                 {
                     if (!TryRemoveIfDisabled<WindowsOCREngine>(ocrConfiguration))
                         yield return GetEngine(() => new WindowsOCREngine(langDescriptor), detectionLanguage);
-                    
+
                     if (!TryRemoveIfDisabled<WinOCREngineWithPreprocess>(ocrConfiguration))
                         yield return GetEngine(() => new WinOCREngineWithPreprocess(langDescriptor), detectionLanguage);
                 }
@@ -53,7 +56,7 @@ namespace Translumo.OCR
                 if (confType == typeof(EasyOCRConfiguration))
                 {
                     if (!TryRemoveIfDisabled<EasyOCREngine>(ocrConfiguration))
-                        yield return GetEngine(() => new EasyOCREngine(langDescriptor, _logger), detectionLanguage);
+                        yield return GetEngine(() => new EasyOCREngine(langDescriptor, _pythonEngine, _logger), detectionLanguage);
                 }
             }
 
@@ -72,7 +75,7 @@ namespace Translumo.OCR
         }
 
         private IOCREngine GetEngine<TEngine>(Func<TEngine> ocrFactoryFunc, Languages detectionLanguage)
-            where TEngine: IOCREngine
+            where TEngine : IOCREngine
         {
             var cachedEngine = _cachedEngines.FirstOrDefault(engine => engine.GetType() == typeof(TEngine));
             if (cachedEngine == null)

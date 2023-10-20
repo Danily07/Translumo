@@ -88,4 +88,5 @@ git clone https://github.com/Danily07/Translumo.git
   <li><a href="https://github.com/shimat/opencvsharp">Opencvsharp</a></li>
   <li><a href="https://github.com/pythonnet/pythonnet">Python.NET</a></li>
   <li><a href="https://github.com/JaidedAI/EasyOCR">EasyOCR</a></li>
+  <li><a href="https://github.com/snakers4/silero-models">Silero TTS</a></li>
 </ul>

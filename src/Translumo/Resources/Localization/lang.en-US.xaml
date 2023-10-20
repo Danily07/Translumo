@@ -116,6 +116,7 @@
     <system:String x:Key="Str.Stages.PyModulesQuestion2" xml:space="preserve">Required modules will take up ~5gb of disk space.&#13;Installation can take from a few minutes to an hour.&#13;Do you want to proceed?</system:String>
     <system:String x:Key="Str.Stages.InstallationPyModule1">(1/2) Installation 'pytorch' module...</system:String>
     <system:String x:Key="Str.Stages.InstallationPyModule2">(2/2) Installation 'easyocr' module...</system:String>
+    <system:String x:Key="Str.Stages.InstallationPyModuleTemplate">Installation '{0}' module...</system:String>
     <system:String x:Key="Str.Stages.PyModulesInstalled">Required modules are installed</system:String>
     <system:String x:Key="Str.Stages.PyModulesCheckError">Couldn't get access to Python for checking modules</system:String>
     <system:String x:Key="Str.Stages.CheckLangPack">Checking language pack installation...</system:String>
@@ -127,6 +128,7 @@
     <system:String x:Key="Str.Stages.CheckLangPackError" xml:space="preserve">Unexpected error of checking Windows feature options.&#13;Please verify that the application is running as an Administrator.</system:String>
     <system:String x:Key="Str.Stages.SwitchLanguage">Switching the language...</system:String>
     <system:String x:Key="Str.Stages.SwitchLanguageError">Failed to switch language: '{0}'</system:String>
+    <system:String x:Key="Str.Stages.TtsNotSupportLanguageTemplate">{0} '{1}' doesn't support '{2}' language</system:String>
 
     <!--Buttons-->
     <system:String x:Key="Str.Button.SettingProxy">Configure proxy</system:String>

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Python.Runtime;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -15,6 +16,7 @@ using Translumo.Infrastructure.Dispatching;
 using Translumo.Infrastructure.Encryption;
 using Translumo.Infrastructure.Language;
 using Translumo.Infrastructure.MachineLearning;
+using Translumo.Infrastructure.Python;
 using Translumo.MVVM.Models;
 using Translumo.MVVM.ViewModels;
 using Translumo.OCR;
@@ -49,9 +51,9 @@ namespace Translumo
             ConfigureServices(services);
             this._serviceProvider = services.BuildServiceProvider();
             this._logger = _serviceProvider.GetService<ILogger<App>>();
-            
+
             this.DispatcherUnhandledException += OnDispatcherUnhandledException;
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;  
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
         }
 
         private void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -82,14 +84,14 @@ namespace Translumo
             var chatViewModel = _serviceProvider.GetService<ChatWindowViewModel>();
             var dialogService = _serviceProvider.GetService<DialogService>();
             dialogService.ShowWindowAsync(chatViewModel);
-            
+
             _serviceProvider.RegisterUIInputController();
         }
 
         private void ConfigureServices(ServiceCollection services)
         {
             services.AddLogging(builder => builder.AddSerilog(/*Log.Logger,*/ dispose: true));
-            
+
             services.AddScoped<SettingsViewModel>();
             services.AddScoped<AppearanceSettingsViewModel>();
             services.AddScoped<HotkeysSettingsViewModel>();
@@ -123,6 +125,7 @@ namespace Translumo
             services.AddSingleton<UpdateManager>();
             services.AddSingleton<IReleasesClient, GithubApiClient>(provider => new GithubApiClient("Danily07", "Translumo"));
             services.AddSingleton<ICapturerFactory, ScreenCapturerFactory>();
+            services.AddSingleton<PythonEngineWrapper>();
 
             services.AddTransient<IProcessingService, TranslationProcessingService>();
             services.AddTransient<OcrEnginesFactory>();
@@ -132,7 +135,7 @@ namespace Translumo
             services.AddTransient<IEncryptionService, AesEncryptionService>();
             services.AddTransient<LanguageDescriptorFactory>();
             services.AddTransient<TtsFactory>();
-            
+
 
             services.AddConfigurationStorage();
         }
@@ -142,7 +145,7 @@ namespace Translumo
             var configuration = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .MinimumLevel.Verbose()
-                .WriteTo.File("Logs/log.txt", LogEventLevel.Warning, rollingInterval: RollingInterval.Day, outputTemplate: "{Timestamp:HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}", retainedFileCountLimit:10);
+                .WriteTo.File("Logs/log.txt", LogEventLevel.Warning, rollingInterval: RollingInterval.Day, outputTemplate: "{Timestamp:HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}", retainedFileCountLimit: 10);
 
 #if DEBUG
             configuration = configuration.WriteTo.File("Logs/trace.txt", LogEventLevel.Verbose, rollingInterval: RollingInterval.Day, outputTemplate: "{Timestamp:HH:mm:ss.fff} [{Level:u3}] [{SourceContext}] {Message:lj}{NewLine}");

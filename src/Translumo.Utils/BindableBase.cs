@@ -6,7 +6,7 @@ namespace Translumo.Utils
     public class BindableBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
-        
+
         protected virtual void SetProperty<T>(ref T member, T value, [CallerMemberName] string propertyName = null)
         {
             if (object.Equals(member, value))
@@ -14,8 +14,18 @@ namespace Translumo.Utils
                 return;
             }
 
+            var previuosValue = member;
             member = value;
-            OnPropertyChanged(propertyName);
+            try
+            {
+                OnPropertyChanged(propertyName);
+            }
+            catch
+            {
+                member = previuosValue;
+                OnPropertyChanged(propertyName);
+                throw;
+            }
         }
 
         [NotifyPropertyChangedInvocator]
