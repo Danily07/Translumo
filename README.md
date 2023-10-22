@@ -1,6 +1,5 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Github All Releases](https://img.shields.io/github/downloads/Danily07/Translumo/total.svg)]()
-![Workflow status](https://github.com/Danily07/Translumo/actions/workflows/PR.check.yml/badge.svg?branch=develop)
 <a href="https://trello.com/b/MEHnLySw/translumo"><img src="https://img.shields.io/badge/Trello-0052CC?style=for-the-badge&logo=trello&logoColor=white"></a>
 <p align="center">
   <img width="670" src="https://github.com/Danily07/Translumo/assets/29047281/8985049f-ea1c-428e-94be-042ece66cb54">
@@ -21,7 +20,7 @@
   <li><b>Integrated modern OCR engines:</b> Tesseract 5.2, WindowsOCR, EasyOCR</li>
   <li><b>Available translators:</b> Google Translate, Yandex translate, Naver Papago, DeepL</li>
   <li><b>Available recognition languages:</b> English, Russian, Japanese, Chinese (simplified), Korean</li>
-  <li><b>Available translation languages:</b> English, Russian, Japanese, Chinese (simplified), Korean, French, Spanish, German, Portuguese, Italian, Vietnamese, Thai, Turkish</li>
+  <li><b>Available translation languages:</b> English, Russian, Japanese, Chinese (simplified), Korean, French, Spanish, German, Portuguese, Italian, Vietnamese, Thai, Turkish, Arabic</li>
 </ul>
 <h1>System requirements</h1>
 <ul>
