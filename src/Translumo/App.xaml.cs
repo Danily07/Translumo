@@ -135,6 +135,7 @@ namespace Translumo
             services.AddTransient<IEncryptionService, AesEncryptionService>();
             services.AddTransient<LanguageDescriptorFactory>();
             services.AddTransient<TtsFactory>();
+            services.AddScoped<IObserverAvailableVoices, LanguagesSettingsViewModel>();
 
 
             services.AddConfigurationStorage();

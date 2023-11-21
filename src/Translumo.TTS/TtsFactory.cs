@@ -9,12 +9,14 @@ namespace Translumo.TTS
     {
         private readonly LanguageService _languageService;
         private readonly PythonEngineWrapper _pythonEngine;
+        private readonly IObserverAvailableVoices _observerAvailableVoices;
         private readonly ILogger _logger;
 
-        public TtsFactory(LanguageService languageService, PythonEngineWrapper pythonEngine, ILogger<TtsFactory> logger)
+        public TtsFactory(LanguageService languageService, PythonEngineWrapper pythonEngine, IObserverAvailableVoices observerAvailableVoices, ILogger<TtsFactory> logger)
         {
             _languageService = languageService;
             _pythonEngine = pythonEngine;
+            _observerAvailableVoices = observerAvailableVoices;
             _logger = logger;
         }
 
@@ -33,8 +35,7 @@ namespace Translumo.TTS
                 ? ttsConfiguration.CurrentVoice
                 : voices.First();
 
-            ttsConfiguration.AvailableVoices.Clear();
-            ttsConfiguration.AvailableVoices.AddRange(voices);
+            _observerAvailableVoices.UpdateVoiceAsync(voices, CancellationToken.None).Wait();
 
             ttsConfiguration.CurrentVoice = currentVoice;
             ttsEngine.SetVoice(currentVoice);
