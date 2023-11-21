@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Management.Automation.Language;
 using Translumo.Infrastructure.Language;
 using Translumo.Infrastructure.Python;
 using Translumo.TTS.Engines;
+using Translumo.Utils.Extensions;
 
 namespace Translumo.TTS
 {
@@ -9,15 +11,15 @@ namespace Translumo.TTS
     {
         private readonly LanguageService _languageService;
         private readonly PythonEngineWrapper _pythonEngine;
-        private readonly IObserverAvailableVoices _observerAvailableVoices;
         private readonly ILogger _logger;
+        private readonly TaskScheduler _uiScheduler;
 
-        public TtsFactory(LanguageService languageService, PythonEngineWrapper pythonEngine, IObserverAvailableVoices observerAvailableVoices, ILogger<TtsFactory> logger)
+        public TtsFactory(LanguageService languageService, PythonEngineWrapper pythonEngine, ILogger<TtsFactory> logger)
         {
             _languageService = languageService;
             _pythonEngine = pythonEngine;
-            _observerAvailableVoices = observerAvailableVoices;
             _logger = logger;
+            _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
         }
 
         public ITTSEngine CreateTtsEngine(TtsConfiguration ttsConfiguration)
@@ -35,7 +37,11 @@ namespace Translumo.TTS
                 ? ttsConfiguration.CurrentVoice
                 : voices.First();
 
-            _observerAvailableVoices.UpdateVoiceAsync(voices, CancellationToken.None).Wait();
+            RunOnUI(() =>
+            {
+                ttsConfiguration.AvailableVoices.Clear();
+                voices.ForEach(ttsConfiguration.AvailableVoices.Add);
+            }).Wait();
 
             ttsConfiguration.CurrentVoice = currentVoice;
             ttsEngine.SetVoice(currentVoice);
@@ -45,5 +51,16 @@ namespace Translumo.TTS
 
         private string GetLangCode(TtsConfiguration ttsConfiguration) =>
             _languageService.GetLanguageDescriptor(ttsConfiguration.TtsLanguage).Code;
+
+        private Task RunOnUI(Action action)
+        {
+            var taskFactory = new TaskFactory(
+                CancellationToken.None,
+                TaskCreationOptions.DenyChildAttach,
+                TaskContinuationOptions.None,
+                _uiScheduler);
+
+            return taskFactory.StartNew(action);
+        }
     }
 }

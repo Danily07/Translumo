@@ -24,7 +24,7 @@ using RelayCommand = Microsoft.Toolkit.Mvvm.Input.RelayCommand;
 
 namespace Translumo.MVVM.ViewModels
 {
-    public sealed class LanguagesSettingsViewModel : BindableBase, IAdditionalPanelController, IDisposable, IObserverAvailableVoices
+    public sealed class LanguagesSettingsViewModel : BindableBase, IAdditionalPanelController, IDisposable
     {
         public event EventHandler<bool> PanelStateIsChanged;
 
@@ -34,16 +34,6 @@ namespace Translumo.MVVM.ViewModels
         public TranslationConfiguration Model { get; set; }
 
         public TtsConfiguration TtsSettings { get; set; }
-
-
-        public ObservableCollection<string> AvailableVoices
-        {
-            get => _availableVoices;
-            set
-            {
-                SetProperty(ref _availableVoices, value);
-            }
-        }
 
         public ObservableCollection<ProxyCardItem> ProxyCollection
         {
@@ -96,14 +86,12 @@ namespace Translumo.MVVM.ViewModels
         public ICommand ProxySettingsSubmitCommand => new RelayCommand<bool>(OnProxySettingsSubmit);
 
         private ObservableCollection<ProxyCardItem> _proxyCollection;
-        private ObservableCollection<string> _availableVoices;
         private bool _proxySettingsIsOpened;
 
         private readonly DialogService _dialogService;
         private readonly OcrGeneralConfiguration _ocrConfiguration;
         private readonly LanguageService _languageService;
         private readonly ILogger _logger;
-        private readonly TaskScheduler _uiScheduler;
 
         public LanguagesSettingsViewModel(LanguageService languageService, TranslationConfiguration translationConfiguration,
             OcrGeneralConfiguration ocrConfiguration, TtsConfiguration ttsConfiguration, DialogService dialogService,
@@ -128,8 +116,6 @@ namespace Translumo.MVVM.ViewModels
             this._dialogService = dialogService;
             this._ocrConfiguration = ocrConfiguration;
             this._logger = logger;
-            _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            AvailableVoices = new();
         }
 
         private void OnProxySettingsClicked()
@@ -267,21 +253,6 @@ namespace Translumo.MVVM.ViewModels
         public void Dispose()
         {
             LocalizationManager.ReleaseChangedValuesCallbacks(this);
-        }
-
-        public Task UpdateVoiceAsync(IList<string> currentVoices, CancellationToken token)
-        {
-            var taskFactory = new TaskFactory(
-                token,
-                TaskCreationOptions.DenyChildAttach,
-                TaskContinuationOptions.None,
-                _uiScheduler);
-
-            return taskFactory.StartNew(() =>
-            {
-                this.AvailableVoices.Clear();
-                currentVoices.ForEach(this.AvailableVoices.Add);
-            });
         }
     }
 }
