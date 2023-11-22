@@ -55,6 +55,11 @@ public class TtsConfiguration : BindableBase
         get => _currentVoice;
         set
         {
+            if (!_availableVoices.Contains(value))
+            {
+                return;
+            }
+
             SetProperty(ref _currentVoice, value);
         }
     }

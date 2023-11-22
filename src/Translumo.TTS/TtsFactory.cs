@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Management.Automation.Language;
 using Translumo.Infrastructure.Language;
 using Translumo.Infrastructure.Python;
 using Translumo.TTS.Engines;
@@ -13,6 +12,7 @@ namespace Translumo.TTS
         private readonly PythonEngineWrapper _pythonEngine;
         private readonly ILogger _logger;
         private readonly TaskScheduler _uiScheduler;
+        private CancellationTokenSource _cancelationTokenSource;
 
         public TtsFactory(LanguageService languageService, PythonEngineWrapper pythonEngine, ILogger<TtsFactory> logger)
         {
@@ -20,6 +20,7 @@ namespace Translumo.TTS
             _pythonEngine = pythonEngine;
             _logger = logger;
             _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            _cancelationTokenSource = new CancellationTokenSource();
         }
 
         public ITTSEngine CreateTtsEngine(TtsConfiguration ttsConfiguration)
@@ -32,30 +33,36 @@ namespace Translumo.TTS
                 _ => throw new NotSupportedException()
             };
 
-            var voices = ttsEngine.GetVoices();
-            var currentVoice = voices.Contains(ttsConfiguration.CurrentVoice)
-                ? ttsConfiguration.CurrentVoice
-                : voices.First();
-
-            RunOnUI(() =>
-            {
-                ttsConfiguration.AvailableVoices.Clear();
-                voices.ForEach(ttsConfiguration.AvailableVoices.Add);
-            }).Wait();
-
-            ttsConfiguration.CurrentVoice = currentVoice;
-            ttsEngine.SetVoice(currentVoice);
-
+            UpdateAvailableAndCurrentVoiceAsync(ttsConfiguration, ttsEngine).ConfigureAwait(false);
             return ttsEngine;
         }
 
         private string GetLangCode(TtsConfiguration ttsConfiguration) =>
             _languageService.GetLanguageDescriptor(ttsConfiguration.TtsLanguage).Code;
 
-        private Task RunOnUI(Action action)
+        private async Task UpdateAvailableAndCurrentVoiceAsync(TtsConfiguration ttsConfiguration, ITTSEngine ttsEngine)
+        {
+            var voices = ttsEngine.GetVoices();
+            var currentVoice = voices.Contains(ttsConfiguration.CurrentVoice)
+                ? ttsConfiguration.CurrentVoice
+                : voices.First();
+
+            _cancelationTokenSource.Cancel();
+            _cancelationTokenSource = new CancellationTokenSource();
+
+            await RunOnUIAsync(() =>
+                {
+                    ttsConfiguration.AvailableVoices.Clear();
+                    voices.ForEach(ttsConfiguration.AvailableVoices.Add);
+                }, _cancelationTokenSource.Token);
+
+            ttsConfiguration.CurrentVoice = currentVoice;
+        }
+
+        private Task RunOnUIAsync(Action action, CancellationToken token)
         {
             var taskFactory = new TaskFactory(
-                CancellationToken.None,
+                token,
                 TaskCreationOptions.DenyChildAttach,
                 TaskContinuationOptions.None,
                 _uiScheduler);
