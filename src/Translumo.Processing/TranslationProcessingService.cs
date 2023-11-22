@@ -407,12 +407,12 @@ namespace Translumo.Processing
             if (e.PropertyName == nameof(_ttsConfiguration.TtsLanguage)
                 || e.PropertyName == nameof(_ttsConfiguration.TtsSystem))
             {
-                _ttsEngine.Dispose();
+                _ttsEngine?.Dispose();
                 _ttsEngine = null;
                 _ttsEngine = _ttsFactory.CreateTtsEngine(_ttsConfiguration);
             }
             else if (e.PropertyName == nameof(_ttsConfiguration.CurrentVoice)
-                && _ttsEngine != null)
+                && _ttsEngine != null && _ttsConfiguration.CurrentVoice != null)
             {
                 _ttsEngine.SetVoice(_ttsConfiguration.CurrentVoice);
             }
