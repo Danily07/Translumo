@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Mvvm.Input;
@@ -35,14 +37,13 @@ namespace Translumo.MVVM.ViewModels
 
         public TtsConfiguration TtsSettings { get; set; }
 
+        // NOTE: wfp doesnt update combobox source for non-static propertions or properties from non-singletone class 💀, I cant find another workaround
+        public static ObservableCollection<string> AvailableVoices { get; } = new();
 
-        public ObservableCollection<string> AvailableVoices
+        public string CurrentVoice
         {
-            get => _availableVoices;
-            set
-            {
-                SetProperty(ref _availableVoices, value);
-            }
+            get => TtsSettings.CurrentVoice;
+            set => ChangeCurrentVoice(value);
         }
 
         public ObservableCollection<ProxyCardItem> ProxyCollection
@@ -96,15 +97,12 @@ namespace Translumo.MVVM.ViewModels
         public ICommand ProxySettingsSubmitCommand => new RelayCommand<bool>(OnProxySettingsSubmit);
 
         private ObservableCollection<ProxyCardItem> _proxyCollection;
-        private ObservableCollection<string> _availableVoices;
         private bool _proxySettingsIsOpened;
 
         private readonly DialogService _dialogService;
         private readonly OcrGeneralConfiguration _ocrConfiguration;
         private readonly LanguageService _languageService;
         private readonly ILogger _logger;
-        private readonly TaskScheduler _uiScheduler;
-
         public LanguagesSettingsViewModel(LanguageService languageService, TranslationConfiguration translationConfiguration,
             OcrGeneralConfiguration ocrConfiguration, TtsConfiguration ttsConfiguration, DialogService dialogService,
             ILogger<LanguagesSettingsViewModel> logger)
@@ -123,13 +121,10 @@ namespace Translumo.MVVM.ViewModels
             this.TtsSettings = ttsConfiguration;
             this.TtsSettings.TtsLanguage = this.Model.TranslateToLang;
 
-
             this._languageService = languageService;
             this._dialogService = dialogService;
             this._ocrConfiguration = ocrConfiguration;
             this._logger = logger;
-            _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            AvailableVoices = new();
         }
 
         private void OnProxySettingsClicked()
@@ -208,6 +203,24 @@ namespace Translumo.MVVM.ViewModels
             OnPropertyChanged(nameof(TtsSystem));
         }
 
+        private async Task ChangeCurrentVoice(string voice)
+        {
+            if (voice == null)
+            {
+                // NOTE: wpf sends null value when removed current selected item
+                return;
+            }
+
+            var changeAction = () =>
+            {
+                this.TtsSettings.CurrentVoice = voice;
+                OnPropertyChanged(nameof(CurrentVoice));
+            };
+
+            var changeStage = StagesFactory.CreateLanguageChangeStages(_dialogService, changeAction, _logger);
+            await changeStage.ExecuteAsync();
+        }
+
         private async Task ReconfigureTts(Languages language, TTSEngines engine, Action changeParameter)
         {
             try
@@ -269,18 +282,15 @@ namespace Translumo.MVVM.ViewModels
             LocalizationManager.ReleaseChangedValuesCallbacks(this);
         }
 
-        public Task UpdateVoiceAsync(IList<string> currentVoices, CancellationToken token)
+        public void UpdateVoice(IList<string> voices)
         {
-            var taskFactory = new TaskFactory(
-                token,
-                TaskCreationOptions.DenyChildAttach,
-                TaskContinuationOptions.None,
-                _uiScheduler);
+            var currentVoice = voices.Contains(CurrentVoice) ? CurrentVoice : voices.First();
+            var previousVoices = AvailableVoices.ToArray();
 
-            return taskFactory.StartNew(() =>
+            Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                this.AvailableVoices.Clear();
-                currentVoices.ForEach(this.AvailableVoices.Add);
+                voices.Except(previousVoices).ForEach(x => AvailableVoices.Add(x));
+                previousVoices.Except(voices).ForEach(x => AvailableVoices.Remove(x));
             });
         }
     }

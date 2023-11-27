@@ -31,14 +31,7 @@ namespace Translumo.TTS
             };
 
             var voices = ttsEngine.GetVoices();
-            var currentVoice = voices.Contains(ttsConfiguration.CurrentVoice)
-                ? ttsConfiguration.CurrentVoice
-                : voices.First();
-
-            _observerAvailableVoices.UpdateVoiceAsync(voices, CancellationToken.None).Wait();
-
-            ttsConfiguration.CurrentVoice = currentVoice;
-            ttsEngine.SetVoice(currentVoice);
+            _observerAvailableVoices.UpdateVoice(voices);
 
             return ttsEngine;
         }
