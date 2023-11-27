@@ -97,6 +97,7 @@ namespace Translumo
             services.AddScoped<HotkeysSettingsViewModel>();
             services.AddScoped<LanguagesSettingsViewModel>();
             services.AddScoped<OcrSettingsViewModel>();
+            services.AddScoped<IObserverAvailableVoices, LanguagesSettingsViewModel>();
 
             var chatWindowConfiguration = ChatWindowConfiguration.Default;
             services.AddSingleton<OcrGeneralConfiguration>(OcrGeneralConfiguration.Default);

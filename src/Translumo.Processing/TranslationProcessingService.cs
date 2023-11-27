@@ -52,10 +52,10 @@ namespace Translumo.Processing
         private long _lastTranslatedTextTicks;
 
         private const float MIN_SCORE_THRESHOLD = 2.1f;
-        
+
         public TranslationProcessingService(ICapturerFactory capturerFactory, IChatTextMediator chatTextMediator, OcrEnginesFactory ocrEnginesFactory,
             TranslatorFactory translationFactory, TtsFactory ttsFactory, TtsConfiguration ttsConfiguration,
-            TextDetectionProvider textProvider, TranslationConfiguration translationConfiguration, OcrGeneralConfiguration ocrConfiguration, 
+            TextDetectionProvider textProvider, TranslationConfiguration translationConfiguration, OcrGeneralConfiguration ocrConfiguration,
             TextResultCacheService textResultCacheService, TextProcessingConfiguration textConfiguration, ILogger<TranslationProcessingService> logger)
         {
             _logger = logger;
@@ -236,7 +236,7 @@ namespace Translumo.Processing
                             continue;
                         }
 
-                        if (_textResultCacheService.IsCached(bestDetected.Text, bestDetected.ValidityScore, sequentialText, 
+                        if (_textResultCacheService.IsCached(bestDetected.Text, bestDetected.ValidityScore, sequentialText,
                                 bestDetected.Language.Asian, out iterationId))
                         {
                             sequentialText = false;
@@ -257,7 +257,7 @@ namespace Translumo.Processing
                     }
 
                     _logger.LogError(ex, $"Screen capture failed (code: {ex.ErrorCode})");
-                    
+
                     _capturer.Dispose();
                     _capturer = null;
                     CapturerEnsureInitialized();
@@ -407,8 +407,14 @@ namespace Translumo.Processing
             if (e.PropertyName == nameof(_ttsConfiguration.TtsLanguage)
                 || e.PropertyName == nameof(_ttsConfiguration.TtsSystem))
             {
-                _ttsEngine.Dispose();
+                _ttsEngine?.Dispose();
+                _ttsEngine = null;
                 _ttsEngine = _ttsFactory.CreateTtsEngine(_ttsConfiguration);
+            }
+            else if (e.PropertyName == nameof(_ttsConfiguration.CurrentVoice)
+                && _ttsEngine != null && _ttsConfiguration.CurrentVoice != null)
+            {
+                _ttsEngine.SetVoice(_ttsConfiguration.CurrentVoice);
             }
         }
 
