@@ -14,14 +14,12 @@ public class TtsConfiguration : BindableBase
             TtsSystem = TTSEngines.None,
             InstalledWinTtsLanguages = new List<Languages>(),
             _currentVoice = string.Empty,
-            _availableVoices = new(),
         };
 
     private TTSEngines _ttsSystem;
     private Languages _ttsLanguage;
     private List<Languages> _installedWinTtsLanguages;
     private string _currentVoice;
-    private ObservableCollection<string> _availableVoices;
 
     public TTSEngines TtsSystem
     {
@@ -41,27 +39,10 @@ public class TtsConfiguration : BindableBase
         }
     }
 
-    public ObservableCollection<string> AvailableVoices
-    {
-        get => _availableVoices;
-        set
-        {
-            SetProperty(ref _availableVoices, value);
-        }
-    }
-
     public string CurrentVoice
     {
         get => _currentVoice;
-        set
-        {
-            if (!_availableVoices.Contains(value))
-            {
-                return;
-            }
-
-            SetProperty(ref _currentVoice, value);
-        }
+        set => SetProperty(ref _currentVoice, value);
     }
 
     public List<Languages> InstalledWinTtsLanguages

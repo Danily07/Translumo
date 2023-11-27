@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Mvvm.Input;
@@ -24,7 +26,7 @@ using RelayCommand = Microsoft.Toolkit.Mvvm.Input.RelayCommand;
 
 namespace Translumo.MVVM.ViewModels
 {
-    public sealed class LanguagesSettingsViewModel : BindableBase, IAdditionalPanelController, IDisposable
+    public sealed class LanguagesSettingsViewModel : BindableBase, IAdditionalPanelController, IDisposable, IObserverAvailableVoices
     {
         public event EventHandler<bool> PanelStateIsChanged;
 
@@ -34,6 +36,15 @@ namespace Translumo.MVVM.ViewModels
         public TranslationConfiguration Model { get; set; }
 
         public TtsConfiguration TtsSettings { get; set; }
+
+        // NOTE: wfp doesnt update combobox source for non-static propertions or properties from non-singletone class 💀, I cant find another workaround
+        public static ObservableCollection<string> AvailableVoices { get; } = new();
+
+        public string CurrentVoice
+        {
+            get => TtsSettings.CurrentVoice;
+            set => ChangeCurrentVoice(value);
+        }
 
         public ObservableCollection<ProxyCardItem> ProxyCollection
         {
@@ -92,7 +103,6 @@ namespace Translumo.MVVM.ViewModels
         private readonly OcrGeneralConfiguration _ocrConfiguration;
         private readonly LanguageService _languageService;
         private readonly ILogger _logger;
-
         public LanguagesSettingsViewModel(LanguageService languageService, TranslationConfiguration translationConfiguration,
             OcrGeneralConfiguration ocrConfiguration, TtsConfiguration ttsConfiguration, DialogService dialogService,
             ILogger<LanguagesSettingsViewModel> logger)
@@ -110,7 +120,6 @@ namespace Translumo.MVVM.ViewModels
             this.Model = translationConfiguration;
             this.TtsSettings = ttsConfiguration;
             this.TtsSettings.TtsLanguage = this.Model.TranslateToLang;
-
 
             this._languageService = languageService;
             this._dialogService = dialogService;
@@ -194,6 +203,24 @@ namespace Translumo.MVVM.ViewModels
             OnPropertyChanged(nameof(TtsSystem));
         }
 
+        private async Task ChangeCurrentVoice(string voice)
+        {
+            if (voice == null)
+            {
+                // NOTE: wpf sends null value when removed current selected item
+                return;
+            }
+
+            var changeAction = () =>
+            {
+                this.TtsSettings.CurrentVoice = voice;
+                OnPropertyChanged(nameof(CurrentVoice));
+            };
+
+            var changeStage = StagesFactory.CreateLanguageChangeStages(_dialogService, changeAction, _logger);
+            await changeStage.ExecuteAsync();
+        }
+
         private async Task ReconfigureTts(Languages language, TTSEngines engine, Action changeParameter)
         {
             try
@@ -253,6 +280,18 @@ namespace Translumo.MVVM.ViewModels
         public void Dispose()
         {
             LocalizationManager.ReleaseChangedValuesCallbacks(this);
+        }
+
+        public void UpdateVoice(IList<string> voices)
+        {
+            var currentVoice = voices.Contains(CurrentVoice) ? CurrentVoice : voices.First();
+            var previousVoices = AvailableVoices.ToArray();
+
+            Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                voices.Except(previousVoices).ForEach(x => AvailableVoices.Add(x));
+                previousVoices.Except(voices).ForEach(x => AvailableVoices.Remove(x));
+            });
         }
     }
 }
