@@ -37,7 +37,7 @@ namespace Translumo.Infrastructure.Python
 
         public static PythonCommand CreatePip(string command, CancellationToken token)
         {
-            return new PythonCommand(GetPythonStartInfo(@$".\scripts\pip {command}"))
+            return new PythonCommand(GetPythonStartInfo(@$"python.exe .\scripts\pip.exe {command}"))
             {
                 Token = token
             };
