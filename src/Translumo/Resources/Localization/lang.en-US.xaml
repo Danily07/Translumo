@@ -109,13 +109,16 @@
     <system:String x:Key="Str.Languages.Turkish">Turkish</system:String>
     <system:String x:Key="Str.Languages.Thai">Thai</system:String>
     <system:String x:Key="Str.Languages.Arabic">Arabic</system:String>
+    <system:String x:Key="Str.Languages.Greek">Greek</system:String>
+    <system:String x:Key="Str.Languages.PortugueseBrazil">Portuguese (BR)</system:String>
 
     <!--Dialog stages-->
     <system:String x:Key="Str.Stages.CheckPyModules">Checking installed modules...</system:String>
     <system:String x:Key="Str.Stages.PyModulesQuestion" xml:space="preserve">Required Python modules are not installed. Do you want to install it now?&#13;Option is available only for NVIDIA GPUs!</system:String>
     <system:String x:Key="Str.Stages.PyModulesQuestion2" xml:space="preserve">Required modules will take up ~5gb of disk space.&#13;Installation can take from a few minutes to an hour.&#13;Do you want to proceed?</system:String>
-    <system:String x:Key="Str.Stages.InstallationPyModule1">(1/2) Installation 'pytorch' module...</system:String>
-    <system:String x:Key="Str.Stages.InstallationPyModule2">(2/2) Installation 'easyocr' module...</system:String>
+    <system:String x:Key="Str.Stages.InstallationPyModule1">(1/3) Installation 'pytorch' module...</system:String>
+    <system:String x:Key="Str.Stages.InstallationPyModule2">(2/3) Installation 'easyocr' module...</system:String>
+    <system:String x:Key="Str.Stages.InstallationPyModule3">(3/3) Installation 'pillow' module...</system:String>
     <system:String x:Key="Str.Stages.InstallationPyModuleTemplate">Installation '{0}' module...</system:String>
     <system:String x:Key="Str.Stages.PyModulesInstalled">Required modules are installed</system:String>
     <system:String x:Key="Str.Stages.PyModulesCheckError">Couldn't get access to Python for checking modules</system:String>

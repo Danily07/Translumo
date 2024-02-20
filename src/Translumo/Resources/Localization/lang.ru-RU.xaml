@@ -108,13 +108,16 @@
     <system:String x:Key="Str.Languages.Turkish">Турецкий</system:String>
     <system:String x:Key="Str.Languages.Thai">Тайский</system:String>
     <system:String x:Key="Str.Languages.Arabic">Арабский</system:String>
+    <system:String x:Key="Str.Languages.Greek">Греческий</system:String>
+    <system:String x:Key="Str.Languages.PortugueseBrazil">Португальский (бразильский)</system:String>
 
     <!--Dialog stages-->
     <system:String x:Key="Str.Stages.CheckPyModules">Проверка установленных модулей...</system:String>
     <system:String x:Key="Str.Stages.PyModulesQuestion" xml:space="preserve">Необходимые Python модули не установлены. Хотите установить сейчас?&#13;Опция доступна только для видеокарт NVIDIA!</system:String>
     <system:String x:Key="Str.Stages.PyModulesQuestion2" xml:space="preserve">Дополнительные модули потребуют ~5гб свободного дискового пространства.&#13;Установка может занять от нескольких минут до часа.&#13;Хотите продолжить?</system:String>
-    <system:String x:Key="Str.Stages.InstallationPyModule1">(1/2) Установка 'pytorch' модуля...</system:String>
-    <system:String x:Key="Str.Stages.InstallationPyModule2">(2/2) Установка 'easyocr' модуля...</system:String>
+    <system:String x:Key="Str.Stages.InstallationPyModule1">(1/3) Установка 'pytorch' модуля...</system:String>
+    <system:String x:Key="Str.Stages.InstallationPyModule2">(2/3) Установка 'easyocr' модуля...</system:String>
+    <system:String x:Key="Str.Stages.InstallationPyModule3">(3/3) Установка 'pillow' модуля...</system:String>
     <system:String x:Key="Str.Stages.InstallationPyModuleTemplate">Установка '{0}' модуля...</system:String>
     <system:String x:Key="Str.Stages.PyModulesInstalled">Необходимые модули успешно установлены</system:String>
     <system:String x:Key="Str.Stages.PyModulesCheckError">Не удалось получить доступ к Python для проверки модулей</system:String>

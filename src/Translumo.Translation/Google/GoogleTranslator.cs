@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Web;
 using Microsoft.Extensions.Logging;
 using Translumo.Infrastructure.Constants;
@@ -20,6 +21,19 @@ namespace Translumo.Translation.Google
             : base(translationConfiguration, languageService, logger)
         {
         }
+
+        public override Task<string> TranslateTextAsync(string sourceText)
+        {
+            //TODO: Temp implementation for specific lang
+            if (TargetLangDescriptor.Language == Languages.PortugueseBrazil)
+            {
+                throw new TransactionException("Google translate is unavailable for this language");
+            }
+
+            return base.TranslateTextAsync(sourceText);
+        }
+
+
 
         protected override async Task<string> TranslateTextInternal(GoogleContainer container, string sourceText)
         {

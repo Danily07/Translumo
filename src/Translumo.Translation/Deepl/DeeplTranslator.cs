@@ -40,8 +40,9 @@ namespace Translumo.Translation.Deepl
         {
             var sourceLangCode = SourceLangDescriptor.IsoCode.ToUpper();
             var targetLangCode = TargetLangDescriptor.IsoCode.ToUpper();
+            var regionalCode = TargetLangDescriptor.RegionalVariant ? TargetLangDescriptor.Code : string.Empty;
 
-            var request = new DeepLTranslatorRequest(container.DeeplId, sourceText, sourceLangCode, targetLangCode);
+            var request = new DeepLTranslatorRequest(container.DeeplId, sourceText, sourceLangCode, targetLangCode, regionalCode);
             string dataIn = request.ToJsonString();
             HttpResponse httpResponse = await container.Reader.RequestWebDataAsync(DEEPL_API_URL, HttpMethods.POST, dataIn, acceptCookie: true)
                 .ConfigureAwait(false);
