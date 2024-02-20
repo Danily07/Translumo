@@ -4,6 +4,6 @@
     {
         None = 0,
         WindowsTTS = 1,
-        SileroTTS = 2,
+        //SileroTTS = 2,
     }
 }

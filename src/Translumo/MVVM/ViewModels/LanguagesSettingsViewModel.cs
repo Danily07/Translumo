@@ -214,11 +214,11 @@ namespace Translumo.MVVM.ViewModels
                     }));
                     changeLangStage = StagesFactory.CreateWindowsTtsCheckingStages(_dialogService, langCode, changeLangStage, _logger);
                 }
-                else if (engine == TTSEngines.SileroTTS)
-                {
-                    var languageDescriptor = _languageService.GetLanguageDescriptor(language);
-                    changeLangStage = StagesFactory.CreateSileroTtsCheckingStages(languageDescriptor, _dialogService, changeLangStage, _logger);
-                }
+                //else if (engine == TTSEngines.SileroTTS)
+                //{
+                //    var languageDescriptor = _languageService.GetLanguageDescriptor(language);
+                //    changeLangStage = StagesFactory.CreateSileroTtsCheckingStages(languageDescriptor, _dialogService, changeLangStage, _logger);
+                //}
 
                 await changeLangStage.ExecuteAsync();
             }

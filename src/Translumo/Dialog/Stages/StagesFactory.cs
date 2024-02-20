@@ -80,7 +80,7 @@ namespace Translumo.Dialog.Stages
             var warningMessage = string.Format(
                 LocalizationManager.GetValue("Str.Stages.TtsNotSupportLanguageTemplate", true),
                 LocalizationManager.GetValue("Str.LangSettings.TtsSystem", true),
-                TTSEngines.SileroTTS.ToString(),
+                //TTSEngines.SileroTTS.ToString(),
                 LocalizationManager.GetValue($"Str.Languages.{languageDescriptor.Language}", true));
 
 
