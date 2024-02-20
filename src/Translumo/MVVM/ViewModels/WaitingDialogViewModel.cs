@@ -17,12 +17,11 @@ namespace Translumo.MVVM.ViewModels
         public event EventHandler DialogIsClosed;
 
         private string _textContent;
-        
+
         public WaitingDialogViewModel(Task innerTask, string taskText)
         {
             this.TextContent = taskText;
-
-            innerTask.ContinueWith(t => Close());
+            innerTask.ContinueWith(_ => Close(), TaskContinuationOptions.ExecuteSynchronously);
         }
 
         private void Close()

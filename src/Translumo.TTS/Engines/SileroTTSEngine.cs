@@ -8,6 +8,7 @@ public class SileroTTSEngine : ITTSEngine
 {
     private dynamic _ipython;
     private dynamic _model;
+    private string[] _voices;
     private string _voice;
     private readonly string _modelPath;
     private readonly PythonEngineWrapper _pythonEngine;
@@ -51,7 +52,8 @@ public class SileroTTSEngine : ITTSEngine
             _pyObjects.Add(_ipython);
         });
 
-        _voice = ((string[])_model.speakers).First();
+        _voices = (string[])_model.speakers;
+        _voice = _voices.First();
     }
 
     public void SpeechText(string text)
@@ -145,6 +147,10 @@ public class SileroTTSEngine : ITTSEngine
                     "Hoy ya es ayer y ayer ya es hoy, ya llegó el día, y hoy es hoy."),
             _ => null
         };
+
+    public string[] GetVoices() => _voices;
+
+    public void SetVoice(string voice) => _voice = _voices.First(x => x.Equals(voice, StringComparison.OrdinalIgnoreCase));
 
     private sealed record ModelDescription(string FileUrl, string WarmUpText);
 }

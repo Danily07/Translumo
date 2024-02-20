@@ -7,7 +7,7 @@
              xmlns:controls="clr-namespace:Translumo.Controls"
              xmlns:translation="clr-namespace:Translumo.Translation;assembly=Translumo.Translation"
              xmlns:tts="clr-namespace:Translumo.TTS;assembly=Translumo.TTS"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
@@ -53,6 +53,10 @@
             <StackPanel Orientation="Horizontal">
                 <ComboBox Width="130" Style="{DynamicResource MaterialDesignComboBox}"  ItemsSource="{Binding Source={StaticResource ttsSystems}}" SelectedItem="{Binding Path=TtsSystem}"></ComboBox>
                 <Label HorizontalAlignment="Stretch" Content="{DynamicResource Str.LangSettings.TtsSystem}" Style="{StaticResource ControlCaptionLabel}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <ComboBox Style="{StaticResource ComboBoxBase}" ItemsSource="{Binding Path=AvailableVoices}" SelectedValue="{Binding Path=CurrentVoice, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True"  MaxDropDownHeight="180" />
+                <Label Content="{DynamicResource Str.LangSettings.Voice}" Style="{StaticResource ControlCaptionLabel}"/>
             </StackPanel>
             <GroupBox Style="{StaticResource MaterialDesignGroupBox}" Margin="0,20,0,0">
                 <GroupBox.Header>
