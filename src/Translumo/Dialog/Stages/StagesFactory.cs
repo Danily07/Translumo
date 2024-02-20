@@ -13,6 +13,7 @@ namespace Translumo.Dialog.Stages
     public static class StagesFactory
     {
         private const string EASYOCR_VERSION = "1.6.2";
+        private const string PIL_VERSION = "9.5.0";
 
         public static InteractionStage CreateLanguageChangeStages(DialogService dialogService, Action changeLangAction, ILogger logger)
         {
@@ -65,8 +66,10 @@ namespace Translumo.Dialog.Stages
                             .AddException(new ExceptionInteractionStage(dialogService, (ex) => logger.LogError(ex, "PyTorch installation error"), "{0}"))
                             .AddNextStage(new ActionInteractionStage(dialogService, () => PythonProvider.InstallModuleAsync($"easyocr=={EASYOCR_VERSION}"), LocalizationManager.GetValue("Str.Stages.InstallationPyModule2"))
                                 .AddException(new ExceptionInteractionStage(dialogService, (ex) => logger.LogError(ex, "EasyOCR installation error"), "{0}"))
-                                .AddNextStage(new DialogInteractionStage(dialogService, LocalizationManager.GetValue("Str.Stages.PyModulesInstalled"))
-                                    .AddNextStage(enableFlagStage))))))
+                                .AddNextStage(new ActionInteractionStage(dialogService, () => PythonProvider.InstallModuleAsync($"Pillow=={PIL_VERSION}", true), LocalizationManager.GetValue("Str.Stages.InstallationPyModule3"))
+                                    .AddException(new ExceptionInteractionStage(dialogService, (ex) => logger.LogError(ex, "Pillow reinstall error"), "{0}"))
+                                    .AddNextStage(new DialogInteractionStage(dialogService, LocalizationManager.GetValue("Str.Stages.PyModulesInstalled"))
+                                        .AddNextStage(enableFlagStage)))))))
                 .AddNextStage(enableFlagStage)
                 .AddException(new ExceptionInteractionStage(dialogService, (ex) => logger.LogError(ex, "Easy OCR installation checking error"), LocalizationManager.GetValue("Str.Stages.PyModulesCheckError")));
         }

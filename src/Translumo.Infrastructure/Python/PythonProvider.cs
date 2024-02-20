@@ -29,12 +29,18 @@ namespace Translumo.Infrastructure.Python
             }
         }
 
-        public static async Task InstallModuleAsync(string moduleName)
+        public static async Task InstallModuleAsync(string moduleName, bool forceReinstall = false)
         {
             await TryInstallPipAsync();
 
             var cancellationTokenSource = new CancellationTokenSource(PYTH_COMMAND_TIMEOUT_MS);
-            using (var command = PythonCommand.CreatePip($"install --no-cache-dir --no-warn-script-location {moduleName}", cancellationTokenSource.Token))
+            var commandStr = $"install --no-cache-dir --no-warn-script-location {moduleName}";
+            if (forceReinstall)
+            {
+                commandStr += " --force-reinstall";
+            }
+
+            using (var command = PythonCommand.CreatePip(commandStr, cancellationTokenSource.Token))
             {
                 var result = await command.TryGetResult();
                 if (result.HasError)
