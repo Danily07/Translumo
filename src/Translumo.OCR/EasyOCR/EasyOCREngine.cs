@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Python.Runtime;
 using Translumo.Infrastructure.Constants;
 using Translumo.Infrastructure.Language;
+using Translumo.Infrastructure.Python;
 
 namespace Translumo.OCR.EasyOCR
 {
@@ -16,27 +17,26 @@ namespace Translumo.OCR.EasyOCR
         public int Confidence => 9;
         public Languages DetectionLanguage => _languageDescriptor.Language;
 
-        private IntPtr _threadState;
         private bool _objectsInitialized;
         private bool _readerIsUsed;
 
-        private readonly object _obj = new object(); 
+        private readonly object _obj = new object();
         private readonly LanguageDescriptor _languageDescriptor;
+        private readonly PythonEngineWrapper _pythonEngine;
         private readonly string _modelPath = Path.Combine(Global.ModelsPath, "easyocr");
         private readonly ILogger _logger;
 
         #region Python objects
-        private PyObject _builtinsLib;
+        private dynamic _builtinsLib;
         private dynamic _easyOcrLib;
         private dynamic _reader;
         private dynamic _bytes;
         #endregion
 
-        public EasyOCREngine(LanguageDescriptor languageDescriptor, ILogger logger)
+        public EasyOCREngine(LanguageDescriptor languageDescriptor, PythonEngineWrapper pythonEngine, ILogger logger)
         {
-            Runtime.PythonDLL = Path.Combine(Global.PythonPath, "python38.dll");
-            PythonEngine.PythonHome = Global.PythonPath;
             _languageDescriptor = languageDescriptor;
+            _pythonEngine = pythonEngine;
             _logger = logger;
 
             _logger.LogTrace($"Initialization EasyOCR from path: '{Global.PythonPath}'");
@@ -54,13 +54,13 @@ namespace Translumo.OCR.EasyOCR
                     throw new InvalidOperationException($"EasyOCR is not initialized");
                 }
 
-                using (Py.GIL())
+                return _pythonEngine.Execute(() =>
                 {
                     dynamic ocrResult = _reader.readtext(_bytes.Invoke(image.ToPython()), detail: 0, paragraph: true);
                     _readerIsUsed = true;
 
                     return (string[])ocrResult;
-                }
+                });
             }
         }
 
@@ -70,11 +70,7 @@ namespace Translumo.OCR.EasyOCR
             {
                 try
                 {
-                    if (!PythonEngine.IsInitialized)
-                    {
-                        PythonEngine.Initialize();
-                        _threadState = PythonEngine.BeginAllowThreads();
-                    }
+                    _pythonEngine.Init();
 
                     if (!_objectsInitialized)
                     {
@@ -88,18 +84,16 @@ namespace Translumo.OCR.EasyOCR
             }
         }
 
-        private void InitializeObjects()
-        {
-            using (Py.GIL())
+        private void InitializeObjects() =>
+            _pythonEngine.Execute(() =>
             {
-                _builtinsLib = Py.Import("builtins");
-                _easyOcrLib = Py.Import("easyocr");
+                _builtinsLib = _pythonEngine.Import("builtins");
+                _easyOcrLib = _pythonEngine.Import("easyocr");
                 _reader = _easyOcrLib.Reader(new[] { _languageDescriptor.EasyOcrCode }, model_storage_directory: _modelPath, download_enabled: false, recog_network: _languageDescriptor.EasyOcrModel);
-                _bytes = _builtinsLib.GetAttr("bytes");
+                _bytes = _builtinsLib.bytes;
 
                 _objectsInitialized = true;
-            }
-        }
+            });
 
         public void Dispose()
         {
@@ -118,12 +112,7 @@ namespace Translumo.OCR.EasyOCR
                     _objectsInitialized = false;
                 }
 
-                if (PythonEngine.IsInitialized)
-                {
-                    //Causes PythonEngine.Shutdown() hanging (https://github.com/pythonnet/pythonnet/issues/1701)
-                    //PythonEngine.EndAllowThreads(_threadState);
-                    PythonEngine.Shutdown();
-                }
+                _pythonEngine.Dispose();
             }
         }
     }

@@ -14,6 +14,11 @@ namespace Translumo.Translation.Papago
     public sealed class PapagoTranslator : BaseTranslator<PapagoContainer>
     {
         private readonly AutoResetEvent _sync;
+        private readonly HashSet<Languages> _unsupportedLanguages = new(new[]
+        {
+            Languages.Turkish, Languages.Arabic, Languages.PortugueseBrazil, Languages.Greek
+        });
+
         public PapagoTranslator(TranslationConfiguration translationConfiguration, LanguageService languageService, ILogger logger) : 
             base(translationConfiguration, languageService, logger)
         {
@@ -23,7 +28,7 @@ namespace Translumo.Translation.Papago
         public override Task<string> TranslateTextAsync(string sourceText)
         {
             //TODO: Temp implementation for specific lang
-            if (TargetLangDescriptor.Language == Languages.Turkish || TargetLangDescriptor.Language == Languages.Arabic)
+            if (_unsupportedLanguages.Contains(TargetLangDescriptor.Language))
             {
                 throw new TransactionException("Papago translator is unavailable for this language");
             }

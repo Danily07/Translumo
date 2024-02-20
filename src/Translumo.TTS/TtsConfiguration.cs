@@ -1,5 +1,6 @@
 ﻿using Translumo.Infrastructure.Language;
 using Translumo.Utils;
+using Windows.Security.EnterpriseData;
 
 namespace Translumo.TTS;
 
@@ -8,7 +9,7 @@ public class TtsConfiguration : BindableBase
 {
     public static TtsConfiguration Default =>
         new TtsConfiguration()
-        {   
+        {
             TtsLanguage = Languages.English,
             TtsSystem = TTSEngines.None,
             InstalledWinTtsLanguages = new List<Languages>()

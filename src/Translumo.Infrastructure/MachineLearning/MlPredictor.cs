@@ -51,7 +51,7 @@ namespace Translumo.Infrastructure.MachineLearning
             {
                 throw new InvalidOperationException("Model is not loaded");
             }
-
+            // TODO: predict isnot return result, just freezing
             return _predictor.Predict(input);
         }
 

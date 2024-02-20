@@ -20,7 +20,7 @@ namespace Translumo.Translation.Deepl
             [JsonPropertyName("id")]
             public long Id { get; set; }
 
-            public DeepLTranslatorRequest(long id, string sentence, string sourceLanguage, string tragetLanguage)
+            public DeepLTranslatorRequest(long id, string sentence, string sourceLanguage, string tragetLanguage, string regionalVariantCode)
             {
                 this.Id = id;
                 this.Jsonrpc = "2.0";
@@ -36,7 +36,7 @@ namespace Translumo.Translation.Deepl
                     jobs.Add(new Job(regexResult[i].Value, prevValue, nextValue));
                 }
 
-                Params = new Parameters(jobs, new Lang(sourceLanguage, tragetLanguage));
+                Params = new Parameters(jobs, new Lang(sourceLanguage, tragetLanguage), regionalVariantCode);
             }
 
             public sealed class Parameters
@@ -58,7 +58,7 @@ namespace Translumo.Translation.Deepl
                 [JsonPropertyName("timestamp")]
                 public long Timestamp { get; set; }
 
-                public Parameters(List<Job> jobs, Lang lang)
+                public Parameters(List<Job> jobs, Lang lang, string regionalVariantCode)
                 {
                     Priority = 1L;
                     Lang = lang;
@@ -72,6 +72,10 @@ namespace Translumo.Translation.Deepl
                     }
                     long num3 = num;
                     Timestamp = num3 + (num2 - num3 % num2);
+                    if (!string.IsNullOrEmpty(regionalVariantCode))
+                    {
+                        CommonJobParams = new CommonJobParams() { RegionalVariant = regionalVariantCode };
+                    }
                 }
             }
 
@@ -79,6 +83,9 @@ namespace Translumo.Translation.Deepl
             {
                 [JsonPropertyName("formality")]
                 public object Formality { get; set; }
+
+                [JsonPropertyName("regionalVariant")]
+                public string RegionalVariant { get; set; }
             }
 
             public sealed class Job

@@ -28,7 +28,7 @@ namespace Translumo.Translation.Yandex
         protected override async Task<string> TranslateTextInternal(YandexContainer container, string sourceText)
         {
             var sourceLangCode = SourceLangDescriptor.IsoCode;
-            var targetLangCode = TargetLangDescriptor.IsoCode;
+            var targetLangCode = TargetLangDescriptor.RegionalVariant ? TargetLangDescriptor.Code : TargetLangDescriptor.IsoCode;
             if (string.IsNullOrEmpty(container.Sid))
             {
                 await _sync.WaitOneAsync(CancellationToken.None);
